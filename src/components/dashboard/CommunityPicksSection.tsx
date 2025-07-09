@@ -7,34 +7,25 @@ export const CommunityPicksSection = () => {
   const communityPicks = [
     {
       type: "tool",
-      title: "Most Popular Tool This Week",
+      title: "Editor's Pick",
       name: "Notion AI",
       description: "Advanced note-taking with AI-powered writing assistance",
-      users: "847 users",
-      rating: 4.9,
-      trend: "+23%",
       category: "Knowledge Management",
       testimonial: "Game-changer for organizing thoughts and ideas"
     },
     {
       type: "prompt",
-      title: "Highest Rated Prompt",
+      title: "Top Choice",
       name: "Strategic Planning Assistant",
       description: "Breaks down complex goals into actionable quarterly plans",
-      users: "423 users",
-      rating: 4.8,
-      trend: "+18%",
       category: "Planning",
       testimonial: "Helped me achieve 3 major goals this quarter"
     },
     {
       type: "stack",
-      title: "Fastest Growing Stack",
+      title: "Editor's Pick",
       name: "The Creator's Toolkit",
       description: "Notion + Claude + Canva for content creators",
-      users: "234 users",
-      rating: 4.7,
-      trend: "+45%",
       category: "Content Creation",
       testimonial: "Perfect combination for my content workflow"
     }
@@ -79,15 +70,9 @@ export const CommunityPicksSection = () => {
                       <h4 className="font-semibold text-foreground">{pick.name}</h4>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">
-                      <TrendingUp className="w-3 h-3 mr-1" />
-                      {pick.trend}
-                    </Badge>
-                    <Badge variant="secondary" className="text-xs">
-                      {pick.category}
-                    </Badge>
-                  </div>
+                  <Badge variant="secondary" className="text-xs">
+                    {pick.category}
+                  </Badge>
                 </div>
 
                 {/* Content */}
@@ -109,14 +94,6 @@ export const CommunityPicksSection = () => {
                   </div>
 
                   <div className="space-y-3">
-                    <div className="text-center p-4 bg-muted/30 rounded-lg">
-                      <div className="flex items-center justify-center gap-1 mb-2">
-                        <Star className="w-4 h-4 text-warning fill-warning" />
-                        <span className="font-semibold text-foreground">{pick.rating}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{pick.users}</p>
-                    </div>
-                    
                     <Button variant="outline" className="w-full rounded-xl">
                       <ExternalLink className="w-4 h-4 mr-2" />
                       Try It
@@ -156,21 +133,6 @@ export const CommunityPicksSection = () => {
         </div>
       </Card>
 
-      {/* Community stats */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card className="p-4 text-center">
-          <div className="text-2xl font-bold text-foreground">2,847</div>
-          <div className="text-xs text-muted-foreground">Active readers</div>
-        </Card>
-        <Card className="p-4 text-center">
-          <div className="text-2xl font-bold text-foreground">156</div>
-          <div className="text-xs text-muted-foreground">Tools shared</div>
-        </Card>
-        <Card className="p-4 text-center">
-          <div className="text-2xl font-bold text-foreground">89%</div>
-          <div className="text-xs text-muted-foreground">Success rate</div>
-        </Card>
-      </div>
     </div>
   );
 };

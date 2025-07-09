@@ -32,8 +32,18 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
               {/* Tool header */}
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-accent/10 rounded-xl flex items-center justify-center border border-primary/20">
-                    <Zap className="w-6 h-6 text-primary" />
+                  <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center border border-primary/20 p-2">
+                    <img 
+                      src={`https://logo.clearbit.com/${tool.name.toLowerCase().replace(/\s+/g, '')}.com`}
+                      alt={`${tool.name} logo`}
+                      className="w-full h-full object-contain"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                    <Zap className="w-6 h-6 text-primary hidden" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground">{tool.name}</h4>
@@ -42,10 +52,9 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
                     </Badge>
                   </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-warning fill-warning" />
-                  <span className="text-sm font-medium text-foreground">4.8</span>
-                </div>
+                <Badge variant="outline" className="text-xs">
+                  Recommended
+                </Badge>
               </div>
 
               {/* Description */}

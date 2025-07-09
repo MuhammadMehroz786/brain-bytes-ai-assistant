@@ -13,7 +13,8 @@ import {
   Zap,
   Brain,
   Target,
-  Star
+  Star,
+  LogOut
 } from "lucide-react";
 import { DailyFlowSection } from "./dashboard/DailyFlowSection";
 import { AIStackSection } from "./dashboard/AIStackSection";
@@ -99,15 +100,25 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
                 <p className="text-sm text-muted-foreground">Productivity Dashboard</p>
               </div>
             </div>
-            <Button
-              variant="outline"
-              onClick={onRestart}
-              size="sm"
-              className="w-full rounded-xl"
-            >
-              <Target className="w-4 h-4 mr-2" />
-              Create New Plan
-            </Button>
+            <div className="space-y-2">
+              <Button
+                variant="outline"
+                onClick={onRestart}
+                size="sm"
+                className="w-full rounded-xl"
+              >
+                <Target className="w-4 h-4 mr-2" />
+                Create New Plan
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full rounded-xl text-muted-foreground hover:text-foreground"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </div>
 
           {/* Navigation */}

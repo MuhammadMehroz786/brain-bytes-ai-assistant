@@ -9,6 +9,16 @@ interface IntroScreenProps {
 export const IntroScreen = ({ onStart }: IntroScreenProps) => {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      {/* Auth buttons - top right */}
+      <div className="absolute top-4 right-4 flex gap-2">
+        <Button variant="ghost" size="sm">
+          Log In
+        </Button>
+        <Button size="sm">
+          Sign Up
+        </Button>
+      </div>
+
       <div className="max-w-4xl mx-auto text-center">
         <div className="mb-8">
           <div className="inline-flex items-center justify-center w-24 h-24 bg-primary-light rounded-3xl mb-6">

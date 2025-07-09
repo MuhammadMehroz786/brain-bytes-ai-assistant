@@ -93,44 +93,30 @@ export const SystemUpgradeSection = () => {
           </div>
 
           <div className="space-y-2">
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-muted-foreground line-through">$97</span>
-              <span className="text-3xl font-bold text-primary">$67</span>
-              <span className="text-muted-foreground">one-time</span>
-            </div>
+            <div className="text-3xl font-bold text-primary">$149</div>
             <p className="text-sm text-muted-foreground">
-              Early access pricing • Lifetime updates included
+              Enrollment currently closed
+            </p>
+            <p className="text-warning text-sm font-medium">
+              Join Waitlist – Invite Only
             </p>
           </div>
 
           <div className="space-y-3">
             <Button 
               size="lg" 
-              className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold rounded-xl"
+              variant="outline"
+              className="w-full rounded-xl"
             >
               <ArrowUp className="w-5 h-5 mr-2" />
-              Unlock the System Builder
+              Join Waitlist
             </Button>
             
             <p className="text-xs text-muted-foreground">
-              30-day money-back guarantee • Cancel anytime
+              Get notified when enrollment reopens
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-primary/10">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">2k+</div>
-              <div className="text-xs text-muted-foreground">Users automated</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">4.9</div>
-              <div className="text-xs text-muted-foreground">Average rating</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-foreground">85%</div>
-              <div className="text-xs text-muted-foreground">Productivity boost</div>
-            </div>
-          </div>
         </div>
       </Card>
     </div>
