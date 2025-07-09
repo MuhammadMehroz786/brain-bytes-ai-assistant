@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IntroScreen } from "@/components/IntroScreen";
 import { OnboardingFlow } from "@/components/OnboardingFlow";
-import { ResultsScreen } from "@/components/ResultsScreen";
+import { Dashboard } from "@/components/Dashboard";
 import { generateProductivityPlan } from "@/utils/productivityGenerator";
 import type { UserResponses, ProductivityPlan } from "@/types/productivity";
 
@@ -47,7 +47,7 @@ export const ProductivityAssistant = () => {
     
     case "results":
       return productivityPlan && userResponses ? (
-        <ResultsScreen 
+        <Dashboard 
           plan={productivityPlan}
           responses={userResponses}
           onRestart={handleRestart}
