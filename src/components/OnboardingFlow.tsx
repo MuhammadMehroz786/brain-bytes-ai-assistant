@@ -100,7 +100,7 @@ export const OnboardingFlow = ({ onComplete, onBack }: OnboardingFlowProps) => {
   const currentAnswer = responses[currentQuestionData.id as keyof UserResponses];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pastel-purple via-pastel-blue to-pastel-green flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-accent-light via-primary-light to-success-light flex items-center justify-center p-4">
       <div className="max-w-2xl mx-auto w-full">
         <Card className="p-8 bg-white/95 backdrop-blur-sm border-0 shadow-2xl rounded-3xl">
           <div className="mb-8">

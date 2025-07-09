@@ -96,13 +96,13 @@ ${plan.gptPrompts.map((prompt, index) => `${index + 1}. ${prompt}`).join('\n\n')
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pastel-purple via-pastel-blue to-pastel-green p-4">
+    <div className="min-h-screen bg-gradient-to-br from-accent-light via-primary-light to-success-light p-4">
       <div className="max-w-6xl mx-auto py-8">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-success/20 rounded-2xl mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-success-light rounded-2xl mb-4 border border-success/20">
             <CheckCircle className="w-8 h-8 text-success" />
           </div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Your AI Productivity Plan</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Your Brain Bytes Productivity Plan</h1>
           <p className="text-lg text-muted-foreground mb-6">Personalized for maximum efficiency and focus</p>
           
           <div className="flex flex-wrap justify-center gap-4 mb-6">

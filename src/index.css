@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 260 100% 99%;
+    --background: 0 0% 100%;
     --foreground: 260 15% 8%;
 
     --card: 0 0% 100%;
@@ -36,17 +36,15 @@ All colors MUST be HSL.
     --input: 220 13% 91%;
     --ring: 262 83% 58%;
 
-    /* Gradient colors */
+    /* Gradient colors for accents */
     --gradient-start: 262 83% 58%;
     --gradient-mid: 174 72% 56%;
     --gradient-end: 142 76% 73%;
     
-    /* Pastel palette */
-    --pastel-purple: 280 100% 95%;
-    --pastel-blue: 220 100% 95%;
-    --pastel-green: 160 100% 95%;
-    --pastel-pink: 330 100% 95%;
-    --pastel-yellow: 50 100% 95%;
+    /* Light accent backgrounds */
+    --accent-light: 262 50% 97%;
+    --primary-light: 262 50% 96%;
+    --success-light: 142 50% 96%;
 
     /* Success and warning */
     --success: 142 76% 73%;

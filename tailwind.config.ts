@@ -65,13 +65,9 @@ export default {
 					mid: 'hsl(var(--gradient-mid))',
 					end: 'hsl(var(--gradient-end))'
 				},
-				pastel: {
-					purple: 'hsl(var(--pastel-purple))',
-					blue: 'hsl(var(--pastel-blue))',
-					green: 'hsl(var(--pastel-green))',
-					pink: 'hsl(var(--pastel-pink))',
-					yellow: 'hsl(var(--pastel-yellow))'
-				},
+				'accent-light': 'hsl(var(--accent-light))',
+				'primary-light': 'hsl(var(--primary-light))',
+				'success-light': 'hsl(var(--success-light))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
