@@ -36,11 +36,7 @@ export const ProductivityAssistant = () => {
   }, []);
 
   const handleStart = () => {
-    if (user) {
-      setCurrentState("onboarding");
-    } else {
-      setCurrentState("auth");
-    }
+    setCurrentState("onboarding");
   };
 
   const handleAuth = () => {

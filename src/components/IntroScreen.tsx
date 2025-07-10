@@ -15,9 +15,6 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <Button variant="ghost" size="sm" onClick={onAuth}>
           Log In
         </Button>
-        <Button size="sm" onClick={onAuth}>
-          Sign Up
-        </Button>
       </div>
 
       <div className="max-w-4xl mx-auto text-center">
@@ -100,7 +97,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
           
           <p className="text-muted-foreground text-sm">
-            Exclusive to Brain Bytes Subscribers • 6 quick questions • Curate your personalized AI productivity assistant instantly
+            Exclusive for Brain Bytes Subscribers • Answer 5 quick questions • Instantly unlock your personalized AI productivity system
           </p>
         </div>
       </div>
