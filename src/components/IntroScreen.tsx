@@ -12,7 +12,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       {/* Auth buttons - top right */}
       <div className="absolute top-4 right-4 flex gap-2">
-        <Button variant="ghost" size="sm" onClick={onAuth}>
+        <Button variant="outline" size="sm" onClick={onAuth} className="bg-white/90 backdrop-blur-sm border-primary/20 hover:bg-white">
           Log In
         </Button>
       </div>
@@ -54,20 +54,20 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20">
             <Clock className="w-8 h-8 text-primary mb-4 mx-auto" />
-            <h3 className="font-semibold mb-2 text-foreground">Time-Blocked Productivity Blueprint</h3>
-            <p className="text-sm text-muted-foreground">Your personalized, AI-generated daily schedule — crafted to optimize energy levels, focus zones, and goal pacing</p>
+            <h3 className="font-semibold mb-2 text-foreground">Your Daily AI Schedule</h3>
+            <p className="text-sm text-muted-foreground">Your personalized, energy-based schedule — optimized for deep focus, goal pacing, and updated in real time when your day changes.</p>
           </Card>
           
           <Card className="p-6 bg-gradient-to-br from-accent-light to-success-light border-accent/20">
             <Target className="w-8 h-8 text-accent mb-4 mx-auto" />
-            <h3 className="font-semibold mb-2 text-foreground">Custom AI Stack Recommendation</h3>
-            <p className="text-sm text-muted-foreground">Hand-selected AI tools tailored to your habits, goals, and productivity style — complete with usage tips</p>
+            <h3 className="font-semibold mb-2 text-foreground">Smart Productivity Stack</h3>
+            <p className="text-sm text-muted-foreground">Hand-picked AI tools matched to your habits — complete with setup guides and starter templates to help you get results faster.</p>
           </Card>
           
           <Card className="p-6 bg-gradient-to-br from-success-light to-primary-light border-success/20">
             <Sparkles className="w-8 h-8 text-success mb-4 mx-auto" />
-            <h3 className="font-semibold mb-2 text-foreground">5 Precision-Crafted GPT Prompts</h3>
-            <p className="text-sm text-muted-foreground">Personalized GPT prompts designed to help you write faster, think clearer, and execute smarter</p>
+            <h3 className="font-semibold mb-2 text-foreground">Personalized AI Navigator</h3>
+            <p className="text-sm text-muted-foreground">Daily focus tips, mini goals, and motivation based on your unique working style — plus instant rescue plans when you get stuck.</p>
           </Card>
         </div>
 
