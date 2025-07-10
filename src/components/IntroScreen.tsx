@@ -4,17 +4,18 @@ import { Play, Sparkles, Clock, Target } from "lucide-react";
 
 interface IntroScreenProps {
   onStart: () => void;
+  onAuth: () => void;
 }
 
-export const IntroScreen = ({ onStart }: IntroScreenProps) => {
+export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       {/* Auth buttons - top right */}
       <div className="absolute top-4 right-4 flex gap-2">
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" onClick={onAuth}>
           Log In
         </Button>
-        <Button size="sm">
+        <Button size="sm" onClick={onAuth}>
           Sign Up
         </Button>
       </div>

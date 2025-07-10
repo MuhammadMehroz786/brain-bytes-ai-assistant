@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Calendar, 
   Sparkles, 
@@ -19,7 +21,6 @@ import {
 import { DailyAINavigatorSection } from "./dashboard/DailyAINavigatorSection";
 import { DailyFlowSection } from "./dashboard/DailyFlowSection";
 import { AIStackSection } from "./dashboard/AIStackSection";
-import { GPTPromptsSection } from "./dashboard/GPTPromptsSection";
 import { SystemUpgradeSection } from "./dashboard/SystemUpgradeSection";
 import { CommunityPicksSection } from "./dashboard/CommunityPicksSection";
 import type { ProductivityPlan, UserResponses } from "@/types/productivity";
@@ -30,10 +31,28 @@ interface DashboardProps {
   onRestart: () => void;
 }
 
-type SectionId = 'daily-navigator' | 'daily-flow' | 'ai-stack' | 'gpt-prompts' | 'community-picks' | 'system-upgrade';
+type SectionId = 'daily-navigator' | 'daily-flow' | 'ai-stack' | 'community-picks' | 'system-upgrade';
 
 export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
   const [activeSection, setActiveSection] = useState<SectionId>('daily-navigator');
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: "Signed out successfully",
+        description: "You've been logged out of your account",
+      });
+      onRestart(); // This will redirect to intro screen
+    } catch (error) {
+      toast({
+        title: "Error signing out",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    }
+  };
 
   const sidebarItems = [
     {
@@ -53,12 +72,6 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
       title: 'Your AI Productivity Stack',
       icon: Zap,
       description: 'Recommended tools'
-    },
-    {
-      id: 'gpt-prompts' as SectionId,
-      title: 'Smart GPT Prompts',
-      icon: MessageSquare,
-      description: 'Custom prompts'
     },
     {
       id: 'community-picks' as SectionId,
@@ -82,8 +95,6 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
         return <DailyFlowSection plan={plan} responses={responses} />;
       case 'ai-stack':
         return <AIStackSection plan={plan} responses={responses} />;
-      case 'gpt-prompts':
-        return <GPTPromptsSection plan={plan} responses={responses} />;
       case 'community-picks':
         return <CommunityPicksSection />;
       case 'system-upgrade':
@@ -122,6 +133,7 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={handleSignOut}
                 className="w-full rounded-xl text-muted-foreground hover:text-foreground"
               >
                 <LogOut className="w-4 h-4 mr-2" />

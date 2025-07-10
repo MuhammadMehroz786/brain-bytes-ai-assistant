@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Compass, Lightbulb, MessageSquare, Copy, Zap, Calendar, Focus, RefreshCw } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Compass, Lightbulb, MessageSquare, Copy, Zap, RefreshCw, Target, Clock, Brain, Pencil, LifeBuoy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { ProductivityPlan, UserResponses } from "@/types/productivity";
 
@@ -13,6 +14,8 @@ interface DailyAINavigatorSectionProps {
 
 export const DailyAINavigatorSection = ({ plan, responses }: DailyAINavigatorSectionProps) => {
   const [tipIndex, setTipIndex] = useState(0);
+  const [brainDumpInput, setBrainDumpInput] = useState("");
+  const [showRescuePlan, setShowRescuePlan] = useState(false);
   const { toast } = useToast();
 
   const personalizedTips = [
@@ -64,6 +67,30 @@ export const DailyAINavigatorSection = ({ plan, responses }: DailyAINavigatorSec
     });
   };
 
+  const handleBrainDump = () => {
+    if (brainDumpInput.trim()) {
+      setBrainDumpInput("");
+      toast({
+        title: "Saved your thoughts!",
+        description: "Now here's your focus for today",
+      });
+    }
+  };
+
+  const handleMorningReset = () => {
+    toast({
+      title: "Schedule rebuilt!",
+      description: "Your flow has been optimized from the current time forward",
+    });
+  };
+
+  const miniWins = [
+    "Complete one deep work sprint before 1PM",
+    "Finish your most important task first",
+    "Have one productive conversation today",
+    "Clear your inbox completely"
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -84,6 +111,25 @@ export const DailyAINavigatorSection = ({ plan, responses }: DailyAINavigatorSec
         </Button>
       </div>
 
+      {/* Yesterday's Recap */}
+      <Card className="p-4 bg-gradient-to-r from-success/5 to-primary/5 border-success/20">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-success/10 rounded-lg flex items-center justify-center border border-success/20">
+              <Clock className="w-4 h-4 text-success" />
+            </div>
+            <div>
+              <h4 className="font-medium text-foreground">Yesterday's Recap</h4>
+              <p className="text-sm text-muted-foreground">You focused for 2h yesterday. Want to increase or maintain that today?</p>
+            </div>
+          </div>
+          <Button variant="outline" size="sm" onClick={refreshContent} className="rounded-xl">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Regenerate Today's Plan
+          </Button>
+        </div>
+      </Card>
+
       <div className="grid md:grid-cols-2 gap-6">
         {/* Today's AI Tip */}
         <Card className="p-6 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
@@ -99,42 +145,45 @@ export const DailyAINavigatorSection = ({ plan, responses }: DailyAINavigatorSec
           <p className="text-muted-foreground leading-relaxed">{currentTip}</p>
         </Card>
 
-        {/* GPT Prompt Suggestion */}
+        {/* Mini Win for Today */}
         <Card className="p-6">
           <div className="flex items-start gap-3 mb-4">
             <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center border border-accent/20">
-              <MessageSquare className="w-5 h-5 text-accent" />
+              <Target className="w-5 h-5 text-accent" />
             </div>
-            <div className="flex-1">
-              <h4 className="font-semibold text-foreground mb-1">{currentPrompt.title}</h4>
-              <Badge variant="outline" className="text-xs">Ready to Copy</Badge>
+            <div>
+              <h4 className="font-semibold text-foreground mb-1">Mini Win for Today</h4>
+              <Badge variant="outline" className="text-xs">Achievable Goal</Badge>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => copyPrompt(currentPrompt.prompt)}
-              className="rounded-xl"
-            >
-              <Copy className="w-4 h-4" />
-            </Button>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-            {currentPrompt.prompt.substring(0, 120)}...
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => copyPrompt(currentPrompt.prompt)}
-            className="w-full rounded-xl"
-          >
-            <Copy className="w-4 h-4 mr-2" />
-            Copy Full Prompt
-          </Button>
+          <p className="text-muted-foreground leading-relaxed">{miniWins[tipIndex % miniWins.length]}</p>
         </Card>
       </div>
 
-      {/* Quick Actions & Motivation */}
-      <div className="grid md:grid-cols-3 gap-4">
+      {/* Brain Dump Input */}
+      <Card className="p-4">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/20">
+            <Brain className="w-4 h-4 text-primary" />
+          </div>
+          <h4 className="font-medium text-foreground">Brain Dump</h4>
+        </div>
+        <div className="flex gap-2">
+          <Input
+            placeholder="Quick thoughts or tasks (1-3 items)..."
+            value={brainDumpInput}
+            onChange={(e) => setBrainDumpInput(e.target.value)}
+            className="flex-1"
+            onKeyPress={(e) => e.key === 'Enter' && handleBrainDump()}
+          />
+          <Button onClick={handleBrainDump} disabled={!brainDumpInput.trim()} className="rounded-xl">
+            Save
+          </Button>
+        </div>
+      </Card>
+
+      {/* Action Cards */}
+      <div className="grid md:grid-cols-4 gap-4">
         <Card className="p-4 text-center">
           <div className="w-8 h-8 bg-success/10 rounded-lg flex items-center justify-center mx-auto mb-3 border border-success/20">
             <Zap className="w-4 h-4 text-success" />
@@ -147,11 +196,26 @@ export const DailyAINavigatorSection = ({ plan, responses }: DailyAINavigatorSec
 
         <Card className="p-4 text-center">
           <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3 border border-primary/20">
-            <Calendar className="w-4 h-4 text-primary" />
+            <Clock className="w-4 h-4 text-primary" />
           </div>
-          <h5 className="font-medium text-foreground mb-2">Quick Sync</h5>
-          <Button variant="outline" size="sm" className="w-full rounded-xl">
-            Update Calendar
+          <h5 className="font-medium text-foreground mb-2">Morning Reset</h5>
+          <Button variant="outline" size="sm" onClick={handleMorningReset} className="w-full rounded-xl text-xs">
+            Start Late? Rebuild Your Schedule
+          </Button>
+        </Card>
+
+        <Card className="p-4 text-center">
+          <div className="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-3 border border-accent/20">
+            <LifeBuoy className="w-4 h-4 text-accent" />
+          </div>
+          <h5 className="font-medium text-foreground mb-2">Distraction Rescue</h5>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowRescuePlan(!showRescuePlan)} 
+            className="w-full rounded-xl"
+          >
+            Distracted or stuck?
           </Button>
         </Card>
 
@@ -165,6 +229,37 @@ export const DailyAINavigatorSection = ({ plan, responses }: DailyAINavigatorSec
           </div>
         </Card>
       </div>
+
+      {/* Distraction Rescue Plan */}
+      {showRescuePlan && (
+        <Card className="p-6 bg-gradient-to-br from-accent/5 to-primary/5 border-accent/20">
+          <div className="text-center space-y-4">
+            <h4 className="font-semibold text-foreground mb-4">3-Step Distraction Rescue Plan</h4>
+            <div className="space-y-3 text-left max-w-md mx-auto">
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">1</div>
+                <p className="text-sm text-foreground">Step away for 1 minute</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">2</div>
+                <p className="text-sm text-foreground">Write your next task in 1 sentence</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">3</div>
+                <p className="text-sm text-foreground">Start a 15-min timer and just begin</p>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setShowRescuePlan(false)} 
+              className="rounded-xl"
+            >
+              Got it, let's refocus!
+            </Button>
+          </div>
+        </Card>
+      )}
     </div>
   );
 };

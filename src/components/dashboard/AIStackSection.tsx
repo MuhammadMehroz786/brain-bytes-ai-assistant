@@ -25,14 +25,14 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
         </Badge>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-4">
         {plan.aiTools.map((tool, index) => (
-          <Card key={index} className="p-6 hover:shadow-lg transition-all duration-200">
-            <div className="space-y-4">
-              {/* Tool header */}
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center border border-primary/20 p-2">
+          <Card key={index} className="p-4 hover:shadow-md transition-all duration-200">
+            <div className="space-y-3">
+              {/* Tool header - compact */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border border-primary/20 p-1">
                     <img 
                       src={`https://logo.clearbit.com/${tool.name.toLowerCase().replace(/\s+/g, '')}.com`}
                       alt={`${tool.name} logo`}
@@ -43,11 +43,11 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
                         target.nextElementSibling?.classList.remove('hidden');
                       }}
                     />
-                    <Zap className="w-6 h-6 text-primary hidden" />
+                    <Zap className="w-4 h-4 text-primary hidden" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground">{tool.name}</h4>
-                    <Badge variant="secondary" className="text-xs mt-1">
+                    <h4 className="font-medium text-foreground text-sm">{tool.name}</h4>
+                    <Badge variant="secondary" className="text-xs">
                       {tool.category}
                     </Badge>
                   </div>
@@ -57,51 +57,31 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
                 </Badge>
               </div>
 
-              {/* Description */}
-              <p className="text-muted-foreground leading-relaxed">
-                {tool.description}
+              {/* Description - shortened */}
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                {tool.description.length > 100 ? tool.description.substring(0, 100) + "..." : tool.description}
               </p>
 
-              {/* Associated time block */}
-              <div className="bg-muted/30 rounded-lg p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <Badge variant="outline" className="text-xs">
-                    Best for
-                  </Badge>
-                </div>
-                <p className="text-sm text-foreground">
-                  {index === 0 && "Deep work and focus sessions"}
-                  {index === 1 && "Communication and collaboration"}
-                  {index === 2 && "Planning and organization"}
-                  {index % 3 === 0 && index > 0 && "Analysis and reporting"}
+              {/* Associated time block - compact */}
+              <div className="bg-muted/20 rounded p-2">
+                <p className="text-xs text-foreground">
+                  Best for: {index === 0 && "Deep work"}
+                  {index === 1 && "Communication"}
+                  {index === 2 && "Planning"}
+                  {index % 3 === 0 && index > 0 && "Analysis"}
                   {index % 3 === 1 && index > 1 && "Creative work"}
-                  {index % 3 === 2 && index > 2 && "Learning and research"}
+                  {index % 3 === 2 && index > 2 && "Research"}
                 </p>
-              </div>
-
-              {/* Video embed placeholder */}
-              <div className="bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl p-4 border border-primary/10">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-foreground">Quick Demo</span>
-                  <Badge variant="outline" className="text-xs">2 min</Badge>
-                </div>
-                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center mb-3">
-                  <Play className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <Button variant="ghost" size="sm" className="w-full rounded-xl">
-                  <Play className="w-4 h-4 mr-2" />
-                  Watch Setup Guide
-                </Button>
               </div>
 
               {/* Action buttons */}
               <div className="flex gap-2">
-                <Button className="flex-1 rounded-xl">
-                  <ExternalLink className="w-4 h-4 mr-2" />
+                <Button size="sm" className="flex-1 rounded-xl">
+                  <ExternalLink className="w-3 h-3 mr-1" />
                   Try {tool.name}
                 </Button>
                 <Button variant="outline" size="sm" className="rounded-xl">
-                  <Star className="w-4 h-4" />
+                  <Star className="w-3 h-3" />
                 </Button>
               </div>
             </div>

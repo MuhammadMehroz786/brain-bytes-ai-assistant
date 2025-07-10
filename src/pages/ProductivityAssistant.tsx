@@ -1,18 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IntroScreen } from "@/components/IntroScreen";
 import { OnboardingFlow } from "@/components/OnboardingFlow";
 import { Dashboard } from "@/components/Dashboard";
+import { AuthFlow } from "@/components/AuthFlow";
 import { generateProductivityPlan } from "@/utils/productivityGenerator";
+import { supabase } from "@/integrations/supabase/client";
 import type { UserResponses, ProductivityPlan } from "@/types/productivity";
+import type { User } from "@supabase/supabase-js";
 
-type AppState = "intro" | "onboarding" | "results";
+type AppState = "intro" | "auth" | "onboarding" | "results";
 
 export const ProductivityAssistant = () => {
   const [currentState, setCurrentState] = useState<AppState>("intro");
   const [userResponses, setUserResponses] = useState<UserResponses | null>(null);
   const [productivityPlan, setProductivityPlan] = useState<ProductivityPlan | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    // Check initial auth state
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+      if (event === 'SIGNED_OUT') {
+        setCurrentState("intro");
+        setUserResponses(null);
+        setProductivityPlan(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleStart = () => {
+    if (user) {
+      setCurrentState("onboarding");
+    } else {
+      setCurrentState("auth");
+    }
+  };
+
+  const handleAuth = () => {
+    setCurrentState("auth");
+  };
+
+  const handleAuthSuccess = () => {
     setCurrentState("onboarding");
   };
 
@@ -35,7 +70,10 @@ export const ProductivityAssistant = () => {
 
   switch (currentState) {
     case "intro":
-      return <IntroScreen onStart={handleStart} />;
+      return <IntroScreen onStart={handleStart} onAuth={handleAuth} />;
+    
+    case "auth":
+      return <AuthFlow onAuthSuccess={handleAuthSuccess} onBack={handleBackToIntro} />;
     
     case "onboarding":
       return (
@@ -55,6 +93,6 @@ export const ProductivityAssistant = () => {
       ) : null;
     
     default:
-      return <IntroScreen onStart={handleStart} />;
+      return <IntroScreen onStart={handleStart} onAuth={handleAuth} />;
   }
 };
