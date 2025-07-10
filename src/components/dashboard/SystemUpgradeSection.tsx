@@ -7,27 +7,23 @@ export const SystemUpgradeSection = () => {
   const features = [
     {
       icon: Calendar,
-      title: "Auto-sync to Google Calendar",
-      description: "Your daily schedule automatically appears in your calendar with smart reminders",
-      badge: "Popular"
-    },
-    {
-      icon: Zap,
-      title: "Notion + Todoist Integration",
-      description: "Seamlessly sync tasks, notes, and goals across your favorite productivity apps",
-      badge: "New"
+      title: "Google Calendar Sync",
+      description: "Your daily schedule automatically appears in your calendar with smart reminders"
     },
     {
       icon: Bot,
-      title: "Daily AI Check-ins",
-      description: "Personalized morning briefings and evening reviews to optimize your workflow",
-      badge: "Premium"
+      title: "Daily Briefing",
+      description: "Personalized morning briefings and evening reviews to optimize your workflow"
+    },
+    {
+      icon: Zap,
+      title: "Focus Playlist",
+      description: "AI-curated music and soundscapes that adapt to your work sessions"
     },
     {
       icon: Clock,
-      title: "Smart Time Tracking",
-      description: "Automatic time tracking with AI-powered insights on your productivity patterns",
-      badge: "Beta"
+      title: "Email Summary", 
+      description: "Daily digest of important emails with AI-powered prioritization"
     }
   ];
 
@@ -41,6 +37,11 @@ export const SystemUpgradeSection = () => {
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Transform your productivity plan from a static guide into a living, breathing system that adapts and evolves with you
         </p>
+        <div className="mt-4">
+          <Badge variant="outline" className="text-primary border-primary">
+            Enrollment Currently Closed – Join Waitlist (Invite Only)
+          </Badge>
+        </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -52,16 +53,8 @@ export const SystemUpgradeSection = () => {
               
               <div className="relative space-y-4">
                 <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-primary/10">
-                      <Icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <Badge 
-                      variant={feature.badge === 'Popular' ? 'default' : 'secondary'} 
-                      className="text-xs"
-                    >
-                      {feature.badge}
-                    </Badge>
+                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-primary/10">
+                    <Icon className="w-5 h-5 text-primary" />
                   </div>
                 </div>
 
@@ -74,7 +67,7 @@ export const SystemUpgradeSection = () => {
 
                 <div className="flex items-center gap-2 text-success">
                   <CheckCircle className="w-4 h-4" />
-                  <span className="text-sm font-medium">Available in System Builder</span>
+                  <span className="text-sm font-medium">Included in Automation Package</span>
                 </div>
               </div>
             </Card>
@@ -95,10 +88,7 @@ export const SystemUpgradeSection = () => {
           <div className="space-y-2">
             <div className="text-3xl font-bold text-primary">$149</div>
             <p className="text-sm text-muted-foreground">
-              Enrollment currently closed
-            </p>
-            <p className="text-warning text-sm font-medium">
-              Join Waitlist – Invite Only
+              One-time payment
             </p>
           </div>
 

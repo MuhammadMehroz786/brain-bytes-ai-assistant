@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Calendar, Play, ExternalLink } from "lucide-react";
+import { Clock, Calendar, Play, ExternalLink, RefreshCw, Edit3, Info } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import type { ProductivityPlan, UserResponses } from "@/types/productivity";
 
 interface DailyFlowSectionProps {
@@ -10,12 +12,22 @@ interface DailyFlowSectionProps {
 }
 
 export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
+  const [editMode, setEditMode] = useState(false);
+  const { toast } = useToast();
+
   const handleAddToCalendar = (timeBlock: any) => {
     // Create calendar event - simplified implementation
     const title = encodeURIComponent(timeBlock.activity);
     const details = encodeURIComponent(timeBlock.description);
     const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}`;
     window.open(googleCalendarUrl, '_blank');
+  };
+
+  const handleRecalculateFlow = () => {
+    toast({
+      title: "Flow recalculated!",
+      description: "Your daily schedule has been optimized based on current preferences",
+    });
   };
 
   return (
@@ -27,10 +39,21 @@ export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
             A timeline-based schedule designed to maximize your energy and focus throughout the day
           </p>
         </div>
-        <Badge variant="outline" className="px-3 py-1">
-          <Clock className="w-4 h-4 mr-1" />
-          {plan.timeBlocks.length} Time Blocks
-        </Badge>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRecalculateFlow}
+            className="rounded-xl"
+          >
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Recalculate Today's Flow
+          </Button>
+          <Badge variant="outline" className="px-3 py-1">
+            <Clock className="w-4 h-4 mr-1" />
+            {plan.timeBlocks.length} Time Blocks
+          </Badge>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -69,9 +92,19 @@ export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
                   </Button>
                 </div>
 
-                <h4 className="text-lg font-semibold text-foreground mb-2">
-                  {block.activity}
-                </h4>
+                <div className="flex items-start gap-2 mb-2">
+                  <h4 className="text-lg font-semibold text-foreground">
+                    {block.activity}
+                  </h4>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-1 h-6 w-6 opacity-50 hover:opacity-100"
+                    title="Why this time block works for you"
+                  >
+                    <Info className="w-3 h-3" />
+                  </Button>
+                </div>
                 
                 <p className="text-muted-foreground mb-4 leading-relaxed">
                   {block.description}
@@ -107,15 +140,21 @@ export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
 
       {/* Summary card */}
       <Card className="p-6 bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
-        <div className="text-center">
+        <div className="text-center space-y-4">
           <h4 className="font-semibold text-foreground mb-2">Your Daily Flow Summary</h4>
           <p className="text-muted-foreground text-sm mb-4">
             This schedule is optimized for your workflow and daily productivity goals
           </p>
-          <Button variant="outline" className="rounded-xl">
-            <Calendar className="w-4 h-4 mr-2" />
-            Export Full Schedule
-          </Button>
+          <div className="flex justify-center gap-3">
+            <Button variant="outline" className="rounded-xl">
+              <Calendar className="w-4 h-4 mr-2" />
+              Export Full Schedule
+            </Button>
+            <Button variant="ghost" className="rounded-xl text-primary hover:bg-primary/10">
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Upgrade for Auto-Sync
+            </Button>
+          </div>
         </div>
       </Card>
     </div>

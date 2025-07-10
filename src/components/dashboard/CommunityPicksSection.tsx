@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Star, TrendingUp, Heart, MessageSquare, ExternalLink, Upload } from "lucide-react";
+import { Users, Star, TrendingUp, Heart, MessageSquare, ExternalLink, Upload, Filter } from "lucide-react";
 
 export const CommunityPicksSection = () => {
+  const [filter, setFilter] = useState("all");
   const communityPicks = [
     {
       type: "tool",
@@ -11,23 +13,44 @@ export const CommunityPicksSection = () => {
       name: "Notion AI",
       description: "Advanced note-taking with AI-powered writing assistance",
       category: "Knowledge Management",
-      testimonial: "Game-changer for organizing thoughts and ideas"
+      trending: "Top pick for Deep Work",
+      icon: "🧠"
     },
     {
-      type: "prompt",
+      type: "prompt", 
       title: "Top Choice",
       name: "Strategic Planning Assistant",
       description: "Breaks down complex goals into actionable quarterly plans",
       category: "Planning",
-      testimonial: "Helped me achieve 3 major goals this quarter"
+      trending: "Most copied prompt this week",
+      icon: "🎯"
     },
     {
       type: "stack",
-      title: "Editor's Pick",
+      title: "Editor's Pick", 
       name: "The Creator's Toolkit",
       description: "Notion + Claude + Canva for content creators",
       category: "Content Creation",
-      testimonial: "Perfect combination for my content workflow"
+      trending: "Fastest growing workflow",
+      icon: "🎨"
+    },
+    {
+      type: "tool",
+      title: "Top Choice",
+      name: "Todoist",
+      description: "Smart task management with natural language processing",
+      category: "Task Management", 
+      trending: "Best for GTD methodology",
+      icon: "✅"
+    },
+    {
+      type: "prompt",
+      title: "Editor's Pick",
+      name: "Weekly Review Assistant", 
+      description: "Comprehensive reflection and planning prompt",
+      category: "Reflection",
+      trending: "Perfect for Sunday planning",
+      icon: "📝"
     }
   ];
 
@@ -40,6 +63,8 @@ export const CommunityPicksSection = () => {
     }
   };
 
+  const filteredPicks = filter === "all" ? communityPicks : communityPicks.filter(pick => pick.type === filter);
+
   return (
     <div className="space-y-6">
       <div className="text-center space-y-4">
@@ -48,55 +73,60 @@ export const CommunityPicksSection = () => {
         </div>
         <h2 className="text-3xl font-bold text-foreground">What's Working for Other Brain Bytes Readers</h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Discover the tools, prompts, and setups that are helping thousands of productivity enthusiasts achieve their goals
+          Discover the tools, prompts, and setups that are helping productivity enthusiasts achieve their goals
         </p>
+        
+        {/* Filter buttons */}
+        <div className="flex justify-center gap-2 mt-6">
+          {["all", "tool", "prompt", "stack"].map((filterType) => (
+            <Button
+              key={filterType}
+              variant={filter === filterType ? "default" : "outline"}
+              size="sm"
+              onClick={() => setFilter(filterType)}
+              className="rounded-xl capitalize"
+            >
+              {filterType === "all" ? "All" : filterType + "s"}
+            </Button>
+          ))}
+        </div>
       </div>
 
-      <div className="space-y-6">
-        {communityPicks.map((pick, index) => {
+      <div className="space-y-4">
+        {filteredPicks.map((pick, index) => {
           const Icon = getIcon(pick.type);
           
           return (
             <Card key={index} className="p-6 hover:shadow-lg transition-all duration-200">
-              <div className="space-y-4">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-success/10 to-accent/10 rounded-xl flex items-center justify-center border border-success/20">
-                      <Icon className="w-5 h-5 text-success" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-success">{pick.title}</p>
-                      <h4 className="font-semibold text-foreground">{pick.name}</h4>
-                    </div>
+              <div className="flex items-start gap-4">
+                {/* Icon and emoji */}
+                <div className="flex flex-col items-center gap-2">
+                  <div className="text-2xl">{pick.icon}</div>
+                  <div className="w-8 h-8 bg-gradient-to-br from-success/10 to-accent/10 rounded-lg flex items-center justify-center border border-success/20">
+                    <Icon className="w-4 h-4 text-success" />
                   </div>
-                  <Badge variant="secondary" className="text-xs">
-                    {pick.category}
-                  </Badge>
                 </div>
 
                 {/* Content */}
-                <div className="grid md:grid-cols-3 gap-4">
-                  <div className="md:col-span-2 space-y-3">
-                    <p className="text-muted-foreground leading-relaxed">
-                      {pick.description}
-                    </p>
-                    
-                    <div className="bg-gradient-to-r from-success/5 to-primary/5 rounded-lg p-3 border border-success/10">
-                      <div className="flex items-start gap-2">
-                        <Heart className="w-4 h-4 text-success mt-0.5" />
-                        <div>
-                          <p className="text-sm font-medium text-foreground mb-1">Community Feedback</p>
-                          <p className="text-sm text-muted-foreground italic">"{pick.testimonial}"</p>
-                        </div>
+                <div className="flex-1">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="font-semibold text-foreground">{pick.name}</h4>
+                        <Badge variant="secondary" className="text-xs">{pick.title}</Badge>
+                      </div>
+                      <p className="text-muted-foreground text-sm leading-relaxed mb-2">
+                        {pick.description}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="w-3 h-3 text-primary" />
+                        <span className="text-xs text-primary font-medium">{pick.trending}</span>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Button variant="outline" className="w-full rounded-xl">
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Try It
+                    
+                    <Button variant="outline" size="sm" className="rounded-xl">
+                      <ExternalLink className="w-4 h-4 mr-1" />
+                      Try
                     </Button>
                   </div>
                 </div>

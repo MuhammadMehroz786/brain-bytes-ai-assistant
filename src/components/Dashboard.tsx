@@ -16,6 +16,7 @@ import {
   Star,
   LogOut
 } from "lucide-react";
+import { DailyAINavigatorSection } from "./dashboard/DailyAINavigatorSection";
 import { DailyFlowSection } from "./dashboard/DailyFlowSection";
 import { AIStackSection } from "./dashboard/AIStackSection";
 import { GPTPromptsSection } from "./dashboard/GPTPromptsSection";
@@ -29,12 +30,18 @@ interface DashboardProps {
   onRestart: () => void;
 }
 
-type SectionId = 'daily-flow' | 'ai-stack' | 'gpt-prompts' | 'system-upgrade' | 'community-picks';
+type SectionId = 'daily-navigator' | 'daily-flow' | 'ai-stack' | 'gpt-prompts' | 'community-picks' | 'system-upgrade';
 
 export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
-  const [activeSection, setActiveSection] = useState<SectionId>('daily-flow');
+  const [activeSection, setActiveSection] = useState<SectionId>('daily-navigator');
 
   const sidebarItems = [
+    {
+      id: 'daily-navigator' as SectionId,
+      title: 'Daily AI Navigator',
+      icon: Brain,
+      description: 'Your AI coach'
+    },
     {
       id: 'daily-flow' as SectionId,
       title: 'Your Optimized Daily Flow',
@@ -54,33 +61,35 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
       description: 'Custom prompts'
     },
     {
-      id: 'system-upgrade' as SectionId,
-      title: 'System Upgrade',
-      icon: ArrowUp,
-      description: 'Automation features'
-    },
-    {
       id: 'community-picks' as SectionId,
       title: 'Community Picks',
       icon: Users,
       description: 'What others use'
+    },
+    {
+      id: 'system-upgrade' as SectionId,
+      title: 'System Upgrade',
+      icon: ArrowUp,
+      description: 'Automation features'
     }
   ];
 
   const renderSection = () => {
     switch (activeSection) {
+      case 'daily-navigator':
+        return <DailyAINavigatorSection plan={plan} responses={responses} />;
       case 'daily-flow':
         return <DailyFlowSection plan={plan} responses={responses} />;
       case 'ai-stack':
         return <AIStackSection plan={plan} responses={responses} />;
       case 'gpt-prompts':
         return <GPTPromptsSection plan={plan} responses={responses} />;
-      case 'system-upgrade':
-        return <SystemUpgradeSection />;
       case 'community-picks':
         return <CommunityPicksSection />;
+      case 'system-upgrade':
+        return <SystemUpgradeSection />;
       default:
-        return <DailyFlowSection plan={plan} responses={responses} />;
+        return <DailyAINavigatorSection plan={plan} responses={responses} />;
     }
   };
 
