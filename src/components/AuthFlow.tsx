@@ -13,7 +13,6 @@ interface AuthFlowProps {
 }
 
 export const AuthFlow = ({ onAuthSuccess, onBack }: AuthFlowProps) => {
-  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -44,34 +43,17 @@ export const AuthFlow = ({ onAuthSuccess, onBack }: AuthFlowProps) => {
     setLoading(true);
 
     try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`
-          }
-        });
-        
-        if (error) throw error;
-        
-        toast({
-          title: "Account created successfully!",
-          description: "Please check your email to verify your account.",
-        });
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        
-        if (error) throw error;
-        
-        toast({
-          title: "Welcome back!",
-          description: "You've successfully signed in.",
-        });
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Welcome back!",
+        description: "You've successfully signed in.",
+      });
     } catch (error: any) {
       toast({
         title: "Authentication error",
@@ -91,10 +73,10 @@ export const AuthFlow = ({ onAuthSuccess, onBack }: AuthFlowProps) => {
             <Brain className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-2">
-            {isSignUp ? "Create Account" : "Welcome Back"}
+            Welcome Back
           </h1>
           <p className="text-muted-foreground">
-            {isSignUp ? "Join Brain Bytes to unlock your productivity" : "Sign in to access your dashboard"}
+            Sign in to access your dashboard
           </p>
         </div>
 
@@ -136,19 +118,9 @@ export const AuthFlow = ({ onAuthSuccess, onBack }: AuthFlowProps) => {
             className="w-full rounded-xl" 
             disabled={loading}
           >
-            {loading ? "Processing..." : isSignUp ? "Create Account" : "Sign In"}
+            {loading ? "Processing..." : "Sign In"}
           </Button>
         </form>
-
-        <div className="mt-6 text-center">
-          <Button
-            variant="ghost"
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-sm"
-          >
-            {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
-          </Button>
-        </div>
 
         <div className="mt-4">
           <Button
