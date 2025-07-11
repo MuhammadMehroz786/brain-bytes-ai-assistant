@@ -95,25 +95,39 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </p>
         </div>
 
-        {/* Feature blocks - Now positioned after CTA */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <Card className="p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20">
-            <Clock className="w-8 h-8 text-primary mb-4 mx-auto" />
-            <h3 className="font-semibold mb-2 text-foreground">Your Daily AI Schedule</h3>
-            <p className="text-sm text-muted-foreground">Your personalized, energy-based schedule — optimized for deep focus, goal pacing, and updated in real time when your day changes.</p>
-          </Card>
+        {/* What You'll Unlock Section */}
+        <div className="mb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              What You'll Unlock
+            </h2>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+              Your personalized AI productivity system, built in under 2 minutes.
+            </p>
+          </div>
           
-          <Card className="p-6 bg-gradient-to-br from-accent-light to-success-light border-accent/20">
-            <Target className="w-8 h-8 text-accent mb-4 mx-auto" />
-            <h3 className="font-semibold mb-2 text-foreground">Smart Productivity Stack</h3>
-            <p className="text-sm text-muted-foreground">Hand-picked AI tools matched to your habits — complete with setup guides and starter templates to help you get results faster.</p>
-          </Card>
-          
-          <Card className="p-6 bg-gradient-to-br from-success-light to-primary-light border-success/20">
-            <Sparkles className="w-8 h-8 text-success mb-4 mx-auto" />
-            <h3 className="font-semibold mb-2 text-foreground">Personalized AI Navigator</h3>
-            <p className="text-sm text-muted-foreground">Daily focus tips, mini goals, and motivation based on your unique working style — plus instant rescue plans when you get stuck.</p>
-          </Card>
+          {/* Feature blocks container */}
+          <div className="bg-muted/30 rounded-3xl p-6 md:p-8 border border-border/50">
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20">
+                <Clock className="w-8 h-8 text-primary mb-4 mx-auto" />
+                <h3 className="font-semibold mb-2 text-foreground">Your Daily AI Schedule</h3>
+                <p className="text-sm text-muted-foreground">Your personalized, energy-based schedule — optimized for deep focus, goal pacing, and updated in real time when your day changes.</p>
+              </Card>
+              
+              <Card className="p-6 bg-gradient-to-br from-accent-light to-success-light border-accent/20">
+                <Target className="w-8 h-8 text-accent mb-4 mx-auto" />
+                <h3 className="font-semibold mb-2 text-foreground">Smart Productivity Stack</h3>
+                <p className="text-sm text-muted-foreground">Hand-picked AI tools matched to your habits — complete with setup guides and starter templates to help you get results faster.</p>
+              </Card>
+              
+              <Card className="p-6 bg-gradient-to-br from-success-light to-primary-light border-success/20">
+                <Sparkles className="w-8 h-8 text-success mb-4 mx-auto" />
+                <h3 className="font-semibold mb-2 text-foreground">Personalized AI Navigator</h3>
+                <p className="text-sm text-muted-foreground">Daily focus tips, mini goals, and motivation based on your unique working style — plus instant rescue plans when you get stuck.</p>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>
