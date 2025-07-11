@@ -46,7 +46,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <div className="mb-8">
           <div className="inline-flex items-center justify-center w-24 h-24 bg-primary-light rounded-3xl mb-6">
             <img 
-              src="/lovable-uploads/bea33803-8352-47e3-96fb-ddfac1bea2af.png" 
+              src="/lovable-uploads/e7fb8ee5-e680-4635-b3ca-22687ca0820b.png" 
               alt="Brain Bytes Logo" 
               className="w-16 h-16 object-contain"
             />
