@@ -29,7 +29,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center px-4 py-2">
       {/* Auth buttons - top right */}
       <div className="absolute top-4 right-4 flex gap-2">
         <Button 
@@ -42,17 +42,18 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </Button>
       </div>
 
-      <div className="max-w-4xl mx-auto text-center">
-        <div className="mb-8">
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-primary-light rounded-3xl mb-6">
+      <div className="max-w-7xl mx-auto text-center w-full">
+        {/* Header section - more compact */}
+        <div className="mb-4 md:mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-primary-light rounded-2xl mb-3 md:mb-4">
             <img 
               src="/lovable-uploads/e7fb8ee5-e680-4635-b3ca-22687ca0820b.png" 
               alt="Brain Bytes Logo" 
-              className="w-16 h-16 object-contain"
+              className="w-10 h-10 md:w-14 md:h-14 object-contain"
             />
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-4 leading-tight">
             Brain Bytes
             <br />
             <span className="bg-gradient-to-r from-primary via-accent to-success bg-clip-text text-transparent">
@@ -60,18 +61,18 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground mb-4 md:mb-6 max-w-2xl mx-auto leading-relaxed">
             Build your personalized, AI-enhanced daily productivity plan in under 2 minutes
           </p>
         </div>
 
-        {/* Pricing section */}
-        <div className="flex items-center justify-center gap-4 mb-6">
-          <div className="flex items-center gap-2 bg-muted rounded-full px-4 py-2 text-foreground">
+        {/* Pricing section - more compact */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 mb-4 md:mb-6">
+          <div className="flex items-center gap-2 bg-muted rounded-full px-3 py-1.5 text-foreground">
             <Play className="w-4 h-4" />
             <span className="text-sm">45-second demo</span>
           </div>
-          <div className="text-muted-foreground">•</div>
+          <div className="hidden sm:block text-muted-foreground">•</div>
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground line-through text-sm">$45</span>
             <span className="text-primary font-bold text-lg">$29</span>
@@ -79,54 +80,57 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
         </div>
 
-        {/* CTA Button - Positioned after pricing, before feature blocks */}
-        <div className="mb-6 md:mb-8">
-          <Button 
-            onClick={handleStartBuilding}
-            size="lg"
-            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full md:w-auto min-h-[48px]"
-          >
-            Start Building Your Plan
-          </Button>
-          
-          {/* Supporting text under CTA */}
-          <p className="text-muted-foreground text-sm md:text-base mt-6 md:mt-8">
-            No recurring fees. One-time purchase. Instantly unlock your AI assistant.
-          </p>
-        </div>
-
-        {/* What You'll Unlock Section */}
-        <div className="mb-12">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              What You'll Unlock
-            </h2>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Your personalized AI productivity system, built in under 2 minutes.
-            </p>
-          </div>
-          
-          {/* Feature blocks container */}
-          <div className="bg-muted/30 rounded-3xl p-6 md:p-8 border border-border/50">
-            <div className="grid md:grid-cols-3 gap-6">
-              <Card className="p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20">
-                <Clock className="w-8 h-8 text-primary mb-4 mx-auto" />
-                <h3 className="font-semibold mb-2 text-foreground">Your Daily AI Schedule</h3>
-                <p className="text-sm text-muted-foreground">Your personalized, energy-based schedule — optimized for deep focus, goal pacing, and updated in real time when your day changes.</p>
-              </Card>
-              
-              <Card className="p-6 bg-gradient-to-br from-accent-light to-success-light border-accent/20">
-                <Target className="w-8 h-8 text-accent mb-4 mx-auto" />
-                <h3 className="font-semibold mb-2 text-foreground">Smart Productivity Stack</h3>
-                <p className="text-sm text-muted-foreground">Hand-picked AI tools matched to your habits — complete with setup guides and starter templates to help you get results faster.</p>
-              </Card>
-              
-              <Card className="p-6 bg-gradient-to-br from-success-light to-primary-light border-success/20">
-                <Sparkles className="w-8 h-8 text-success mb-4 mx-auto" />
-                <h3 className="font-semibold mb-2 text-foreground">Personalized AI Navigator</h3>
-                <p className="text-sm text-muted-foreground">Daily focus tips, mini goals, and motivation based on your unique working style — plus instant rescue plans when you get stuck.</p>
-              </Card>
+        {/* Desktop layout with features and CTA side by side */}
+        <div className="lg:grid lg:grid-cols-3 lg:gap-6 lg:items-start">
+          {/* Feature blocks - Takes 2 columns on desktop */}
+          <div className="lg:col-span-2 mb-6 lg:mb-0">
+            <div className="text-center mb-4 lg:mb-6">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2 md:mb-3">
+                What You'll Unlock
+              </h2>
+              <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-2xl mx-auto">
+                Your personalized AI productivity system, built in under 2 minutes.
+              </p>
             </div>
+            
+            {/* Mobile: Stack vertically, Desktop: Horizontal row */}
+            <div className="bg-muted/30 rounded-2xl md:rounded-3xl p-4 md:p-6 border border-border/50">
+              <div className="flex flex-col lg:flex-row gap-4 lg:gap-3">
+                <Card className="flex-1 p-4 md:p-5 bg-gradient-to-br from-primary-light to-accent-light border-primary/20">
+                  <Clock className="w-6 h-6 md:w-7 md:h-7 text-primary mb-3 mx-auto" />
+                  <h3 className="font-semibold mb-2 text-foreground text-sm md:text-base">Your Daily AI Schedule</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground">Personalized, energy-based schedule optimized for deep focus and goal pacing.</p>
+                </Card>
+                
+                <Card className="flex-1 p-4 md:p-5 bg-gradient-to-br from-accent-light to-success-light border-accent/20">
+                  <Target className="w-6 h-6 md:w-7 md:h-7 text-accent mb-3 mx-auto" />
+                  <h3 className="font-semibold mb-2 text-foreground text-sm md:text-base">Smart Productivity Stack</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground">Hand-picked AI tools with setup guides and starter templates for faster results.</p>
+                </Card>
+                
+                <Card className="flex-1 p-4 md:p-5 bg-gradient-to-br from-success-light to-primary-light border-success/20">
+                  <Sparkles className="w-6 h-6 md:w-7 md:h-7 text-success mb-3 mx-auto" />
+                  <h3 className="font-semibold mb-2 text-foreground text-sm md:text-base">Personalized AI Navigator</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground">Daily focus tips, mini goals, and instant rescue plans based on your working style.</p>
+                </Card>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA section - Takes 1 column on desktop, full width on mobile */}
+          <div className="lg:col-span-1 flex flex-col justify-center">
+            <Button 
+              onClick={handleStartBuilding}
+              size="lg"
+              className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 md:px-12 py-4 md:py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full min-h-[48px] mb-3 md:mb-4"
+            >
+              Start Building Your Plan
+            </Button>
+            
+            {/* Supporting text under CTA */}
+            <p className="text-muted-foreground text-sm md:text-base">
+              No recurring fees. One-time purchase. Instantly unlock your AI assistant.
+            </p>
           </div>
         </div>
       </div>
