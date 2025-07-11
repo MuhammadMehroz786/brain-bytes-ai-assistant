@@ -1,63 +1,50 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Brain, Mail, Lock, ArrowLeft } from "lucide-react";
+import { Brain, Mail, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-interface AuthFlowProps {
-  onAuthSuccess: () => void;
-  onBack: () => void;
+interface CreateAccountProps {
+  onAccountCreated: () => void;
 }
 
-export const AuthFlow = ({ onAuthSuccess, onBack }: AuthFlowProps) => {
-  // Remove sign up functionality - only allow login
+export const CreateAccount = ({ onAccountCreated }: CreateAccountProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    // Check if user is already logged in
-    const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        onAuthSuccess();
-      }
-    };
-    checkUser();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        onAuthSuccess();
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [onAuthSuccess]);
-
-  const handleAuth = async (e: React.FormEvent) => {
+  const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`
+        }
       });
       
       if (error) throw error;
       
       toast({
-        title: "Welcome back!",
-        description: "You've successfully signed in.",
+        title: "Account created successfully!",
+        description: "You can now start building your productivity plan.",
       });
+      
+      // Wait a moment for the auth state to update, then proceed
+      setTimeout(() => {
+        onAccountCreated();
+      }, 1000);
+      
     } catch (error: any) {
       toast({
-        title: "Authentication error",
+        title: "Account creation error",
         description: error.message,
         variant: "destructive",
       });
@@ -74,14 +61,14 @@ export const AuthFlow = ({ onAuthSuccess, onBack }: AuthFlowProps) => {
             <Brain className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-2">
-            Welcome Back
+            Create Your Account
           </h1>
           <p className="text-muted-foreground">
-            Sign in to access your dashboard
+            Set up your account to access your AI productivity plan
           </p>
         </div>
 
-        <form onSubmit={handleAuth} className="space-y-4">
+        <form onSubmit={handleCreateAccount} className="space-y-4">
           <div>
             <Label htmlFor="email">Email</Label>
             <div className="relative">
@@ -105,35 +92,28 @@ export const AuthFlow = ({ onAuthSuccess, onBack }: AuthFlowProps) => {
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Create a secure password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10"
                 required
+                minLength={6}
               />
             </div>
           </div>
 
           <Button 
             type="submit" 
-            className="w-full rounded-xl" 
+            className="w-full rounded-xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold" 
             disabled={loading}
           >
-            {loading ? "Processing..." : "Sign In"}
+            {loading ? "Creating Account..." : "Create Account & Continue"}
           </Button>
         </form>
 
-
-        <div className="mt-4">
-          <Button
-            variant="ghost"
-            onClick={onBack}
-            className="w-full text-sm"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
-          </Button>
-        </div>
+        <p className="text-xs text-muted-foreground text-center mt-4">
+          After creating your account, you'll answer 5 quick questions to unlock your personalized AI productivity system.
+        </p>
       </Card>
     </div>
   );

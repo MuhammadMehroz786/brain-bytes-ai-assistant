@@ -12,7 +12,12 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       {/* Auth buttons - top right */}
       <div className="absolute top-4 right-4 flex gap-2">
-        <Button variant="outline" size="sm" onClick={onAuth} className="bg-white/90 backdrop-blur-sm border-primary/20 hover:bg-white">
+        <Button 
+          variant="outline" 
+          size="lg" 
+          onClick={onAuth} 
+          className="bg-white/95 backdrop-blur-sm border-primary/30 hover:bg-white text-primary font-semibold px-6 py-2 shadow-md hover:shadow-lg transition-all duration-200"
+        >
           Log In
         </Button>
       </div>
@@ -45,9 +50,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           <Button 
             onClick={onStart}
             size="lg"
-            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full"
+            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-xl px-16 py-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full"
           >
-            Start Building Your Plan
+            Unlock My AI Plan
           </Button>
         </div>
 
@@ -90,9 +95,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             <Button 
               onClick={onStart}
               size="lg"
-              className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-xl px-16 py-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
-              Start Building Your Plan
+              Unlock My AI Plan
             </Button>
           </div>
           

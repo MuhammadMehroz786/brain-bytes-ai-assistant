@@ -3,12 +3,14 @@ import { IntroScreen } from "@/components/IntroScreen";
 import { OnboardingFlow } from "@/components/OnboardingFlow";
 import { Dashboard } from "@/components/Dashboard";
 import { AuthFlow } from "@/components/AuthFlow";
+import { PaymentSuccess } from "@/components/PaymentSuccess";
+import { CreateAccount } from "@/components/CreateAccount";
 import { generateProductivityPlan } from "@/utils/productivityGenerator";
 import { supabase } from "@/integrations/supabase/client";
 import type { UserResponses, ProductivityPlan } from "@/types/productivity";
 import type { User } from "@supabase/supabase-js";
 
-type AppState = "intro" | "auth" | "onboarding" | "results";
+type AppState = "intro" | "auth" | "onboarding" | "results" | "payment-success" | "create-account";
 
 export const ProductivityAssistant = () => {
   const [currentState, setCurrentState] = useState<AppState>("intro");
@@ -35,8 +37,18 @@ export const ProductivityAssistant = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleStart = () => {
-    setCurrentState("onboarding");
+  const handleStart = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('create-payment');
+      if (error) throw error;
+      
+      if (data?.url) {
+        // Open Stripe checkout in a new tab
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+    }
   };
 
   const handleAuth = () => {
@@ -58,11 +70,27 @@ export const ProductivityAssistant = () => {
     setCurrentState("intro");
   };
 
+  const handlePaymentSuccess = () => {
+    setCurrentState("create-account");
+  };
+
+  const handleAccountCreated = () => {
+    setCurrentState("onboarding");
+  };
+
   const handleRestart = () => {
     setUserResponses(null);
     setProductivityPlan(null);
     setCurrentState("intro");
   };
+
+  // Check for payment success on component mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('session_id')) {
+      setCurrentState("payment-success");
+    }
+  }, []);
 
   switch (currentState) {
     case "intro":
@@ -70,6 +98,12 @@ export const ProductivityAssistant = () => {
     
     case "auth":
       return <AuthFlow onAuthSuccess={handleAuthSuccess} onBack={handleBackToIntro} />;
+    
+    case "payment-success":
+      return <PaymentSuccess onCreateAccount={handlePaymentSuccess} />;
+    
+    case "create-account":
+      return <CreateAccount onAccountCreated={handleAccountCreated} />;
     
     case "onboarding":
       return (
