@@ -17,14 +17,6 @@ export const ProductivityAssistant = () => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Check for payment success in URL
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('payment') === 'success') {
-      setCurrentState("onboarding");
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
     // Check initial auth state
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
