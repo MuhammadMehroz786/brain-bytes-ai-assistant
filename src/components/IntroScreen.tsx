@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Play, Sparkles, Clock, Target } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface IntroScreenProps {
   onStart: () => void;
@@ -8,11 +10,34 @@ interface IntroScreenProps {
 }
 
 export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
+  const handleStartBuilding = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('create-payment');
+      
+      if (error) {
+        toast.error('Failed to start checkout process');
+        return;
+      }
+      
+      if (data?.url) {
+        // Open Stripe checkout in a new tab
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      toast.error('Something went wrong. Please try again.');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       {/* Auth buttons - top right */}
       <div className="absolute top-4 right-4 flex gap-2">
-        <Button variant="outline" size="sm" onClick={onAuth} className="bg-white/90 backdrop-blur-sm border-primary/20 hover:bg-white">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={onAuth} 
+          className="bg-gradient-to-r from-primary/10 to-accent/10 backdrop-blur-sm border-primary/30 hover:bg-gradient-to-r hover:from-primary/20 hover:to-accent/20 text-primary font-semibold shadow-sm"
+        >
           Log In
         </Button>
       </div>
@@ -40,17 +65,37 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </p>
         </div>
 
-        {/* Mobile CTA - show at top on mobile */}
-        <div className="block md:hidden mb-8">
+        {/* Pricing section */}
+        <div className="flex items-center justify-center gap-4 mb-6">
+          <div className="flex items-center gap-2 bg-muted rounded-full px-4 py-2 text-foreground">
+            <Play className="w-4 h-4" />
+            <span className="text-sm">45-second demo</span>
+          </div>
+          <div className="text-muted-foreground">•</div>
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground line-through text-sm">$45</span>
+            <span className="text-primary font-bold text-lg">$29</span>
+            <span className="text-muted-foreground text-sm">one-time</span>
+          </div>
+        </div>
+
+        {/* CTA Button - Positioned after pricing, before feature blocks */}
+        <div className="mb-6 md:mb-8">
           <Button 
-            onClick={onStart}
+            onClick={handleStartBuilding}
             size="lg"
-            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full"
+            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full md:w-auto min-h-[48px]"
           >
             Start Building Your Plan
           </Button>
+          
+          {/* Supporting text under CTA */}
+          <p className="text-muted-foreground text-sm md:text-base mt-6 md:mt-8">
+            No recurring fees. One-time purchase. Instantly unlock your AI assistant.
+          </p>
         </div>
 
+        {/* Feature blocks - Now positioned after CTA */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <Card className="p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20">
             <Clock className="w-8 h-8 text-primary mb-4 mx-auto" />
@@ -69,36 +114,6 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             <h3 className="font-semibold mb-2 text-foreground">Personalized AI Navigator</h3>
             <p className="text-sm text-muted-foreground">Daily focus tips, mini goals, and motivation based on your unique working style — plus instant rescue plans when you get stuck.</p>
           </Card>
-        </div>
-
-        <div className="space-y-6">
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <div className="flex items-center gap-2 bg-muted rounded-full px-4 py-2 text-foreground">
-              <Play className="w-4 h-4" />
-              <span className="text-sm">45-second demo</span>
-            </div>
-            <div className="text-muted-foreground">•</div>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground line-through text-sm">$45</span>
-              <span className="text-primary font-bold text-lg">$29</span>
-              <span className="text-muted-foreground text-sm">one-time</span>
-            </div>
-          </div>
-          
-          {/* Desktop CTA - hidden on mobile */}
-          <div className="hidden md:block">
-            <Button 
-              onClick={onStart}
-              size="lg"
-              className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-            >
-              Start Building Your Plan
-            </Button>
-          </div>
-          
-          <p className="text-muted-foreground text-sm">
-            Exclusive for Brain Bytes Subscribers • Answer 5 quick questions • Instantly unlock your personalized AI productivity system
-          </p>
         </div>
       </div>
     </div>
