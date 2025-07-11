@@ -76,7 +76,11 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
 
               {/* Action buttons */}
               <div className="flex gap-2">
-                <Button size="sm" className="flex-1 rounded-xl">
+                <Button 
+                  size="sm" 
+                  className="flex-1 rounded-xl"
+                  onClick={() => window.open('https://quillbot.com', '_blank')}
+                >
                   <ExternalLink className="w-3 h-3 mr-1" />
                   Try {tool.name}
                 </Button>
