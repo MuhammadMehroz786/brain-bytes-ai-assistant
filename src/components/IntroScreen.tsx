@@ -72,13 +72,13 @@ export const IntroScreen = ({
         {/* Mobile CTA - moved up on mobile */}
         <div className="block md:hidden mb-6">
           <div className="space-y-4">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground text-xs">One-time fee — just</span>
-                <span className="text-primary font-bold text-base">$29</span>
-                <span className="text-muted-foreground text-xs">for full access</span>
-              </div>
-            </div>
+             <div className="flex items-center justify-center gap-3 mb-4">
+               <div className="flex items-center gap-2">
+                 <span className="text-muted-foreground line-through text-xs">$45</span>
+                 <span className="text-primary font-bold text-base">$29</span>
+                 <span className="text-muted-foreground text-xs">One-time fee for full access</span>
+               </div>
+             </div>
             <Button onClick={onStart} size="lg" className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full">
               Unlock my AI Assistant
             </Button>
@@ -112,9 +112,9 @@ export const IntroScreen = ({
         <div className="space-y-6">
           <div className="hidden md:flex items-center justify-center gap-4 mb-6">
             <div className="flex items-center gap-2">
-              <span className="text-muted-foreground text-sm">One-time fee — just</span>
+              <span className="text-muted-foreground line-through text-sm">$45</span>
               <span className="text-primary font-bold text-lg">$29</span>
-              <span className="text-muted-foreground text-sm">for full access</span>
+              <span className="text-muted-foreground text-sm">One-time fee for full access</span>
             </div>
           </div>
           
