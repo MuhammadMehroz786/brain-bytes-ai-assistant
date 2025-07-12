@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   Mail, 
   Inbox, 
@@ -11,7 +12,8 @@ import {
   ExternalLink,
   Loader,
   Check,
-  Edit3
+  Edit3,
+  RefreshCw
 } from "lucide-react";
 
 interface EmailSummary {
@@ -68,19 +70,126 @@ export const EmailSummarySection = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [emailSummaries, setEmailSummaries] = useState<EmailSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
-  // Simulate email connection status
+  // Check Gmail connection status
   useEffect(() => {
-    const connected = localStorage.getItem('emailConnected') === 'true';
-    setIsConnected(connected);
-    if (connected) {
+    checkGmailConnection();
+  }, []);
+
+  const checkGmailConnection = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('gmail_tokens')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (data && !error) {
+        setIsConnected(true);
+        await fetchGmailEmails();
+      }
+    } catch (error) {
+      console.error('Error checking Gmail connection:', error);
+    }
+  };
+
+  const handleSyncGmail = async () => {
+    setIsSyncing(true);
+    try {
+      // Get authorization URL
+      const response = await fetch(`https://tvbetqvpiypncjtkchcc.supabase.co/functions/v1/gmail-oauth?action=authorize`);
+      const authData = await response.json();
+
+      if (!response.ok) throw new Error(authData.error);
+
+      // Open OAuth popup
+      const popup = window.open(
+        authData.authUrl, 
+        'gmail-oauth', 
+        'width=500,height=600,scrollbars=yes,resizable=yes'
+      );
+
+      // Listen for OAuth completion
+      const handleMessage = async (event: MessageEvent) => {
+        if (event.origin !== window.location.origin.replace(window.location.port, '54321')) {
+          // Allow messages from Supabase edge function domain
+          if (!event.origin.includes('supabase.co')) return;
+        }
+
+        if (event.data.success) {
+          popup?.close();
+          
+          // Store tokens
+          const { error: storeError } = await supabase.functions.invoke('gmail-oauth', {
+            body: {
+              tokens: event.data.tokens,
+              userInfo: event.data.userInfo
+            }
+          });
+
+          if (storeError) throw storeError;
+
+          setIsConnected(true);
+          await fetchGmailEmails();
+          window.removeEventListener('message', handleMessage);
+        } else if (event.data.error) {
+          popup?.close();
+          throw new Error(event.data.error);
+        }
+      };
+
+      window.addEventListener('message', handleMessage);
+      
+      // Check if popup was closed without completion
+      const checkClosed = setInterval(() => {
+        if (popup?.closed) {
+          clearInterval(checkClosed);
+          window.removeEventListener('message', handleMessage);
+          setIsSyncing(false);
+        }
+      }, 1000);
+
+    } catch (error) {
+      console.error('Gmail sync error:', error);
+      alert('Failed to sync Gmail. Please try again.');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const fetchGmailEmails = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('fetch-gmail-emails');
+      
+      if (error) throw error;
+      
+      if (data?.emails) {
+        // Format emails to match our interface
+        const formattedEmails = data.emails.map((email: any) => ({
+          id: email.id,
+          sender: email.sender,
+          subject: email.subject,
+          summary: email.summary,
+          time: new Date(email.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isUnread: email.isUnread,
+          tags: email.tags || []
+        }));
+        setEmailSummaries(formattedEmails);
+      }
+    } catch (error) {
+      console.error('Error fetching Gmail emails:', error);
+      // Fallback to mock data if Gmail fetch fails
       setEmailSummaries(mockEmailSummaries);
     }
-  }, []);
+  };
 
   const handleConnectEmail = () => {
     setIsLoading(true);
-    // Simulate connection process
+    // Simulate connection process for non-Gmail
     setTimeout(() => {
       setIsConnected(true);
       setEmailSummaries(mockEmailSummaries);
@@ -143,9 +252,30 @@ export const EmailSummarySection = () => {
           </div>
           <h2 className="text-xl sm:text-2xl font-bold text-foreground truncate">Today's Email Recap</h2>
         </div>
-        <Badge variant="secondary" className="text-xs flex-shrink-0">
-          {emailSummaries.filter(email => email.isUnread).length} Unread
-        </Badge>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <Button 
+            onClick={handleSyncGmail}
+            disabled={isSyncing}
+            variant="outline"
+            size="sm"
+            className="text-xs"
+          >
+            {isSyncing ? (
+              <>
+                <Loader className="w-3 h-3 mr-1 animate-spin" />
+                Syncing...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="w-3 h-3 mr-1" />
+                Sync Gmail
+              </>
+            )}
+          </Button>
+          <Badge variant="secondary" className="text-xs">
+            {emailSummaries.filter(email => email.isUnread).length} Unread
+          </Badge>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:gap-6">

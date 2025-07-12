@@ -2,3 +2,9 @@ project_id = "tvbetqvpiypncjtkchcc"
 
 [functions.create-payment]
 verify_jwt = false
+
+[functions.gmail-oauth]
+verify_jwt = false
+
+[functions.fetch-gmail-emails]
+verify_jwt = true
