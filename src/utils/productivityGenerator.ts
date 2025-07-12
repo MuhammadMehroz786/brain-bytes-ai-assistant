@@ -1,7 +1,7 @@
 import type { UserResponses, ProductivityPlan, TimeBlock, AITool } from "@/types/productivity";
 
 const generateTimeBlocks = (responses: UserResponses): TimeBlock[] => {
-  const { workHours, preferredWorkflow, jobType, productivityStruggle } = responses;
+  const { productiveTime, productivityStruggle } = responses;
   
   const baseSchedule: Record<string, TimeBlock[]> = {
     "early-morning": [
@@ -32,89 +32,95 @@ const generateTimeBlocks = (responses: UserResponses): TimeBlock[] => {
       { time: "8:00 PM", activity: "Creative Projects", description: "Personal or side projects", duration: "1.5 hours" },
       { time: "9:30 PM", activity: "Wind Down", description: "Planning tomorrow, reflection", duration: "30 min" },
     ],
-    "night": [
-      { time: "9:00 PM", activity: "Evening Setup", description: "Environment preparation, goal setting", duration: "15 min" },
-      { time: "9:15 PM", activity: "Deep Work Block", description: "Complex, focused work", duration: "2.5 hours" },
-      { time: "11:45 PM", activity: "Break", description: "Stretch, hydrate, brief rest", duration: "15 min" },
-      { time: "12:00 AM", activity: "Creative Work", description: "When creativity peaks", duration: "1.5 hours" },
-      { time: "1:30 AM", activity: "Wrap Up", description: "Tomorrow's planning, gradual wind down", duration: "30 min" },
+    "varies": [
+      { time: "9:00 AM", activity: "Morning Planning", description: "Review goals and plan your day", duration: "15 min" },
+      { time: "9:15 AM", activity: "Deep Work Block", description: "Focus on priority tasks", duration: "2 hours" },
+      { time: "11:15 AM", activity: "Break & Movement", description: "Take a walk or do light stretching", duration: "15 min" },
+      { time: "11:30 AM", activity: "Communication", description: "Check emails and messages", duration: "30 min" },
+      { time: "12:00 PM", activity: "Lunch Break", description: "Mindful eating and relaxation", duration: "1 hour" },
+      { time: "1:00 PM", activity: "Focused Work", description: "Continue important tasks", duration: "90 min" },
+      { time: "2:30 PM", activity: "Quick Break", description: "Hydrate and reset", duration: "10 min" },
+      { time: "2:40 PM", activity: "Creative Tasks", description: "Brainstorming or creative work", duration: "80 min" },
+      { time: "4:00 PM", activity: "Admin & Planning", description: "Administrative tasks and tomorrow's prep", duration: "1 hour" },
     ]
   };
 
-  return baseSchedule[workHours] || baseSchedule["morning"];
+  return baseSchedule[productiveTime] || baseSchedule["morning"];
 };
 
 const generateAITools = (responses: UserResponses): AITool[] => {
-  const { jobType, productivityStruggle, preferredWorkflow } = responses;
+  const { currentTools, productivityStruggle, aiFamiliarity } = responses;
   
-  const toolDatabase: Record<string, AITool[]> = {
-    creative: [
-      { name: "Midjourney", description: "AI image generation for visual concepts", category: "Design" },
-      { name: "Copy.ai", description: "AI writing assistant for creative content", category: "Writing" },
-      { name: "Notion AI", description: "Smart note-taking and content organization", category: "Organization" },
+  const baseTools = [
+    { name: "ChatGPT", description: "AI assistant for writing, brainstorming, and problem-solving", category: "AI Assistant" },
+    { name: "Notion AI", description: "Smart note-taking and content generation", category: "Productivity" },
+    { name: "Grammarly", description: "AI-powered writing assistant", category: "Writing" }
+  ];
+  
+  // Add tools based on current tools experience
+  const toolsByExperience: Record<string, AITool[]> = {
+    none: [
+      { name: "Todoist", description: "Simple AI-powered task management", category: "Task Management" },
     ],
-    technical: [
-      { name: "GitHub Copilot", description: "AI pair programming assistant", category: "Development" },
-      { name: "ChatGPT Plus", description: "Advanced problem-solving and code review", category: "AI Assistant" },
-      { name: "Linear", description: "AI-powered project management", category: "Project Management" },
-    ],
-    business: [
-      { name: "Grammarly", description: "AI writing enhancement for professional communication", category: "Communication" },
+    basic: [
       { name: "Calendly", description: "Smart scheduling with AI optimization", category: "Scheduling" },
-      { name: "Loom", description: "AI-powered video messaging", category: "Communication" },
     ],
-    freelance: [
-      { name: "Freelancer Tools AI", description: "Client communication and project management", category: "Business" },
-      { name: "Canva AI", description: "Quick design creation for proposals", category: "Design" },
-      { name: "Wave AI", description: "Automated invoicing and expense tracking", category: "Finance" },
+    digital: [
+      { name: "Linear", description: "AI-powered project management", category: "Project Management" },
+      { name: "Zapier", description: "AI workflow automation", category: "Automation" },
     ],
-    student: [
-      { name: "Quillbot", description: "AI paraphrasing and research assistant", category: "Research" },
-      { name: "Anki", description: "AI-optimized spaced repetition learning", category: "Learning" },
-      { name: "Forest", description: "AI-powered focus and study sessions", category: "Focus" },
+    advanced: [
+      { name: "GitHub Copilot", description: "AI pair programming assistant", category: "Development" },
+      { name: "Midjourney", description: "AI image generation for creative projects", category: "Creative" },
+    ],
+    multiple: [
+      { name: "Make (Integromat)", description: "Advanced workflow automation", category: "Integration" },
     ]
   };
 
-  const baseTools = toolDatabase[jobType] || toolDatabase.business;
-  
   // Add struggle-specific tools
   const struggleTools: Record<string, AITool> = {
-    focus: { name: "Freedom", description: "AI-powered distraction blocking", category: "Focus" },
-    overwhelm: { name: "Todoist", description: "AI task prioritization and scheduling", category: "Task Management" },
+    focus: { name: "Brain.fm", description: "AI-generated focus music", category: "Focus" },
+    overwhelm: { name: "Motion", description: "AI task prioritization and scheduling", category: "Task Management" },
     procrastination: { name: "Toggl Track", description: "AI insights for time tracking", category: "Time Management" },
-    organization: { name: "Obsidian", description: "AI-enhanced knowledge management", category: "Organization" },
+    "time-management": { name: "RescueTime", description: "AI-powered time analytics", category: "Analytics" },
     motivation: { name: "Habitica", description: "Gamified productivity with AI coaching", category: "Motivation" }
   };
 
-  return [...baseTools, struggleTools[productivityStruggle]].filter(Boolean);
+  const experienceTools = toolsByExperience[currentTools] || [];
+  const struggleTool = struggleTools[productivityStruggle];
+
+  return [...baseTools, ...experienceTools, struggleTool].filter(Boolean);
 };
 
 const generateGPTPrompts = (responses: UserResponses): string[] => {
-  const { jobType, productivityStruggle, goals } = responses;
+  const { productivityStruggle, goals } = responses;
   
   const prompts = [
-    `As a ${jobType} professional struggling with ${productivityStruggle}, help me break down my most important task today into 3 actionable steps. Make each step specific and time-bound.`,
+    `Help me break down my most important task today into 3 actionable steps, considering that my main challenge is ${productivityStruggle}. Make each step specific and time-bound.`,
     
-    `I'm a ${jobType} who wants to ${goals}. Give me 5 specific strategies I can implement this week to make measurable progress toward this goal.`,
+    `I want to ${goals}. Give me 5 specific strategies I can implement this week to make measurable progress toward this goal.`,
     
-    `Create a personalized focus ritual for a ${jobType} that helps overcome ${productivityStruggle}. Include specific actions I can take before starting deep work.`,
+    `Create a personalized focus ritual that helps me overcome ${productivityStruggle}. Include specific actions I can take before starting deep work.`,
     
-    `Help me design a weekly review process tailored for ${jobType} work. Include questions that help me identify what's working and what needs adjustment.`,
+    `Help me design a weekly review process that addresses my struggle with ${productivityStruggle}. Include questions that help me identify what's working and what needs adjustment.`,
     
-    `Generate a template for daily reflection that addresses ${productivityStruggle} and supports my goal to ${goals}. Keep it under 5 minutes to complete.`
+    `Generate a template for daily reflection that supports my goal to ${goals} while helping me manage ${productivityStruggle}. Keep it under 5 minutes to complete.`
   ];
 
   return prompts;
 };
 
 const generateSummary = (responses: UserResponses): string => {
-  const { jobType, productivityStruggle, goals, preferredWorkflow, workHours } = responses;
+  const { productivityStruggle, goals, currentTools, aiFamiliarity, productiveTime } = responses;
   
-  return `Your personalized productivity plan is designed for a ${jobType} professional who works best during ${workHours.replace('-', ' ')} hours and prefers ${preferredWorkflow.replace('-', ' ')} work sessions. 
-
-This plan specifically addresses your challenge with ${productivityStruggle.replace('-', ' ')} while supporting your goal to ${goals.replace('-', ' ')}. 
-
-The time-blocked schedule optimizes your natural energy patterns, the AI tools are selected to enhance your workflow, and the GPT prompts are crafted to provide ongoing support for your specific needs.`;
+  const struggleText = productivityStruggle || "productivity challenges";
+  const goalsText = goals || "improve efficiency";
+  const toolsText = currentTools || "basic tools";
+  const aiText = aiFamiliarity || "some AI experience";
+  const timeText = productiveTime || "morning";
+  
+  return `Your personalized productivity plan addresses your main challenge of ${struggleText} and helps you achieve ${goalsText}. The schedule is optimized for your ${timeText} peak productivity hours and integrates well with your current ${toolsText} workflow approach. Based on your ${aiText} level with AI tools, we've selected the right mix of technologies to enhance your productivity without overwhelming you.`;
 };
 
 export const generateProductivityPlan = (responses: UserResponses): ProductivityPlan => {
