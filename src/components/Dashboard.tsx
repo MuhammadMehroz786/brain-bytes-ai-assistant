@@ -245,7 +245,7 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
                       : `${item.bgColor} group-hover:scale-105`
                 }`}>
                   <Icon className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 transition-all duration-300 ${
-                    isActive ? 'text-white' : item.isSpecial ? `${item.iconColor} animate-pulse hover:animate-none` : item.iconColor
+                    isActive ? 'text-white' : item.isSpecial ? `${item.iconColor}` : item.iconColor
                   }`} />
                 </div>
                 <div className="flex-1 min-w-0">
