@@ -14,58 +14,58 @@ interface OnboardingFlowProps {
 
 const questions = [
   {
-    id: "jobType",
-    title: "What best describes your work?",
-    options: [
-      { value: "creative", label: "Creative (Designer, Writer, Artist)" },
-      { value: "technical", label: "Technical (Developer, Engineer, Analyst)" },
-      { value: "business", label: "Business (Manager, Sales, Consultant)" },
-      { value: "freelance", label: "Freelancer/Entrepreneur" },
-      { value: "student", label: "Student/Researcher" },
-    ]
-  },
-  {
     id: "productivityStruggle",
-    title: "What's your biggest productivity challenge?",
+    title: "What is your biggest productivity struggle right now?",
     options: [
       { value: "focus", label: "Staying focused and avoiding distractions" },
       { value: "overwhelm", label: "Feeling overwhelmed by too many tasks" },
       { value: "procrastination", label: "Procrastination and getting started" },
-      { value: "organization", label: "Organizing tasks and priorities" },
+      { value: "time-management", label: "Managing time effectively" },
       { value: "motivation", label: "Maintaining motivation throughout the day" },
     ]
   },
   {
-    id: "preferredWorkflow",
-    title: "How do you prefer to work?",
+    id: "goals",
+    title: "What do you want to achieve with your AI assistant?",
     options: [
-      { value: "deep-work", label: "Long focused sessions (2-4 hours)" },
-      { value: "sprints", label: "Short focused sprints (25-50 minutes)" },
-      { value: "flexible", label: "Flexible schedule based on energy" },
-      { value: "structured", label: "Highly structured with set times" },
-      { value: "collaborative", label: "Mix of solo work and collaboration" },
+      { value: "efficiency", label: "Get more done in less time" },
+      { value: "organization", label: "Better task organization and planning" },
+      { value: "focus", label: "Improve focus and concentration" },
+      { value: "balance", label: "Better work-life balance" },
+      { value: "stress", label: "Reduce stress and overwhelm" },
     ]
   },
   {
-    id: "workHours",
-    title: "When are you most productive?",
+    id: "currentTools",
+    title: "What tools do you currently use to stay organized or focused?",
+    options: [
+      { value: "none", label: "I don't use any specific tools" },
+      { value: "basic", label: "Basic tools (notebooks, simple apps)" },
+      { value: "digital", label: "Digital tools (Notion, Todoist, Trello)" },
+      { value: "advanced", label: "Advanced systems (GTD, custom workflows)" },
+      { value: "multiple", label: "Multiple tools but struggle to stick with them" },
+    ]
+  },
+  {
+    id: "aiFamiliarity",
+    title: "How familiar are you with using AI in your daily work?",
+    options: [
+      { value: "beginner", label: "Complete beginner - new to AI tools" },
+      { value: "some", label: "I've tried ChatGPT or similar a few times" },
+      { value: "regular", label: "I use AI tools regularly for some tasks" },
+      { value: "advanced", label: "I'm comfortable with various AI tools" },
+      { value: "expert", label: "I integrate AI into most of my workflow" },
+    ]
+  },
+  {
+    id: "productiveTime",
+    title: "When during the day are you most productive?",
     options: [
       { value: "early-morning", label: "Early morning (6-9 AM)" },
       { value: "morning", label: "Late morning (9 AM-12 PM)" },
       { value: "afternoon", label: "Afternoon (12-5 PM)" },
       { value: "evening", label: "Evening (5-9 PM)" },
-      { value: "night", label: "Night owl (9 PM+)" },
-    ]
-  },
-  {
-    id: "goals",
-    title: "What's your main goal right now?",
-    options: [
-      { value: "efficiency", label: "Get more done in less time" },
-      { value: "quality", label: "Improve the quality of my work" },
-      { value: "balance", label: "Better work-life balance" },
-      { value: "growth", label: "Learn new skills and grow" },
-      { value: "stress", label: "Reduce stress and burnout" },
+      { value: "varies", label: "It varies day to day" },
     ]
   }
 ];

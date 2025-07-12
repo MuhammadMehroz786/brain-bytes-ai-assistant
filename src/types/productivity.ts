@@ -1,9 +1,9 @@
 export interface UserResponses {
-  jobType: string;
   productivityStruggle: string;
-  preferredWorkflow: string;
-  workHours: string;
   goals: string;
+  currentTools: string;
+  aiFamiliarity: string;
+  productiveTime: string;
 }
 
 export interface AITool {

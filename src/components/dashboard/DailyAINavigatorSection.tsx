@@ -10,25 +10,26 @@ import type { ProductivityPlan, UserResponses } from "@/types/productivity";
 interface DailyAINavigatorSectionProps {
   plan: ProductivityPlan;
   responses: UserResponses;
+  todaysPriority?: string;
 }
 
-export const DailyAINavigatorSection = ({ plan, responses }: DailyAINavigatorSectionProps) => {
+export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: DailyAINavigatorSectionProps) => {
   const [tipIndex, setTipIndex] = useState(0);
   const [brainDumpInput, setBrainDumpInput] = useState("");
   const [showRescuePlan, setShowRescuePlan] = useState(false);
   const { toast } = useToast();
 
   const personalizedTips = [
-    `Since you work as a ${responses.jobType}, try using 25-minute focused sprints with 5-minute breaks today.`,
+    `Based on your current tools (${responses.currentTools}), try using 25-minute focused sprints with 5-minute breaks today.`,
     `Your main productivity struggle is ${responses.productivityStruggle}. Start each hour by asking: "What's the most important thing right now?"`,
-    `Based on your ${responses.preferredWorkflow} workflow preference, your peak focus time is likely mid-morning. Schedule your hardest task then.`,
+    `Since you're most productive during ${responses.productiveTime}, schedule your hardest tasks then.`,
     `To tackle time management better, try the "2-minute rule" - if it takes less than 2 minutes, do it immediately.`
   ];
 
   const gptPrompts = [
     {
       title: "Daily Priority Setter",
-      prompt: `Based on my goals and current workload, help me identify the top 3 priorities for today. Consider: I'm a ${responses.jobType} working ${responses.workHours}, my main goals are ${responses.goals}, and I prefer ${responses.preferredWorkflow} approaches. Please provide specific, actionable tasks.`
+      prompt: `Based on my goals and current workload, help me identify the top 3 priorities for today. Consider: I want to achieve ${responses.goals}, my main struggle is ${responses.productivityStruggle}, and I'm most productive during ${responses.productiveTime}. Please provide specific, actionable tasks.`
     },
     {
       title: "Focus Session Planner", 

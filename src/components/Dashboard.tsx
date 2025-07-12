@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,13 +16,18 @@ import {
   Brain,
   Target,
   Star,
-  LogOut
+  LogOut,
+  Music,
+  Settings,
+  Rocket
 } from "lucide-react";
 import { DailyAINavigatorSection } from "./dashboard/DailyAINavigatorSection";
 import { DailyFlowSection } from "./dashboard/DailyFlowSection";
 import { AIStackSection } from "./dashboard/AIStackSection";
-import { SystemUpgradeSection } from "./dashboard/SystemUpgradeSection";
-import { CommunityPicksSection } from "./dashboard/CommunityPicksSection";
+import { FocusPlaylistSection } from "./dashboard/FocusPlaylistSection";
+import { UpgradeAssistantSection } from "./dashboard/UpgradeAssistantSection";
+import { SystemSettingsSection } from "./dashboard/SystemSettingsSection";
+import { DailyFocusPopup } from "./dashboard/DailyFocusPopup";
 import type { ProductivityPlan, UserResponses } from "@/types/productivity";
 
 interface DashboardProps {
@@ -31,11 +36,43 @@ interface DashboardProps {
   onRestart: () => void;
 }
 
-type SectionId = 'daily-navigator' | 'daily-flow' | 'ai-stack' | 'community-picks' | 'system-upgrade';
+type SectionId = 'daily-navigator' | 'ai-plan' | 'smart-stack' | 'focus-playlist' | 'system-settings' | 'upgrade-assistant';
 
 export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
   const [activeSection, setActiveSection] = useState<SectionId>('daily-navigator');
+  const [showDailyPopup, setShowDailyPopup] = useState(false);
+  const [todaysPriority, setTodaysPriority] = useState<string>("");
   const { toast } = useToast();
+
+  // Check if popup should be shown (once per day)
+  useEffect(() => {
+    const lastShown = localStorage.getItem('lastDailyPopup');
+    const today = new Date().toDateString();
+    
+    if (lastShown !== today) {
+      // Show popup after a short delay
+      const timer = setTimeout(() => {
+        setShowDailyPopup(true);
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleDailyPopupClose = () => {
+    setShowDailyPopup(false);
+    const today = new Date().toDateString();
+    localStorage.setItem('lastDailyPopup', today);
+  };
+
+  const handlePrioritySave = (priority: string) => {
+    setTodaysPriority(priority);
+    localStorage.setItem('todaysPriority', priority);
+    toast({
+      title: "Focus set!",
+      description: `Your priority today: ${priority}`,
+    });
+  };
 
   const handleSignOut = async () => {
     try {
@@ -62,45 +99,53 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
       description: 'Your AI coach'
     },
     {
-      id: 'daily-flow' as SectionId,
-      title: 'Your Optimized Daily Flow',
+      id: 'ai-plan' as SectionId,
+      title: 'Your AI Plan',
       icon: Clock,
-      description: 'Timeline schedule'
+      description: 'Personalized schedule'
     },
     {
-      id: 'ai-stack' as SectionId,
-      title: 'Your AI Productivity Stack',
+      id: 'smart-stack' as SectionId,
+      title: 'Smart Stack',
       icon: Zap,
-      description: 'Recommended tools'
+      description: 'AI tools & tutorials'
     },
     {
-      id: 'community-picks' as SectionId,
-      title: 'Community Picks',
-      icon: Users,
-      description: 'What others use'
+      id: 'focus-playlist' as SectionId,
+      title: 'Focus Playlist',
+      icon: Music,
+      description: 'Mood-based music'
     },
     {
-      id: 'system-upgrade' as SectionId,
-      title: 'System Upgrade',
-      icon: ArrowUp,
-      description: 'Automation features'
+      id: 'system-settings' as SectionId,
+      title: 'System Settings',
+      icon: Settings,
+      description: 'Preferences & sync'
+    },
+    {
+      id: 'upgrade-assistant' as SectionId,
+      title: 'Upgrade Assistant🚀',
+      icon: Rocket,
+      description: 'Unlock more features'
     }
   ];
 
   const renderSection = () => {
     switch (activeSection) {
       case 'daily-navigator':
-        return <DailyAINavigatorSection plan={plan} responses={responses} />;
-      case 'daily-flow':
+        return <DailyAINavigatorSection plan={plan} responses={responses} todaysPriority={todaysPriority} />;
+      case 'ai-plan':
         return <DailyFlowSection plan={plan} responses={responses} />;
-      case 'ai-stack':
+      case 'smart-stack':
         return <AIStackSection plan={plan} responses={responses} />;
-      case 'community-picks':
-        return <CommunityPicksSection />;
-      case 'system-upgrade':
-        return <SystemUpgradeSection />;
+      case 'focus-playlist':
+        return <FocusPlaylistSection />;
+      case 'system-settings':
+        return <SystemSettingsSection />;
+      case 'upgrade-assistant':
+        return <UpgradeAssistantSection />;
       default:
-        return <DailyAINavigatorSection plan={plan} responses={responses} />;
+        return <DailyAINavigatorSection plan={plan} responses={responses} todaysPriority={todaysPriority} />;
     }
   };
 
@@ -195,6 +240,14 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
           </div>
         </div>
       </div>
+
+      {/* Daily Focus Popup */}
+      {showDailyPopup && (
+        <DailyFocusPopup 
+          onClose={handleDailyPopupClose}
+          onSave={handlePrioritySave}
+        />
+      )}
     </div>
   );
 };

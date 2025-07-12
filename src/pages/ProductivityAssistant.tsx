@@ -125,11 +125,11 @@ export const ProductivityAssistant = () => {
       // For returning users, generate a sample plan if none exists
       if (!productivityPlan || !userResponses) {
         const sampleResponses: UserResponses = {
-          jobType: "Knowledge Worker",
-          productivityStruggle: "Time Management",
-          preferredWorkflow: "Task Batching",
-          workHours: "9-5",
-          goals: "Increase Focus"
+          productivityStruggle: "focus",
+          goals: "efficiency", 
+          currentTools: "digital",
+          aiFamiliarity: "some",
+          productiveTime: "morning"
         };
         const samplePlan = generateProductivityPlan(sampleResponses);
         setUserResponses(sampleResponses);
