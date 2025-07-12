@@ -270,16 +270,18 @@ export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
           </div>
 
           {/* Daily progress bar */}
-          <div className="mt-6 sm:mt-8 bg-white rounded-lg p-3 sm:p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-muted-foreground">Today's Progress</span>
-              <span className="text-sm text-muted-foreground">{completedBlocks.length}/{plan.timeBlocks.slice(0, 4).length}</span>
+          <div className="mt-6 sm:mt-8 bg-gradient-to-r from-white to-blue-50 rounded-xl p-4 sm:p-5 border border-blue-100">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium text-slate-700">Today's Progress</span>
+              <span className="text-sm font-semibold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+                {completedBlocks.length}/{plan.timeBlocks.slice(0, 4).length}
+              </span>
             </div>
             
-            {/* Slim progress bar */}
-            <div className="w-full bg-gray-200 rounded-full h-1.5">
+            {/* Enhanced progress bar */}
+            <div className="w-full bg-gradient-to-r from-gray-100 to-gray-200 rounded-full h-2 shadow-inner">
               <div 
-                className="h-full bg-green-500 rounded-full transition-all duration-300"
+                className="h-full bg-gradient-to-r from-green-400 to-emerald-500 rounded-full transition-all duration-500 ease-out shadow-sm"
                 style={{ width: `${(completedBlocks.length / plan.timeBlocks.slice(0, 4).length) * 100}%` }}
               ></div>
             </div>
