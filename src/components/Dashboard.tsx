@@ -107,7 +107,7 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
     },
     {
       id: 'ai-plan' as SectionId,
-      title: 'Your Day at a Glance',
+      title: 'Your Smart Calendar',
       icon: Clock,
       description: 'Personalized schedule'
     },
