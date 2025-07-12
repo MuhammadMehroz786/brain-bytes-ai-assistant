@@ -104,8 +104,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </Card>
           
           {/* Center Column - YouTube Video */}
-          <div className="order-1 md:order-2">
-            <div className="rounded-xl overflow-hidden bg-black/5 border border-primary/10">
+          <Card className="p-4 md:p-6 bg-gradient-to-br from-muted to-background border-muted/20 order-1 md:order-2">
+            <div className="rounded-xl overflow-hidden">
               <iframe
                 src="https://www.youtube.com/embed/bWi86lZyyX8"
                 width="100%"
@@ -113,10 +113,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                className="w-full h-48 md:h-56"
+                className="w-full h-40 md:h-44"
               />
             </div>
-          </div>
+          </Card>
           
           {/* Right Box - Email Summary */}
           <Card className="p-4 md:p-6 bg-gradient-to-br from-accent-light to-success-light border-accent/20 order-3">
