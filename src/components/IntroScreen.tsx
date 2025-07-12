@@ -35,7 +35,14 @@ export const IntroScreen = ({
       behavior: 'smooth'
     });
   };
-  return <div className="min-h-screen bg-background flex items-center justify-center p-2 md:p-4">
+  return <div className="min-h-screen bg-background p-2 md:p-4">
+      {/* Logo - top left */}
+      <div className="absolute top-2 md:top-4 left-2 md:left-4 flex items-center">
+        <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-primary-light rounded-2xl">
+          <img alt="Brain Bytes Logo" className="w-8 h-8 md:w-10 md:h-10 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
+        </div>
+      </div>
+
       {/* Auth buttons - top right */}
       <div className="absolute top-2 md:top-4 right-2 md:right-4 flex gap-2">
         <Button variant="outline" size={isMobile ? "sm" : "lg"} onClick={onAuth} className="bg-white/95 backdrop-blur-sm border-primary/30 hover:bg-white text-primary font-semibold px-3 md:px-6 py-1.5 md:py-2 shadow-md hover:shadow-lg transition-all duration-200 text-sm md:text-base">
@@ -43,13 +50,10 @@ export const IntroScreen = ({
         </Button>
       </div>
 
-      <div className="max-w-4xl mx-auto text-center">
-        <div className="mb-4 md:mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 md:w-24 md:h-24 bg-primary-light rounded-3xl mb-3 md:mb-6">
-            <img alt="Brain Bytes Logo" className="w-10 h-10 md:w-16 md:h-16 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
-          </div>
-          
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-6 leading-tight">
+      <div className="min-h-screen flex items-center justify-center pt-16 md:pt-20">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="mb-4 md:mb-8">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-6 leading-tight">
             Brain Bytes
             <br />
             <span className="bg-gradient-to-r from-primary via-accent to-success bg-clip-text text-transparent">
@@ -121,6 +125,7 @@ export const IntroScreen = ({
           <p className="text-muted-foreground text-xs md:text-sm">
             Exclusive for Brain Bytes Subscribers • Answer 5 quick questions • Instantly unlock your personalized AI productivity system
           </p>
+        </div>
         </div>
       </div>
 
