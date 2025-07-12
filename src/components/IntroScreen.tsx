@@ -69,24 +69,15 @@ export const IntroScreen = ({
           </p>
         </div>
 
-        {/* Mobile CTA - moved up on mobile */}
+        {/* Video Section - moved up on mobile */}
         <div className="block md:hidden mb-6">
-          <div className="space-y-4">
-             <div className="flex items-center justify-center gap-3 mb-4">
-               <div className="flex items-center gap-2">
-                 <span className="text-muted-foreground line-through text-xs">$45</span>
-                 <span className="text-primary font-bold text-base">$29</span>
-                 <span className="text-muted-foreground text-xs">One-time fee for full access</span>
-               </div>
-             </div>
-            <Button onClick={onStart} size="lg" className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full">
-              Unlock my AI Assistant
-            </Button>
+          <div className="rounded-xl overflow-hidden bg-black/5 border border-primary/10">
+            <iframe src="https://www.youtube.com/embed/bWi86lZyyX8" width="100%" height="200" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="w-full h-48 md:h-56" />
           </div>
         </div>
 
         {/* New Three Column Layout */}
-        <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
+        <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-12 md:mb-16">
           {/* Left Box - Calendar Sync */}
           <Card className="p-4 md:p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20 order-2 md:order-1">
             <Calendar className="w-6 h-6 md:w-8 md:h-8 text-primary mb-3 md:mb-4 mx-auto" />
@@ -94,10 +85,19 @@ export const IntroScreen = ({
             <p className="text-xs md:text-sm text-muted-foreground">Sync your Google Calendar in seconds and get a clear view of your daily events directly inside your AI dashboard. No more switching tabs — your schedule lives where your productivity happens.</p>
           </Card>
           
-          {/* Center Column - YouTube Video */}
+          {/* Center Column - Mobile CTA */}
           <div className="order-1 md:order-2">
-            <div className="rounded-xl overflow-hidden bg-black/5 border border-primary/10">
-              <iframe src="https://www.youtube.com/embed/bWi86lZyyX8" width="100%" height="200" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="w-full h-48 md:h-56" />
+            <div className="space-y-4">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground line-through text-xs">$45</span>
+                  <span className="text-primary font-bold text-base">$29</span>
+                  <span className="text-muted-foreground text-xs">One-time fee for full access</span>
+                </div>
+              </div>
+              <Button onClick={onStart} size="lg" className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full">
+                Unlock my AI Assistant
+              </Button>
             </div>
           </div>
           
