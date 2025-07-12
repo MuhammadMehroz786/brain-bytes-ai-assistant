@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -19,7 +20,8 @@ import {
   LogOut,
   Music,
   Settings,
-  Rocket
+  Rocket,
+  Menu
 } from "lucide-react";
 import { DailyAINavigatorSection } from "./dashboard/DailyAINavigatorSection";
 import { DailyFlowSection } from "./dashboard/DailyFlowSection";
@@ -43,6 +45,7 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
   const [activeSection, setActiveSection] = useState<SectionId>('daily-navigator');
   const [showDailyPopup, setShowDailyPopup] = useState(false);
   const [todaysPriority, setTodaysPriority] = useState<string>("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { toast } = useToast();
 
   // Check if popup should be shown (once per day)
@@ -158,94 +161,127 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
     }
   };
 
+  const SidebarContent = () => (
+    <>
+      {/* Header */}
+      <div className="p-4 sm:p-6 border-b border-primary/10">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary-light rounded-xl flex items-center justify-center">
+            <Brain className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-sm sm:text-base font-bold text-foreground">Brain Bytes</h1>
+            <p className="text-xs text-muted-foreground">Productivity Dashboard</p>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Button
+            variant="outline"
+            onClick={onRestart}
+            size="sm"
+            className="w-full rounded-xl text-xs sm:text-sm h-8 sm:h-9"
+          >
+            <Target className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+            Create New Plan
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleSignOut}
+            className="w-full rounded-xl text-muted-foreground hover:text-foreground text-xs sm:text-sm h-8 sm:h-9"
+          >
+            <LogOut className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
+            Sign Out
+          </Button>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 p-3 sm:p-4 space-y-1 sm:space-y-2">
+        {sidebarItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = activeSection === item.id;
+          
+          return (
+            <button
+              key={item.id}
+              onClick={() => {
+                setActiveSection(item.id);
+                setSidebarOpen(false); // Close mobile sidebar on selection
+              }}
+              className={`w-full text-left p-3 sm:p-4 rounded-xl transition-all duration-200 ${
+                isActive
+                  ? 'bg-primary/10 border border-primary/20 text-primary'
+                  : 'hover:bg-muted/50 text-foreground'
+              }`}
+            >
+              <div className="flex items-start gap-2 sm:gap-3">
+                <Icon className={`w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+                <div className="flex-1 min-w-0">
+                  <h3 className={`font-medium text-xs sm:text-sm leading-tight ${isActive ? 'text-primary' : 'text-foreground'}`}>
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1 hidden sm:block">
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Footer */}
+      <div className="p-3 sm:p-4 border-t border-primary/10">
+        <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-3 sm:p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Star className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
+            <span className="text-xs sm:text-sm font-medium text-foreground">Premium Plan</span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Unlock automation and advanced integrations
+          </p>
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-accent-light via-primary-light to-success-light">
       <div className="flex h-screen">
-        {/* Sidebar */}
-        <div className="w-80 bg-white/90 backdrop-blur-sm border-r border-primary/10 flex flex-col">
-          {/* Header */}
-          <div className="p-6 border-b border-primary/10">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary-light rounded-xl flex items-center justify-center">
-                <Brain className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h1 className="font-bold text-foreground">Brain Bytes</h1>
-                <p className="text-sm text-muted-foreground">Productivity Dashboard</p>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Button
-                variant="outline"
-                onClick={onRestart}
-                size="sm"
-                className="w-full rounded-xl"
-              >
-                <Target className="w-4 h-4 mr-2" />
-                Create New Plan
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleSignOut}
-                className="w-full rounded-xl text-muted-foreground hover:text-foreground"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
-              </Button>
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
-            {sidebarItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeSection === item.id;
-              
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveSection(item.id)}
-                  className={`w-full text-left p-4 rounded-xl transition-all duration-200 ${
-                    isActive
-                      ? 'bg-primary/10 border border-primary/20 text-primary'
-                      : 'hover:bg-muted/50 text-foreground'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <Icon className={`w-5 h-5 mt-0.5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
-                    <div className="flex-1 min-w-0">
-                      <h3 className={`font-medium text-sm leading-tight ${isActive ? 'text-primary' : 'text-foreground'}`}>
-                        {item.title}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Footer */}
-          <div className="p-4 border-t border-primary/10">
-            <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Star className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-foreground">Premium Plan</span>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Unlock automation and advanced integrations
-              </p>
-            </div>
-          </div>
+        {/* Desktop Sidebar */}
+        <div className="hidden lg:flex w-80 bg-white/90 backdrop-blur-sm border-r border-primary/10 flex-col">
+          <SidebarContent />
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 overflow-auto">
-          <div className="p-8">
-            {renderSection()}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Mobile Header */}
+          <div className="lg:hidden bg-white/90 backdrop-blur-sm border-b border-primary/10 p-4 flex items-center justify-between">
+            <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" className="p-2">
+                  <Menu className="w-5 h-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-80 p-0 bg-white/90 backdrop-blur-sm">
+                <SidebarContent />
+              </SheetContent>
+            </Sheet>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-primary-light rounded-lg flex items-center justify-center">
+                <Brain className="w-3 h-3 text-primary" />
+              </div>
+              <span className="text-sm font-semibold text-foreground">Brain Bytes</span>
+            </div>
+            <div className="w-9" /> {/* Spacer for centering */}
+          </div>
+
+          {/* Content Area */}
+          <div className="flex-1 overflow-auto">
+            <div className="p-4 sm:p-6 lg:p-8">
+              {renderSection()}
+            </div>
           </div>
         </div>
       </div>

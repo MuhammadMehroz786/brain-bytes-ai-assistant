@@ -135,58 +135,58 @@ export const EmailSummarySection = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
-            <Mail className="w-4 h-4 text-primary" />
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-center justify-between mb-4 sm:mb-6 gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+            <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
           </div>
-          <h2 className="text-2xl font-bold text-foreground">Today's Email Recap</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground truncate">Today's Email Recap</h2>
         </div>
-        <Badge variant="secondary" className="text-xs">
+        <Badge variant="secondary" className="text-xs flex-shrink-0">
           {emailSummaries.filter(email => email.isUnread).length} Unread
         </Badge>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-4 sm:gap-6">
         {emailSummaries.map((email) => (
           <Card 
             key={email.id} 
-            className="p-6 bg-white border border-gray-200 transition-all duration-200 hover:shadow-lg"
+            className="p-4 sm:p-6 bg-white border border-gray-200 transition-all duration-200 hover:shadow-lg"
           >
             {/* Header with sender, time, and unread indicator */}
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <h4 className="font-medium text-foreground text-base">
+            <div className="flex items-start justify-between mb-3 gap-3">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <h4 className="font-medium text-foreground text-sm sm:text-base truncate">
                   {email.sender}
                 </h4>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <span className="text-xs sm:text-sm text-muted-foreground">
                   {email.time}
                 </span>
                 {email.isUnread && (
                   <div className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-purple-500">Unread</span>
+                    <span className="text-xs sm:text-sm font-medium text-purple-500 hidden sm:inline">Unread</span>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Subject */}
-            <h5 className="font-medium text-foreground text-sm mb-2">
+            <h5 className="font-medium text-foreground text-sm sm:text-base mb-2 leading-tight">
               {email.subject}
             </h5>
 
             {/* Summary */}
-            <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
+            <p className="text-sm text-muted-foreground mb-3 sm:mb-4 leading-relaxed">
               {email.summary}
             </p>
 
             {/* Tags */}
-            <div className="flex gap-2 mb-4">
-              <span className="text-sm text-muted-foreground">Tags:</span>
+            <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
+              <span className="text-xs sm:text-sm text-muted-foreground">Tags:</span>
               {email.tags.map((tag, index) => (
                 <div key={index} className="flex items-center gap-1">
                   {tag === "17" && (
@@ -199,7 +199,7 @@ export const EmailSummarySection = () => {
                       <div className="w-4 h-4 bg-orange-100 rounded flex items-center justify-center">
                         <div className="w-2 h-2 bg-orange-500 rounded"></div>
                       </div>
-                      <span className="text-sm text-muted-foreground">{tag}</span>
+                      <span className="text-xs sm:text-sm text-muted-foreground">{tag}</span>
                     </>
                   )}
                   {tag === "Internal" && (
@@ -207,7 +207,15 @@ export const EmailSummarySection = () => {
                       <div className="w-4 h-4 bg-gray-100 rounded flex items-center justify-center">
                         <div className="w-2 h-2 bg-gray-500 rounded"></div>
                       </div>
-                      <span className="text-sm text-muted-foreground">{tag}</span>
+                      <span className="text-xs sm:text-sm text-muted-foreground">{tag}</span>
+                    </>
+                  )}
+                  {!["17", "Meeting", "Internal"].includes(tag) && (
+                    <>
+                      <div className="w-4 h-4 bg-blue-100 rounded flex items-center justify-center">
+                        <div className="w-2 h-2 bg-blue-500 rounded"></div>
+                      </div>
+                      <span className="text-xs sm:text-sm text-muted-foreground">{tag}</span>
                     </>
                   )}
                 </div>
@@ -215,30 +223,33 @@ export const EmailSummarySection = () => {
             </div>
 
             {/* Action buttons */}
-            <div className="flex gap-3 pt-2 border-t border-gray-100">
-              <Button variant="ghost" size="sm" className="text-sm">
-                <Check className="w-4 h-4 mr-1" />
-                Mark Done
+            <div className="flex flex-wrap gap-2 sm:gap-3 pt-2 border-t border-gray-100">
+              <Button variant="ghost" size="sm" className="text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4">
+                <Check className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                <span className="hidden sm:inline">Mark Done</span>
+                <span className="sm:hidden">Done</span>
               </Button>
-              <Button variant="ghost" size="sm" className="text-sm">
-                <Edit3 className="w-4 h-4 mr-1" />
-                Suggested Reply
+              <Button variant="ghost" size="sm" className="text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4">
+                <Edit3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                <span className="hidden sm:inline">Suggested Reply</span>
+                <span className="sm:hidden">Reply</span>
               </Button>
-              <Button variant="ghost" size="sm" className="text-sm">
-                <ExternalLink className="w-4 h-4 mr-1" />
-                Open in Gmail
+              <Button variant="ghost" size="sm" className="text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4">
+                <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
+                <span className="hidden sm:inline">Open in Gmail</span>
+                <span className="sm:hidden">Gmail</span>
               </Button>
             </div>
           </Card>
         ))}
       </div>
 
-      <div className="flex items-center justify-between pt-4 border-t border-primary/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-primary/10 gap-3">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Clock className="w-3 h-3" />
           <span>Last updated: 2 minutes ago</span>
         </div>
-        <Button variant="ghost" size="sm" className="text-xs">
+        <Button variant="ghost" size="sm" className="text-xs self-start sm:self-auto">
           <ExternalLink className="w-3 h-3 mr-1" />
           Open Gmail
         </Button>
