@@ -22,12 +22,19 @@ export const ProductivityAssistant = () => {
     // Check initial auth state
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      // If user is already logged in, go straight to dashboard
+      if (session?.user) {
+        setCurrentState("results");
+      }
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
-      if (event === 'SIGNED_OUT') {
+      if (event === 'SIGNED_IN' && session?.user) {
+        // When user logs in, go straight to dashboard (skip onboarding for returning users)
+        setCurrentState("results");
+      } else if (event === 'SIGNED_OUT') {
         setCurrentState("intro");
         setUserResponses(null);
         setProductivityPlan(null);
@@ -56,7 +63,8 @@ export const ProductivityAssistant = () => {
   };
 
   const handleAuthSuccess = () => {
-    setCurrentState("onboarding");
+    // For returning users, go straight to dashboard
+    setCurrentState("results");
   };
 
   const handleOnboardingComplete = (responses: UserResponses) => {
@@ -114,13 +122,34 @@ export const ProductivityAssistant = () => {
       );
     
     case "results":
-      return productivityPlan && userResponses ? (
+      // For returning users, generate a sample plan if none exists
+      if (!productivityPlan || !userResponses) {
+        const sampleResponses: UserResponses = {
+          jobType: "Knowledge Worker",
+          productivityStruggle: "Time Management",
+          preferredWorkflow: "Task Batching",
+          workHours: "9-5",
+          goals: "Increase Focus"
+        };
+        const samplePlan = generateProductivityPlan(sampleResponses);
+        setUserResponses(sampleResponses);
+        setProductivityPlan(samplePlan);
+        return (
+          <Dashboard 
+            plan={samplePlan}
+            responses={sampleResponses}
+            onRestart={handleRestart}
+          />
+        );
+      }
+      
+      return (
         <Dashboard 
           plan={productivityPlan}
           responses={userResponses}
           onRestart={handleRestart}
         />
-      ) : null;
+      );
     
     default:
       return <IntroScreen onStart={handleStart} onAuth={handleAuth} />;
