@@ -14,9 +14,9 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-foreground mb-2">Your AI Productivity Stack</h2>
+          <h2 className="text-3xl font-bold text-foreground mb-2">Your Optimized Daily Schedule</h2>
           <p className="text-muted-foreground">
-            Carefully selected tools that match your work style and productivity goals
+            AI-generated schedule blocks optimized for your productivity goals and energy levels
           </p>
         </div>
         <Badge variant="outline" className="px-3 py-1">

@@ -18,7 +18,6 @@ import {
   ExternalLink
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { GoogleCalendarSection } from "./GoogleCalendarSection";
 
 export const SystemSettingsSection = () => {
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -62,10 +61,6 @@ export const SystemSettingsSection = () => {
         <h2 className="text-2xl font-bold text-foreground">System Settings</h2>
       </div>
 
-      {/* Google Calendar Integration */}
-      <Card className="p-6 bg-white/50 backdrop-blur-sm border border-primary/10">
-        <GoogleCalendarSection />
-      </Card>
 
       {/* Email Summary Settings */}
       <Card className="p-6 bg-white/50 backdrop-blur-sm border border-primary/10">

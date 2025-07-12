@@ -19,6 +19,7 @@ interface EmailSummary {
   summary: string;
   time: string;
   isUnread: boolean;
+  tags: string[];
 }
 
 // Mock data for demo purposes
@@ -28,24 +29,27 @@ const mockEmailSummaries: EmailSummary[] = [
     sender: "Sarah Chen",
     subject: "Q4 Project Review Meeting",
     summary: "Sarah has scheduled a Q4 review meeting for Friday at 2 PM. She's requesting project status updates and wants to discuss budget allocations for next quarter.",
-    time: "9:30 AM",
-    isUnread: true
+    time: "3 hrs ago",
+    isUnread: true,
+    tags: ["Meeting", "Internal"]
   },
   {
     id: "2",
-    sender: "Marketing Team",
+    sender: "Marketing Team", 
     subject: "Campaign Performance Update",
     summary: "Latest campaign metrics show 23% increase in engagement. The team is requesting feedback on the new creative assets and approval for the next phase.",
-    time: "8:45 AM",
-    isUnread: true
+    time: "5 hrs ago",
+    isUnread: true,
+    tags: ["Urgent", "Follow-up"]
   },
   {
     id: "3",
     sender: "Alex Rodriguez",
-    subject: "Client Proposal Draft",
+    subject: "Client Proposal Draft", 
     summary: "Alex has completed the first draft of the Johnson & Co proposal. He's looking for your review and wants to schedule a call to discuss pricing strategy.",
-    time: "7:22 AM",
-    isUnread: false
+    time: "8 hrs ago",
+    isUnread: false,
+    tags: ["Client", "Review"]
   },
   {
     id: "4",
@@ -53,7 +57,8 @@ const mockEmailSummaries: EmailSummary[] = [
     subject: "System Maintenance Notice",
     summary: "Scheduled maintenance this weekend will affect the CRM system. All data will be backed up and the downtime is expected to be minimal.",
     time: "Yesterday",
-    isUnread: false
+    isUnread: false,
+    tags: ["System", "Info"]
   }
 ];
 
@@ -146,7 +151,7 @@ export const EmailSummarySection = () => {
           {emailSummaries.map((email) => (
             <Card 
               key={email.id} 
-              className={`p-4 bg-white/50 backdrop-blur-sm border transition-all duration-200 hover:shadow-md ${
+              className={`p-4 bg-white/50 backdrop-blur-sm border transition-all duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer ${
                 email.isUnread 
                   ? "border-primary/20 bg-primary/5" 
                   : "border-primary/10"
@@ -173,6 +178,17 @@ export const EmailSummarySection = () => {
                   <p className="text-sm font-medium text-foreground mb-2 truncate">
                     {email.subject}
                   </p>
+                  <div className="flex gap-1 mb-2">
+                    {email.tags.map((tag, index) => (
+                      <Badge 
+                        key={index} 
+                        variant={tag === "Urgent" ? "destructive" : "secondary"} 
+                        className="text-xs px-2 py-0"
+                      >
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
                   <p className="text-xs text-muted-foreground leading-relaxed">
                     {email.summary}
                   </p>
