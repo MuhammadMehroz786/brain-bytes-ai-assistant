@@ -161,12 +161,12 @@ export const FocusPlaylistSection = () => {
             <iframe
               src={selectedPlaylist.embedUrl}
               width="100%"
-              height="152"
+              height="60vh"
               frameBorder="0"
               allowTransparency={true}
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
               loading="lazy"
-              className="rounded-xl"
+              className="rounded-xl min-h-[300px] md:min-h-[60vh]"
             />
           </div>
         </Card>

@@ -27,6 +27,7 @@ import { AIStackSection } from "./dashboard/AIStackSection";
 import { FocusPlaylistSection } from "./dashboard/FocusPlaylistSection";
 import { UpgradeAssistantSection } from "./dashboard/UpgradeAssistantSection";
 import { SystemSettingsSection } from "./dashboard/SystemSettingsSection";
+import { EmailSummarySection } from "./dashboard/EmailSummarySection";
 import { DailyFocusPopup } from "./dashboard/DailyFocusPopup";
 import type { ProductivityPlan, UserResponses } from "@/types/productivity";
 
@@ -36,7 +37,7 @@ interface DashboardProps {
   onRestart: () => void;
 }
 
-type SectionId = 'daily-navigator' | 'ai-plan' | 'smart-stack' | 'focus-playlist' | 'system-settings' | 'upgrade-assistant';
+type SectionId = 'daily-navigator' | 'email-recap' | 'ai-plan' | 'smart-stack' | 'focus-playlist' | 'system-settings' | 'upgrade-assistant';
 
 export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
   const [activeSection, setActiveSection] = useState<SectionId>('daily-navigator');
@@ -99,8 +100,14 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
       description: 'Your AI coach'
     },
     {
+      id: 'email-recap' as SectionId,
+      title: 'Today\'s Email Recap',
+      icon: MessageSquare,
+      description: 'AI-summarized emails'
+    },
+    {
       id: 'ai-plan' as SectionId,
-      title: 'Your AI Plan',
+      title: 'Your Day at a Glance',
       icon: Clock,
       description: 'Personalized schedule'
     },
@@ -134,6 +141,8 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
     switch (activeSection) {
       case 'daily-navigator':
         return <DailyAINavigatorSection plan={plan} responses={responses} todaysPriority={todaysPriority} />;
+      case 'email-recap':
+        return <EmailSummarySection />;
       case 'ai-plan':
         return <DailyFlowSection plan={plan} responses={responses} />;
       case 'smart-stack':

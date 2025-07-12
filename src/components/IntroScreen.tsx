@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Play, Sparkles, Clock, Target } from "lucide-react";
+import { Play, Sparkles, Clock, Target, Calendar } from "lucide-react";
 
 interface IntroScreenProps {
   onStart: () => void;
@@ -74,15 +74,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </p>
         </div>
 
-        {/* Mobile CTA, Demo, Pricing - moved up on mobile */}
+        {/* Mobile CTA - moved up on mobile */}
         <div className="block md:hidden mb-6">
           <div className="space-y-4">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="flex items-center gap-2 bg-muted rounded-full px-3 py-1.5 text-foreground">
-                <Play className="w-3 h-3" />
-                <span className="text-xs">45-second demo</span>
-              </div>
-              <div className="text-muted-foreground text-xs">•</div>
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground line-through text-xs">$45</span>
                 <span className="text-primary font-bold text-base">$29</span>
@@ -99,33 +94,40 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
         </div>
 
+        {/* New Three Column Layout */}
         <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
-          <Card className="p-4 md:p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20">
-            <Clock className="w-6 h-6 md:w-8 md:h-8 text-primary mb-3 md:mb-4 mx-auto" />
-            <h3 className="font-semibold mb-2 text-foreground text-sm md:text-base">Your Daily AI Schedule</h3>
-            <p className="text-xs md:text-sm text-muted-foreground">Your personalized, energy-based schedule — optimized for deep focus, goal pacing, and updated in real time when your day changes.</p>
+          {/* Left Box - Calendar Sync */}
+          <Card className="p-4 md:p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20 order-2 md:order-1">
+            <Calendar className="w-6 h-6 md:w-8 md:h-8 text-primary mb-3 md:mb-4 mx-auto" />
+            <h3 className="font-semibold mb-2 text-foreground text-sm md:text-base">Smart Calendar Integration</h3>
+            <p className="text-xs md:text-sm text-muted-foreground">Sync your Google Calendar in seconds and get a clear view of your daily events directly inside your AI dashboard. No more switching tabs — your schedule lives where your productivity happens.</p>
           </Card>
           
-          <Card className="p-4 md:p-6 bg-gradient-to-br from-accent-light to-success-light border-accent/20">
-            <Target className="w-6 h-6 md:w-8 md:h-8 text-accent mb-3 md:mb-4 mx-auto" />
-            <h3 className="font-semibold mb-2 text-foreground text-sm md:text-base">Smart Productivity Stack</h3>
-            <p className="text-xs md:text-sm text-muted-foreground">Hand-picked AI tools matched to your habits — complete with setup guides and starter templates to help you get results faster.</p>
-          </Card>
+          {/* Center Column - YouTube Video */}
+          <div className="order-1 md:order-2">
+            <div className="rounded-xl overflow-hidden bg-black/5 border border-primary/10">
+              <iframe
+                src="https://www.youtube.com/embed/bWi86lZyyX8"
+                width="100%"
+                height="200"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-48 md:h-56"
+              />
+            </div>
+          </div>
           
-          <Card className="p-4 md:p-6 bg-gradient-to-br from-success-light to-primary-light border-success/20">
-            <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-success mb-3 md:mb-4 mx-auto" />
-            <h3 className="font-semibold mb-2 text-foreground text-sm md:text-base">Personalized AI Navigator</h3>
-            <p className="text-xs md:text-sm text-muted-foreground">Daily focus tips, mini goals, and motivation based on your unique working style — plus instant rescue plans when you get stuck.</p>
+          {/* Right Box - Email Summary */}
+          <Card className="p-4 md:p-6 bg-gradient-to-br from-accent-light to-success-light border-accent/20 order-3">
+            <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-accent mb-3 md:mb-4 mx-auto" />
+            <h3 className="font-semibold mb-2 text-foreground text-sm md:text-base">Curated Email Recap</h3>
+            <p className="text-xs md:text-sm text-muted-foreground">Automatically pull in and summarize your daily emails, helping you stay on top of what matters. Access your recap right from your dashboard — no inbox overload.</p>
           </Card>
         </div>
 
         <div className="space-y-6">
           <div className="hidden md:flex items-center justify-center gap-4 mb-6">
-            <div className="flex items-center gap-2 bg-muted rounded-full px-4 py-2 text-foreground">
-              <Play className="w-4 h-4" />
-              <span className="text-sm">45-second demo</span>
-            </div>
-            <div className="text-muted-foreground">•</div>
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground line-through text-sm">$45</span>
               <span className="text-primary font-bold text-lg">$29</span>
