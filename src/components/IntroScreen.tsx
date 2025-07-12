@@ -57,10 +57,10 @@ export const IntroScreen = ({
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-3 md:mb-6">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-6 leading-tight">
-            Master AI Workflows
+            Brain Bytes
             <br />
             <span className="bg-gradient-to-r from-primary via-accent to-success bg-clip-text text-transparent">
-              Without the Learning Curve
+              AI Productivity Assistant
             </span>
           </h1>
           
