@@ -269,29 +269,20 @@ export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
             </div>
           </div>
 
-          {/* Weekly goal section */}
-          <div className="mt-6 sm:mt-8 bg-white rounded-lg p-4 sm:p-6 text-center">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-sm sm:text-lg font-semibold text-foreground">
-                <span className="text-blue-500">Focus Time</span> Weekly Goal
-              </h4>
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-                <CheckCircle2 className="w-3 h-3 sm:w-5 sm:h-5" />
-              </div>
+          {/* Daily progress bar */}
+          <div className="mt-6 sm:mt-8 bg-white rounded-lg p-3 sm:p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-muted-foreground">Today's Progress</span>
+              <span className="text-sm text-muted-foreground">{completedBlocks.length}/{plan.timeBlocks.slice(0, 4).length}</span>
             </div>
             
-            {/* Progress bar */}
-            <div className="relative w-full bg-gray-200 rounded-full h-2 mb-2">
+            {/* Slim progress bar */}
+            <div className="w-full bg-gray-200 rounded-full h-1.5">
               <div 
-                className="absolute top-0 left-0 h-full bg-blue-500 rounded-full transition-all duration-300"
-                style={{ width: '65%' }}
-              ></div>
-              <div 
-                className="absolute top-1/2 left-3/5 transform -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-blue-500 rounded-full border-2 border-white"
+                className="h-full bg-green-500 rounded-full transition-all duration-300"
+                style={{ width: `${(completedBlocks.length / plan.timeBlocks.slice(0, 4).length) * 100}%` }}
               ></div>
             </div>
-            
-            <p className="text-xs sm:text-sm text-muted-foreground mt-2">20 hrs</p>
           </div>
         </div>
       </Card>
