@@ -100,43 +100,57 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
       id: 'daily-navigator' as SectionId,
       title: 'Daily AI Navigator',
       icon: Brain,
-      description: 'Your AI coach'
+      description: 'Your AI coach',
+      iconColor: 'text-purple-600',
+      bgColor: 'bg-purple-100'
     },
     {
       id: 'email-recap' as SectionId,
       title: 'Today\'s Email Recap',
       icon: MessageSquare,
-      description: 'AI-summarized emails'
+      description: 'AI-summarized emails',
+      iconColor: 'text-blue-500',
+      bgColor: 'bg-blue-100'
     },
     {
       id: 'ai-plan' as SectionId,
       title: 'Your Smart Calendar',
       icon: Clock,
-      description: 'Personalized schedule'
+      description: 'Personalized schedule',
+      iconColor: 'text-orange-500',
+      bgColor: 'bg-orange-100'
     },
     {
       id: 'smart-stack' as SectionId,
-      title: 'Smart Stack',
+      title: 'Smart Tool Stack',
       icon: Zap,
-      description: 'AI tools & tutorials'
+      description: 'AI tools & tutorials',
+      iconColor: 'text-teal-500',
+      bgColor: 'bg-teal-100'
     },
     {
       id: 'focus-playlist' as SectionId,
       title: 'Focus Playlist',
       icon: Music,
-      description: 'Mood-based music'
+      description: 'Mood-based music',
+      iconColor: 'text-pink-500',
+      bgColor: 'bg-pink-100'
     },
     {
       id: 'system-settings' as SectionId,
       title: 'System Settings',
       icon: Settings,
-      description: 'Preferences & sync'
+      description: 'Preferences & sync',
+      iconColor: 'text-gray-500',
+      bgColor: 'bg-gray-100'
     },
     {
       id: 'upgrade-assistant' as SectionId,
       title: 'Upgrade Assistant',
       icon: Rocket,
-      description: 'Unlock more features'
+      description: 'Unlock more features',
+      iconColor: 'text-indigo-600',
+      bgColor: 'bg-indigo-100'
     }
   ];
 
@@ -166,8 +180,12 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
       {/* Header */}
       <div className="p-4 sm:p-6 border-b border-primary/10">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary-light rounded-xl flex items-center justify-center">
-            <Brain className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center overflow-hidden">
+            <img 
+              src="/lovable-uploads/704fc48f-fec6-4000-9776-f878e0249feb.png" 
+              alt="Brain Bytes Logo" 
+              className="w-full h-full object-contain"
+            />
           </div>
           <div>
             <h1 className="text-sm sm:text-base font-bold text-foreground">Brain Bytes</h1>
@@ -209,14 +227,22 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
                 setActiveSection(item.id);
                 setSidebarOpen(false); // Close mobile sidebar on selection
               }}
-              className={`w-full text-left p-3 sm:p-4 rounded-xl transition-all duration-200 ${
+              className={`w-full text-left p-3 sm:p-4 rounded-xl transition-all duration-200 group ${
                 isActive
                   ? 'bg-primary/10 border border-primary/20 text-primary'
                   : 'hover:bg-muted/50 text-foreground'
               }`}
             >
               <div className="flex items-start gap-2 sm:gap-3">
-                <Icon className={`w-4 h-4 sm:w-5 sm:h-5 mt-0.5 flex-shrink-0 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${
+                  isActive 
+                    ? 'bg-primary text-white' 
+                    : `${item.bgColor} group-hover:scale-105`
+                }`}>
+                  <Icon className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 ${
+                    isActive ? 'text-white' : item.iconColor
+                  }`} />
+                </div>
                 <div className="flex-1 min-w-0">
                   <h3 className={`font-medium text-xs sm:text-sm leading-tight ${isActive ? 'text-primary' : 'text-foreground'}`}>
                     {item.title}
@@ -269,8 +295,12 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
               </SheetContent>
             </Sheet>
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-primary-light rounded-lg flex items-center justify-center">
-                <Brain className="w-3 h-3 text-primary" />
+              <div className="w-6 h-6 rounded-lg flex items-center justify-center overflow-hidden">
+                <img 
+                  src="/lovable-uploads/704fc48f-fec6-4000-9776-f878e0249feb.png" 
+                  alt="Brain Bytes Logo" 
+                  className="w-full h-full object-contain"
+                />
               </div>
               <span className="text-sm font-semibold text-foreground">Brain Bytes</span>
             </div>
