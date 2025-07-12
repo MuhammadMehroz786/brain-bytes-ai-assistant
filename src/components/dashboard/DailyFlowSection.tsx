@@ -269,29 +269,111 @@ export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
             </div>
           </div>
 
-          {/* Weekly goal section */}
-          <div className="mt-6 sm:mt-8 bg-white rounded-lg p-4 sm:p-6 text-center">
-            <div className="flex items-center justify-between mb-4">
+          {/* Daily Progress Timeline */}
+          <div className="mt-6 sm:mt-8 bg-white rounded-lg p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-6">
               <h4 className="text-sm sm:text-lg font-semibold text-foreground">
-                <span className="text-blue-500">Focus Time</span> Weekly Goal
+                <span className="text-blue-500">Today's</span> Progress Timeline
               </h4>
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
-                <CheckCircle2 className="w-3 h-3 sm:w-5 sm:h-5" />
+              <div className="text-xs sm:text-sm text-muted-foreground">
+                {new Date().toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}
               </div>
             </div>
             
-            {/* Progress bar */}
-            <div className="relative w-full bg-gray-200 rounded-full h-2 mb-2">
-              <div 
-                className="absolute top-0 left-0 h-full bg-blue-500 rounded-full transition-all duration-300"
-                style={{ width: '65%' }}
-              ></div>
-              <div 
-                className="absolute top-1/2 left-3/5 transform -translate-y-1/2 w-3 h-3 sm:w-4 sm:h-4 bg-blue-500 rounded-full border-2 border-white"
-              ></div>
+            {/* Vertical Timeline */}
+            <div className="relative">
+              {/* Timeline line */}
+              <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+              
+              {/* Timeline blocks */}
+              <div className="space-y-4">
+                {plan.timeBlocks.map((block, index) => {
+                  const isCompleted = completedBlocks.includes(index);
+                  const isPast = isBlockInPast(block.time);
+                  const isFocusTime = block.activity.toLowerCase().includes('focus') || 
+                                     block.activity.toLowerCase().includes('deep work') ||
+                                     index % 2 === 0;
+                  
+                  // Calculate height based on duration (assuming 1 hour = 60px)
+                  const durationMatch = block.duration.match(/(\d+)/);
+                  const hours = durationMatch ? parseInt(durationMatch[1]) : 1;
+                  const height = Math.max(hours * 60, 40); // Minimum 40px height
+                  
+                  return (
+                    <div key={index} className="relative flex items-start gap-4">
+                      {/* Timeline dot */}
+                      <div className={`relative z-10 w-3 h-3 rounded-full border-2 border-white ${
+                        isCompleted 
+                          ? 'bg-green-500' 
+                          : isPast 
+                            ? 'bg-gray-400' 
+                            : isFocusTime 
+                              ? 'bg-blue-500' 
+                              : 'bg-orange-400'
+                      }`}>
+                        {isCompleted && (
+                          <CheckCircle2 className="w-3 h-3 text-white absolute -inset-0.5" />
+                        )}
+                      </div>
+                      
+                      {/* Time block card */}
+                      <div 
+                        className={`flex-1 rounded-lg transition-all duration-200 ${
+                          isFocusTime 
+                            ? 'bg-blue-50 border border-blue-200' 
+                            : 'bg-gray-50 border border-gray-200'
+                        } ${isCompleted ? 'opacity-60' : ''} ${isPast && !isCompleted ? 'opacity-50' : ''}`}
+                        style={{ minHeight: `${height}px` }}
+                      >
+                        <div className="p-3 sm:p-4 h-full flex flex-col justify-center">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className={`text-xs sm:text-sm font-medium ${
+                              isFocusTime ? 'text-blue-700' : 'text-gray-700'
+                            }`}>
+                              {block.time}
+                            </span>
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              isFocusTime 
+                                ? 'bg-blue-100 text-blue-700' 
+                                : 'bg-gray-100 text-gray-600'
+                            }`}>
+                              {block.duration}
+                            </span>
+                          </div>
+                          <h5 className={`font-medium text-sm sm:text-base ${
+                            isCompleted ? 'line-through' : ''
+                          } ${isFocusTime ? 'text-blue-800' : 'text-gray-800'}`}>
+                            {isFocusTime ? 'Focus Time' : block.activity}
+                          </h5>
+                          {!isFocusTime && (
+                            <p className={`text-xs sm:text-sm mt-1 ${
+                              isFocusTime ? 'text-blue-600' : 'text-gray-600'
+                            } ${isCompleted ? 'line-through' : ''}`}>
+                              {block.activity}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Progress summary */}
+              <div className="mt-6 pt-4 border-t border-gray-200">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">
+                    {completedBlocks.length} of {plan.timeBlocks.length} blocks completed
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-blue-600 font-medium">
+                      {Math.round((completedBlocks.length / plan.timeBlocks.length) * 100)}% done
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
-            
-            <p className="text-xs sm:text-sm text-muted-foreground mt-2">20 hrs</p>
           </div>
         </div>
       </Card>
