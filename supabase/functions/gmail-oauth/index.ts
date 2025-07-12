@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
         throw new Error('Google Client ID not configured')
       }
 
-      const redirectUri = `${url.origin}/functions/v1/gmail-oauth?action=callback`
+      const redirectUri = `https://tvbetqvpiypncjtkchcc.supabase.co/functions/v1/gmail-oauth?action=callback`
       const scope = 'https://www.googleapis.com/auth/gmail.readonly email profile'
       const state = crypto.randomUUID()
 
@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
       // Exchange code for token
       const clientId = Deno.env.get('GOOGLE_CLIENT_ID')
       const clientSecret = Deno.env.get('GOOGLE_CLIENT_SECRET')
-      const redirectUri = `${url.origin}/functions/v1/gmail-oauth?action=callback`
+      const redirectUri = `https://tvbetqvpiypncjtkchcc.supabase.co/functions/v1/gmail-oauth?action=callback`
 
       const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
         method: 'POST',
