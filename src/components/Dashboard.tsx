@@ -134,7 +134,7 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
     },
     {
       id: 'upgrade-assistant' as SectionId,
-      title: 'Upgrade Assistant🚀',
+      title: 'Upgrade Assistant',
       icon: Rocket,
       description: 'Unlock more features'
     }
