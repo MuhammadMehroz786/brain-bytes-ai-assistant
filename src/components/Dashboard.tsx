@@ -232,7 +232,7 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
                 isActive
                   ? 'bg-primary/10 border border-primary/20 text-primary'
                   : item.isSpecial
-                    ? 'hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border hover:border-indigo-200 hover:shadow-lg hover:scale-105 text-foreground'
+                    ? 'bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 shadow-lg scale-105 hover:shadow-xl hover:scale-110 text-foreground'
                     : 'hover:bg-muted/50 text-foreground'
               }`}
             >
@@ -241,21 +241,21 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
                   isActive 
                     ? 'bg-primary text-white' 
                     : item.isSpecial
-                      ? `${item.bgColor} group-hover:scale-110 group-hover:shadow-md`
+                      ? `${item.bgColor} scale-110 shadow-md hover:scale-125 hover:shadow-lg`
                       : `${item.bgColor} group-hover:scale-105`
                 }`}>
                   <Icon className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 transition-all duration-300 ${
-                    isActive ? 'text-white' : item.isSpecial ? `${item.iconColor} group-hover:animate-pulse` : item.iconColor
+                    isActive ? 'text-white' : item.isSpecial ? `${item.iconColor} animate-pulse hover:animate-none` : item.iconColor
                   }`} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className={`font-medium text-xs sm:text-sm leading-tight transition-all duration-300 ${
-                    isActive ? 'text-primary' : item.isSpecial ? 'text-foreground group-hover:text-indigo-700' : 'text-foreground'
+                    isActive ? 'text-primary' : item.isSpecial ? 'text-indigo-700 hover:text-indigo-800' : 'text-foreground'
                   }`}>
                     {item.title}
                   </h3>
                   <p className={`text-xs mt-1 hidden sm:block transition-all duration-300 ${
-                    item.isSpecial ? 'text-muted-foreground group-hover:text-indigo-600' : 'text-muted-foreground'
+                    item.isSpecial ? 'text-indigo-600 hover:text-indigo-700' : 'text-muted-foreground'
                   }`}>
                     {item.description}
                   </p>
