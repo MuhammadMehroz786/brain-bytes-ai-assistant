@@ -9,7 +9,9 @@ import {
   Clock, 
   User,
   ExternalLink,
-  Loader
+  Loader,
+  Check,
+  Edit3
 } from "lucide-react";
 
 interface EmailSummary {
@@ -28,10 +30,10 @@ const mockEmailSummaries: EmailSummary[] = [
     id: "1",
     sender: "Sarah Chen",
     subject: "Q4 Project Review Meeting",
-    summary: "Sarah has scheduled a Q4 review meeting for Friday at 2 PM. She's requesting project status updates and wants to discuss budget allocations for next quarter.",
-    time: "3 hrs ago",
+    summary: "Sarah has scheduled a Q4 review meeting...",
+    time: "9:30 AM",
     isUnread: true,
-    tags: ["Meeting", "Internal"]
+    tags: ["17", "Meeting", "Internal"]
   },
   {
     id: "2",
@@ -151,48 +153,82 @@ export const EmailSummarySection = () => {
           {emailSummaries.map((email) => (
             <Card 
               key={email.id} 
-              className={`p-4 bg-white/50 backdrop-blur-sm border transition-all duration-200 hover:shadow-lg hover:scale-[1.02] cursor-pointer ${
-                email.isUnread 
-                  ? "border-primary/20 bg-primary/5" 
-                  : "border-primary/10"
-              }`}
+              className="p-4 bg-white border border-gray-200 transition-all duration-200 hover:shadow-lg"
             >
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <User className="w-4 h-4 text-primary" />
+              {/* Header with sender, time, and unread indicator */}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <h4 className="font-medium text-foreground text-base">
+                    {email.sender}
+                  </h4>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h4 className="font-medium text-foreground text-sm truncate">
-                      {email.sender}
-                    </h4>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">
-                        {email.time}
-                      </span>
-                      {email.isUnread && (
-                        <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      )}
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">
+                    {email.time}
+                  </span>
+                  {email.isUnread && (
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      <span className="text-sm font-medium text-purple-500">Unread</span>
                     </div>
-                  </div>
-                  <p className="text-sm font-medium text-foreground mb-2 truncate">
-                    {email.subject}
-                  </p>
-                  <div className="flex gap-1 mb-2">
-                    {email.tags.map((tag, index) => (
-                      <Badge 
-                        key={index} 
-                        variant={tag === "Urgent" ? "destructive" : "secondary"} 
-                        className="text-xs px-2 py-0"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    {email.summary}
-                  </p>
+                  )}
                 </div>
+              </div>
+
+              {/* Subject */}
+              <h5 className="font-medium text-foreground text-sm mb-2">
+                {email.subject}
+              </h5>
+
+              {/* Summary */}
+              <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
+                {email.summary}
+              </p>
+
+              {/* Tags */}
+              <div className="flex gap-2 mb-4">
+                <span className="text-sm text-muted-foreground">Tags:</span>
+                {email.tags.map((tag, index) => (
+                  <div key={index} className="flex items-center gap-1">
+                    {tag === "17" && (
+                      <div className="w-4 h-4 bg-orange-100 text-orange-600 rounded flex items-center justify-center text-xs font-medium">
+                        17
+                      </div>
+                    )}
+                    {tag === "Meeting" && (
+                      <>
+                        <div className="w-4 h-4 bg-orange-100 rounded flex items-center justify-center">
+                          <div className="w-2 h-2 bg-orange-500 rounded"></div>
+                        </div>
+                        <span className="text-sm text-muted-foreground">{tag}</span>
+                      </>
+                    )}
+                    {tag === "Internal" && (
+                      <>
+                        <div className="w-4 h-4 bg-gray-100 rounded flex items-center justify-center">
+                          <div className="w-2 h-2 bg-gray-500 rounded"></div>
+                        </div>
+                        <span className="text-sm text-muted-foreground">{tag}</span>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex gap-3 pt-2 border-t border-gray-100">
+                <Button variant="ghost" size="sm" className="text-sm">
+                  <Check className="w-4 h-4 mr-1" />
+                  Mark Done
+                </Button>
+                <Button variant="ghost" size="sm" className="text-sm">
+                  <Edit3 className="w-4 h-4 mr-1" />
+                  Suggested Reply
+                </Button>
+                <Button variant="ghost" size="sm" className="text-sm">
+                  <ExternalLink className="w-4 h-4 mr-1" />
+                  Open in Gmail
+                </Button>
               </div>
             </Card>
           ))}
