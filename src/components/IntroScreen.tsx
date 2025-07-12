@@ -89,7 +89,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               size="lg"
               className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full"
             >
-              Unlock My AI Plan
+              Unlock my AI Assistant
             </Button>
           </div>
         </div>
@@ -142,7 +142,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               size="lg"
               className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-xl px-20 py-10 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
-              Unlock My AI Plan
+              Unlock my AI Assistant
             </Button>
           </div>
           
@@ -159,7 +159,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             onClick={scrollToTop}
             className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold py-4 rounded-xl shadow-lg"
           >
-            Unlock My AI Plan – $29
+            Unlock my AI Assistant – $29
           </Button>
         </div>
       )}
