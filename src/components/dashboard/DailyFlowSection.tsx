@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Calendar, Play, ExternalLink, RefreshCw, Info, CheckCircle, CheckCircle2 } from "lucide-react";
+import { Clock, Calendar, Play, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { ProductivityPlan, UserResponses } from "@/types/productivity";
 
@@ -15,21 +15,6 @@ export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
   const [completedBlocks, setCompletedBlocks] = useState<number[]>([]);
   const { toast } = useToast();
 
-  const handleAddToCalendar = (timeBlock: any) => {
-    // Create calendar event - simplified implementation
-    const title = encodeURIComponent(timeBlock.activity);
-    const details = encodeURIComponent(timeBlock.description);
-    const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}`;
-    window.open(googleCalendarUrl, '_blank');
-  };
-
-  const handleRecalculateFlow = () => {
-    toast({
-      title: "Flow recalculated!",
-      description: "Your daily schedule has been optimized based on current preferences",
-    });
-  };
-
   const toggleBlockCompletion = (index: number) => {
     setCompletedBlocks(prev => 
       prev.includes(index) 
@@ -38,129 +23,118 @@ export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
     );
   };
 
-  const startNowSession = () => {
-    toast({
-      title: "25-minute focus session started!",
-      description: "Stay focused - you've got this!",
-    });
+  // Get current day
+  const getCurrentDay = () => {
+    const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    return days[new Date().getDay()];
   };
+
+  const currentDay = getCurrentDay();
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-foreground mb-2">Your Optimized Daily Flow</h2>
+          <h2 className="text-3xl font-bold text-foreground mb-2">Your Smart Calendar</h2>
           <p className="text-muted-foreground">
-            A timeline-based schedule designed to maximize your energy and focus throughout the day
+            Today's optimized schedule with focus time blocks
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button
-            onClick={startNowSession}
-            className="rounded-xl"
-          >
-            <Play className="w-4 h-4 mr-2" />
-            Start Now (25min)
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRecalculateFlow}
-            className="rounded-xl"
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Recalculate Today's Flow
-          </Button>
-          <Badge variant="outline" className="px-3 py-1">
-            <Clock className="w-4 h-4 mr-1" />
-            {plan.timeBlocks.length} Time Blocks
-          </Badge>
-        </div>
+        <Badge variant="outline" className="px-3 py-1">
+          <Clock className="w-4 h-4 mr-1" />
+          {plan.timeBlocks.length} Focus Blocks
+        </Badge>
       </div>
 
-      <div className="space-y-3">
-        {plan.timeBlocks.map((block, index) => {
-          const isCompleted = completedBlocks.includes(index);
-          return (
-            <Card key={index} className={`p-4 hover:shadow-md transition-all duration-200 ${isCompleted ? 'bg-success/5 border-success/20' : ''}`}>
-              <div className="flex items-center gap-4">
-                {/* Completion toggle */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleBlockCompletion(index)}
-                  className={`p-1 rounded-full ${isCompleted ? 'text-success' : 'text-muted-foreground hover:text-foreground'}`}
+      {/* Calendar visualization like the image */}
+      <Card className="p-6 bg-gradient-to-br from-violet-50 to-indigo-100 border-none">
+        <div className="space-y-4">
+          {/* Day header */}
+          <div className="text-center">
+            <h3 className="text-xl font-bold text-foreground mb-4">{currentDay}</h3>
+          </div>
+
+          {/* Focus time blocks */}
+          <div className="space-y-3">
+            {plan.timeBlocks.slice(0, 4).map((block, index) => {
+              const isCompleted = completedBlocks.includes(index);
+              const isFocusTime = block.activity.toLowerCase().includes('focus') || 
+                                 block.activity.toLowerCase().includes('deep work') ||
+                                 index % 2 === 0; // Alternate green blocks for demo
+              
+              return (
+                <div
+                  key={index}
+                  className={`relative p-4 rounded-lg transition-all duration-200 ${
+                    isFocusTime 
+                      ? 'bg-green-400 text-white' 
+                      : 'bg-gray-200 text-gray-700'
+                  } ${isCompleted ? 'opacity-60' : ''}`}
                 >
-                  <CheckCircle2 className={`w-5 h-5 ${isCompleted ? 'fill-current' : ''}`} />
-                </Button>
-
-                {/* Time indicator */}
-                <div className="flex flex-col items-center min-w-0">
-                  <Badge variant="secondary" className="text-xs font-medium whitespace-nowrap">
-                    {block.time}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs mt-1">
-                    {block.duration}
-                  </Badge>
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className={`font-semibold text-foreground ${isCompleted ? 'line-through opacity-60' : ''}`}>
-                      {block.activity}
-                    </h4>
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="p-1 h-6 w-6 opacity-50 hover:opacity-100"
-                        title="Why this time block works for you"
+                        onClick={() => toggleBlockCompletion(index)}
+                        className={`p-1 rounded-full ${
+                          isCompleted 
+                            ? 'text-white' 
+                            : isFocusTime 
+                              ? 'text-white hover:text-gray-200' 
+                              : 'text-gray-600 hover:text-gray-800'
+                        }`}
                       >
-                        <Info className="w-3 h-3" />
+                        <CheckCircle2 className={`w-5 h-5 ${isCompleted ? 'fill-current' : ''}`} />
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleAddToCalendar(block)}
-                        className="rounded-xl"
-                      >
-                        <Calendar className="w-4 h-4" />
-                      </Button>
+                      <div>
+                        <h4 className={`font-medium ${isCompleted ? 'line-through' : ''}`}>
+                          {isFocusTime ? 'Focus Time' : block.activity}
+                        </h4>
+                        <p className={`text-sm opacity-80 ${isCompleted ? 'line-through' : ''}`}>
+                          {block.time} • {block.duration}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <p className={`text-sm text-muted-foreground mb-2 ${isCompleted ? 'line-through opacity-60' : ''}`}>
-                    {block.description}
-                  </p>
-
-                  {/* Tool suggestion - compact */}
-                  <div className="text-xs text-muted-foreground">
-                    Tool: {plan.aiTools[index % plan.aiTools.length]?.name || 'Focus Timer'}
+                    {isFocusTime && !isCompleted && (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="bg-white/20 text-white hover:bg-white/30 border-white/30"
+                      >
+                        <Play className="w-4 h-4 mr-1" />
+                        Start
+                      </Button>
+                    )}
                   </div>
                 </div>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
 
-      {/* Summary card */}
-      <Card className="p-6 bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
-        <div className="text-center space-y-4">
-          <h4 className="font-semibold text-foreground mb-2">Your Daily Flow Summary</h4>
-          <p className="text-muted-foreground text-sm mb-4">
-            This schedule is optimized for your workflow and daily productivity goals
-          </p>
-          <div className="flex justify-center gap-3">
-            <Button variant="outline" className="rounded-xl">
-              <Calendar className="w-4 h-4 mr-2" />
-              Export Full Schedule
-            </Button>
-            <Button variant="ghost" className="rounded-xl text-primary hover:bg-primary/10">
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Upgrade for Auto-Sync
-            </Button>
+          {/* Weekly goal section */}
+          <div className="mt-8 bg-white rounded-lg p-6 text-center">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-lg font-semibold text-foreground">
+                <span className="text-blue-500">Focus Time</span> Weekly Goal
+              </h4>
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white">
+                <CheckCircle2 className="w-5 h-5" />
+              </div>
+            </div>
+            
+            {/* Progress bar */}
+            <div className="relative w-full bg-gray-200 rounded-full h-2 mb-2">
+              <div 
+                className="absolute top-0 left-0 h-full bg-blue-500 rounded-full transition-all duration-300"
+                style={{ width: '65%' }}
+              ></div>
+              <div 
+                className="absolute top-1/2 left-3/5 transform -translate-y-1/2 w-4 h-4 bg-blue-500 rounded-full border-2 border-white"
+              ></div>
+            </div>
+            
+            <p className="text-sm text-muted-foreground mt-2">20 hrs</p>
           </div>
         </div>
       </Card>

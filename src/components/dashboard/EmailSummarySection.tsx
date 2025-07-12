@@ -148,92 +148,90 @@ export const EmailSummarySection = () => {
         </Badge>
       </div>
 
-      <ScrollArea className="h-[400px]">
-        <div className="space-y-4">
-          {emailSummaries.map((email) => (
-            <Card 
-              key={email.id} 
-              className="p-4 bg-white border border-gray-200 transition-all duration-200 hover:shadow-lg"
-            >
-              {/* Header with sender, time, and unread indicator */}
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <h4 className="font-medium text-foreground text-base">
-                    {email.sender}
-                  </h4>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">
-                    {email.time}
-                  </span>
-                  {email.isUnread && (
-                    <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      <span className="text-sm font-medium text-purple-500">Unread</span>
+      <div className="grid gap-6">
+        {emailSummaries.map((email) => (
+          <Card 
+            key={email.id} 
+            className="p-6 bg-white border border-gray-200 transition-all duration-200 hover:shadow-lg"
+          >
+            {/* Header with sender, time, and unread indicator */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <h4 className="font-medium text-foreground text-base">
+                  {email.sender}
+                </h4>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {email.time}
+                </span>
+                {email.isUnread && (
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <span className="text-sm font-medium text-purple-500">Unread</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Subject */}
+            <h5 className="font-medium text-foreground text-sm mb-2">
+              {email.subject}
+            </h5>
+
+            {/* Summary */}
+            <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
+              {email.summary}
+            </p>
+
+            {/* Tags */}
+            <div className="flex gap-2 mb-4">
+              <span className="text-sm text-muted-foreground">Tags:</span>
+              {email.tags.map((tag, index) => (
+                <div key={index} className="flex items-center gap-1">
+                  {tag === "17" && (
+                    <div className="w-4 h-4 bg-orange-100 text-orange-600 rounded flex items-center justify-center text-xs font-medium">
+                      17
                     </div>
                   )}
-                </div>
-              </div>
-
-              {/* Subject */}
-              <h5 className="font-medium text-foreground text-sm mb-2">
-                {email.subject}
-              </h5>
-
-              {/* Summary */}
-              <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
-                {email.summary}
-              </p>
-
-              {/* Tags */}
-              <div className="flex gap-2 mb-4">
-                <span className="text-sm text-muted-foreground">Tags:</span>
-                {email.tags.map((tag, index) => (
-                  <div key={index} className="flex items-center gap-1">
-                    {tag === "17" && (
-                      <div className="w-4 h-4 bg-orange-100 text-orange-600 rounded flex items-center justify-center text-xs font-medium">
-                        17
+                  {tag === "Meeting" && (
+                    <>
+                      <div className="w-4 h-4 bg-orange-100 rounded flex items-center justify-center">
+                        <div className="w-2 h-2 bg-orange-500 rounded"></div>
                       </div>
-                    )}
-                    {tag === "Meeting" && (
-                      <>
-                        <div className="w-4 h-4 bg-orange-100 rounded flex items-center justify-center">
-                          <div className="w-2 h-2 bg-orange-500 rounded"></div>
-                        </div>
-                        <span className="text-sm text-muted-foreground">{tag}</span>
-                      </>
-                    )}
-                    {tag === "Internal" && (
-                      <>
-                        <div className="w-4 h-4 bg-gray-100 rounded flex items-center justify-center">
-                          <div className="w-2 h-2 bg-gray-500 rounded"></div>
-                        </div>
-                        <span className="text-sm text-muted-foreground">{tag}</span>
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
+                      <span className="text-sm text-muted-foreground">{tag}</span>
+                    </>
+                  )}
+                  {tag === "Internal" && (
+                    <>
+                      <div className="w-4 h-4 bg-gray-100 rounded flex items-center justify-center">
+                        <div className="w-2 h-2 bg-gray-500 rounded"></div>
+                      </div>
+                      <span className="text-sm text-muted-foreground">{tag}</span>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
 
-              {/* Action buttons */}
-              <div className="flex gap-3 pt-2 border-t border-gray-100">
-                <Button variant="ghost" size="sm" className="text-sm">
-                  <Check className="w-4 h-4 mr-1" />
-                  Mark Done
-                </Button>
-                <Button variant="ghost" size="sm" className="text-sm">
-                  <Edit3 className="w-4 h-4 mr-1" />
-                  Suggested Reply
-                </Button>
-                <Button variant="ghost" size="sm" className="text-sm">
-                  <ExternalLink className="w-4 h-4 mr-1" />
-                  Open in Gmail
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </ScrollArea>
+            {/* Action buttons */}
+            <div className="flex gap-3 pt-2 border-t border-gray-100">
+              <Button variant="ghost" size="sm" className="text-sm">
+                <Check className="w-4 h-4 mr-1" />
+                Mark Done
+              </Button>
+              <Button variant="ghost" size="sm" className="text-sm">
+                <Edit3 className="w-4 h-4 mr-1" />
+                Suggested Reply
+              </Button>
+              <Button variant="ghost" size="sm" className="text-sm">
+                <ExternalLink className="w-4 h-4 mr-1" />
+                Open in Gmail
+              </Button>
+            </div>
+          </Card>
+        ))}
+      </div>
 
       <div className="flex items-center justify-between pt-4 border-t border-primary/10">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">

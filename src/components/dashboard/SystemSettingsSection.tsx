@@ -2,20 +2,16 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { 
   Settings, 
-  Calendar, 
-  Mail, 
   Bell, 
   User,
   Clock,
   Save,
-  CheckCircle,
-  ExternalLink
+  ExternalLink,
+  LogOut
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -23,32 +19,26 @@ export const SystemSettingsSection = () => {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [dailySummary, setDailySummary] = useState(false);
   const [focusReminders, setFocusReminders] = useState(true);
-  const [email, setEmail] = useState("");
-  const [isEmailOptedIn, setIsEmailOptedIn] = useState(false);
   const { toast } = useToast();
-
-  const handleEmailOptIn = () => {
-    if (!email.trim()) {
-      toast({
-        title: "Email required",
-        description: "Please enter your email address",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsEmailOptedIn(true);
-    setDailySummary(true);
-    toast({
-      title: "Email summary enabled!",
-      description: "You'll receive your first daily summary tomorrow morning.",
-    });
-  };
 
   const handleSaveSettings = () => {
     toast({
       title: "Settings saved",
       description: "Your preferences have been updated successfully.",
+    });
+  };
+
+  const handleResetPlan = () => {
+    toast({
+      title: "Plan reset",
+      description: "Your productivity plan has been reset. You can create a new one.",
+    });
+  };
+
+  const handleSignOut = () => {
+    toast({
+      title: "Signed out",
+      description: "You have been successfully signed out.",
     });
   };
 
@@ -60,52 +50,6 @@ export const SystemSettingsSection = () => {
         </div>
         <h2 className="text-2xl font-bold text-foreground">System Settings</h2>
       </div>
-
-
-      {/* Email Summary Settings */}
-      <Card className="p-6 bg-white/50 backdrop-blur-sm border border-primary/10">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 mb-4">
-            <Mail className="w-5 h-5 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Daily Email Summary</h3>
-          </div>
-
-          {!isEmailOptedIn ? (
-            <div className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Get a daily email with your calendar events, productivity tips, and focus reminders.
-              </p>
-              <div className="flex gap-2">
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  className="flex-1 rounded-xl border-2 border-border focus:border-primary"
-                />
-                <Button 
-                  onClick={handleEmailOptIn}
-                  className="rounded-xl px-6"
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Enable Summary
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-                <span className="text-sm font-medium text-foreground">Daily summaries enabled</span>
-                <Badge variant="secondary" className="text-xs">Active</Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                You'll receive daily emails at 7:00 AM with your schedule and productivity insights.
-              </p>
-            </div>
-          )}
-        </div>
-      </Card>
 
       {/* Notification Preferences */}
       <Card className="p-6 bg-white/50 backdrop-blur-sm border border-primary/10">
@@ -137,7 +81,6 @@ export const SystemSettingsSection = () => {
               <Switch 
                 checked={dailySummary}
                 onCheckedChange={setDailySummary}
-                disabled={!isEmailOptedIn}
               />
             </div>
 
@@ -170,9 +113,21 @@ export const SystemSettingsSection = () => {
               <ExternalLink className="w-4 h-4 mr-2" />
               Export My Data
             </Button>
-            <Button variant="outline" className="w-full justify-start rounded-xl">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start rounded-xl"
+              onClick={handleResetPlan}
+            >
               <Clock className="w-4 h-4 mr-2" />
               Reset Productivity Plan
+            </Button>
+            <Button 
+              variant="destructive" 
+              className="w-full justify-start rounded-xl"
+              onClick={handleSignOut}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
             </Button>
           </div>
         </div>
