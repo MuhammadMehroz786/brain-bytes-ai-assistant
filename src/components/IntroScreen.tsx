@@ -50,9 +50,9 @@ export const IntroScreen = ({
         </Button>
       </div>
 
-      <div className="min-h-screen flex items-center justify-center pt-16 md:pt-20">
+      <div className="min-h-screen flex items-center justify-center pt-8 md:pt-12">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="mb-4 md:mb-8">
+          <div className="mb-3 md:mb-6">
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3 md:mb-6 leading-tight">
             Brain Bytes
             <br />
