@@ -150,7 +150,8 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
       icon: Rocket,
       description: 'Unlock more features',
       iconColor: 'text-indigo-600',
-      bgColor: 'bg-indigo-100'
+      bgColor: 'bg-gradient-to-r from-indigo-100 to-purple-100',
+      isSpecial: true
     }
   ];
 
@@ -227,27 +228,35 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
                 setActiveSection(item.id);
                 setSidebarOpen(false); // Close mobile sidebar on selection
               }}
-              className={`w-full text-left p-3 sm:p-4 rounded-xl transition-all duration-200 group ${
+              className={`w-full text-left p-3 sm:p-4 rounded-xl transition-all duration-300 group ${
                 isActive
                   ? 'bg-primary/10 border border-primary/20 text-primary'
-                  : 'hover:bg-muted/50 text-foreground'
+                  : item.isSpecial
+                    ? 'hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:border hover:border-indigo-200 hover:shadow-lg hover:scale-105 text-foreground'
+                    : 'hover:bg-muted/50 text-foreground'
               }`}
             >
               <div className="flex items-start gap-2 sm:gap-3">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
                   isActive 
                     ? 'bg-primary text-white' 
-                    : `${item.bgColor} group-hover:scale-105`
+                    : item.isSpecial
+                      ? `${item.bgColor} group-hover:scale-110 group-hover:shadow-md`
+                      : `${item.bgColor} group-hover:scale-105`
                 }`}>
-                  <Icon className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 ${
-                    isActive ? 'text-white' : item.iconColor
+                  <Icon className={`w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 transition-all duration-300 ${
+                    isActive ? 'text-white' : item.isSpecial ? `${item.iconColor} group-hover:animate-pulse` : item.iconColor
                   }`} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className={`font-medium text-xs sm:text-sm leading-tight ${isActive ? 'text-primary' : 'text-foreground'}`}>
+                  <h3 className={`font-medium text-xs sm:text-sm leading-tight transition-all duration-300 ${
+                    isActive ? 'text-primary' : item.isSpecial ? 'text-foreground group-hover:text-indigo-700' : 'text-foreground'
+                  }`}>
                     {item.title}
                   </h3>
-                  <p className="text-xs text-muted-foreground mt-1 hidden sm:block">
+                  <p className={`text-xs mt-1 hidden sm:block transition-all duration-300 ${
+                    item.isSpecial ? 'text-muted-foreground group-hover:text-indigo-600' : 'text-muted-foreground'
+                  }`}>
                     {item.description}
                   </p>
                 </div>
