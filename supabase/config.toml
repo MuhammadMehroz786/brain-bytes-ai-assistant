@@ -1,7 +1,7 @@
 project_id = "tvbetqvpiypncjtkchcc"
 
 [functions.create-payment]
-verify_jwt = false
+verify_jwt = true
 
 [functions.gmail-oauth]
 verify_jwt = false

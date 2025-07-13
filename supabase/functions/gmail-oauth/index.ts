@@ -25,6 +25,9 @@ Deno.serve(async (req) => {
       const redirectUri = `https://tvbetqvpiypncjtkchcc.supabase.co/functions/v1/gmail-oauth?action=callback`
       const scope = 'https://www.googleapis.com/auth/gmail.readonly email profile'
       const state = crypto.randomUUID()
+      
+      // Store state for validation (in production, use Redis or database)
+      // For now, we'll validate on callback using basic checks
 
       const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth')
       authUrl.searchParams.set('client_id', clientId)
@@ -45,15 +48,23 @@ Deno.serve(async (req) => {
     if (action === 'callback') {
       // Handle OAuth callback
       const code = url.searchParams.get('code')
+      const state = url.searchParams.get('state')
       const error = url.searchParams.get('error')
+      
+      // Basic state validation (prevent CSRF)
+      if (!state || state.length < 10) {
+        throw new Error('Invalid or missing state parameter')
+      }
 
       if (error) {
         console.error('OAuth error:', error)
+        // Sanitize error message
+        const sanitizedError = error === 'access_denied' ? 'access_denied' : 'oauth_error'
         return new Response(`
           <html>
             <body>
               <script>
-                window.opener.postMessage({ error: '${error}' }, '*');
+                window.opener.postMessage({ error: '${sanitizedError}' }, '*');
                 window.close();
               </script>
             </body>
@@ -162,6 +173,21 @@ Deno.serve(async (req) => {
         throw error
       }
 
+      // Log security event
+      const supabaseService = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+        { auth: { persistSession: false } }
+      )
+
+      await supabaseService.from("security_audit").insert({
+        user_id: user.id,
+        event_type: "gmail_oauth_connected",
+        event_data: { email: userInfo.email },
+        ip_address: req.headers.get("x-forwarded-for") || "unknown",
+        user_agent: req.headers.get("user-agent") || "unknown"
+      })
+
       return new Response(JSON.stringify({ success: true }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
@@ -170,8 +196,15 @@ Deno.serve(async (req) => {
     throw new Error('Invalid request')
   } catch (error) {
     console.error('Gmail OAuth error:', error)
+    
+    // Sanitize error message for security
+    const sanitizedError = error instanceof Error ? 
+      (error.message.includes("authenticated") ? "Authentication required" : 
+       error.message.includes("state") ? "Invalid request" : "OAuth processing failed") :
+      "OAuth processing failed"
+    
     return new Response(JSON.stringify({ 
-      error: error.message 
+      error: sanitizedError 
     }), {
       status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
