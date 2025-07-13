@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Play, Sparkles, Clock, Target, Calendar } from "lucide-react";
+import { Link } from "react-router-dom";
 interface IntroScreenProps {
   onStart: () => void;
   onAuth: () => void;
@@ -130,6 +131,16 @@ export const IntroScreen = ({
           </p>
         </div>
         </div>
+      </div>
+
+      {/* Privacy Policy Link - Bottom Left */}
+      <div className="absolute bottom-4 left-4">
+        <Link 
+          to="/privacy-policy" 
+          className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 underline"
+        >
+          Privacy Policy
+        </Link>
       </div>
 
       {/* Sticky CTA Button for Mobile */}
