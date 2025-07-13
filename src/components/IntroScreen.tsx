@@ -133,13 +133,19 @@ export const IntroScreen = ({
         </div>
       </div>
 
-      {/* Privacy Policy Link - Bottom Left */}
-      <div className="absolute bottom-4 left-4">
+      {/* Privacy Policy and Terms Links - Bottom Left */}
+      <div className="absolute bottom-4 left-4 flex gap-4">
         <Link 
           to="/privacy-policy" 
           className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 underline"
         >
           Privacy Policy
+        </Link>
+        <Link 
+          to="/terms-of-service" 
+          className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 underline"
+        >
+          Terms of Service
         </Link>
       </div>
 
