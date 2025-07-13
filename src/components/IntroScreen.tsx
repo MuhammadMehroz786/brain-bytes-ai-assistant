@@ -85,19 +85,19 @@ export const IntroScreen = ({
             <p className="text-xs md:text-sm text-muted-foreground">Sync your Google Calendar in seconds and get a clear view of your daily events directly inside your AI dashboard. No more switching tabs — your schedule lives where your productivity happens.</p>
           </Card>
           
-          {/* Center Column - Mobile CTA */}
+          {/* Center Column - YouTube Video */}
           <div className="order-1 md:order-2">
-            <div className="space-y-4">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground line-through text-xs">$45</span>
-                  <span className="text-primary font-bold text-base">$29</span>
-                  <span className="text-muted-foreground text-xs">One-time fee for full access</span>
-                </div>
-              </div>
-              <Button onClick={onStart} size="lg" className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 w-full">
-                Unlock my AI Assistant
-              </Button>
+            <div className="rounded-xl overflow-hidden bg-black/5 border border-primary/10 shadow-lg">
+              <iframe 
+                src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ" 
+                width="100%" 
+                height="200" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen 
+                className="w-full aspect-video"
+                title="AI Assistant Demo"
+              />
             </div>
           </div>
           
