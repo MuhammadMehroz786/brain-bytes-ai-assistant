@@ -137,11 +137,15 @@ export const EmailSummarySection = () => {
 
       // Listen for OAuth completion
       const handleMessage = async (event: MessageEvent) => {
-        if (event.origin !== window.location.origin && !event.origin.includes('supabase.co')) {
+        console.log('Received message from origin:', event.origin, 'data:', event.data);
+        
+        // Accept messages from the Supabase function domain
+        if (!event.origin.includes('supabase.co')) {
+          console.log('Ignoring message from non-Supabase origin:', event.origin);
           return;
         }
 
-        console.log('Received OAuth message:', event.data);
+        console.log('Processing OAuth message:', event.data);
 
         if (event.data.success) {
           popup?.close();
