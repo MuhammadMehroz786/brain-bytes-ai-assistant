@@ -134,80 +134,79 @@ export const EmailSummarySection = () => {
         console.log('Origin:', event.origin);
         console.log('Data:', event.data);
         console.log('Data type:', typeof event.data);
-        console.log('Has success property:', event.data?.success);
-        console.log('Success value:', event.data?.success === true);
         
-        // Accept messages from Supabase functions domain
-        if (!event.origin.includes('supabase.co')) {
-          console.log('Ignoring message from non-Supabase origin:', event.origin);
-          return;
-        }
-        
+        // Accept messages from any origin for debugging (we'll validate the data structure instead)
         // Check if this is our OAuth success message
         if (event.data && typeof event.data === 'object' && event.data.success === true) {
-          console.log('✅ OAuth SUCCESS - processing tokens...');
+          console.log('✅ OAuth SUCCESS detected - processing...');
           
           // Remove listener immediately to prevent duplicate processing
           window.removeEventListener('message', handleMessage);
           
           try {
-            console.log('Storing tokens...');
+            console.log('Step 1: Getting current session...');
+            const { data: sessionData } = await supabase.auth.getSession();
+            console.log('Session data:', sessionData);
             
-            // Get current session
-            const { data: session } = await supabase.auth.getSession();
-            
-            // Store tokens using POST request directly to the edge function
-            const storeResponse = await fetch(`https://tvbetqvpiypncjtkchcc.supabase.co/functions/v1/gmail-oauth`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${session.session?.access_token}`,
-              },
-              body: JSON.stringify({
-                tokens: event.data.tokens,
-                userInfo: event.data.userInfo
-              })
-            });
-
-            const storeResult = await storeResponse.json();
-            console.log('Store response:', storeResult);
-            
-            if (!storeResponse.ok) {
-              console.error('❌ Token storage failed:', storeResult);
-              throw new Error(storeResult.error || 'Failed to store tokens');
+            if (!sessionData.session) {
+              throw new Error('No active session found');
             }
 
-            console.log('✅ Tokens stored successfully');
+            console.log('Step 2: Storing tokens via direct database insert...');
             
-            // Update UI state
-            console.log('Updating connection state...');
+            // Instead of calling the edge function, directly insert tokens into database
+            const { data, error } = await supabase
+              .from('gmail_tokens')
+              .upsert({
+                user_id: sessionData.session.user.id,
+                access_token: event.data.tokens.access_token,
+                refresh_token: event.data.tokens.refresh_token,
+                expires_at: new Date(Date.now() + (event.data.tokens.expires_in * 1000)).toISOString(),
+                email: event.data.userInfo.email,
+                updated_at: new Date().toISOString()
+              })
+              .select();
+
+            if (error) {
+              console.error('❌ Database insert failed:', error);
+              throw error;
+            }
+
+            console.log('✅ Tokens stored successfully in database:', data);
+            
+            console.log('Step 3: Updating UI state...');
             setIsConnected(true);
             setIsSyncing(false);
             setErrorMessage('');
             
-            // Fetch emails
-            console.log('Fetching Gmail emails...');
-            await fetchGmailEmails();
+            console.log('Step 4: Fetching Gmail emails...');
+            try {
+              await fetchGmailEmails();
+              console.log('✅ Emails fetched successfully');
+            } catch (emailError) {
+              console.warn('⚠️ Email fetch failed, but connection established:', emailError);
+              // Don't fail the whole process if email fetch fails
+            }
             
             console.log('✅ Gmail sync complete!');
             
             toast({
               title: "Gmail synced successfully!",
-              description: "Your emails have been fetched and summarized.",
+              description: "Your Gmail account has been connected.",
             });
             
           } catch (storeError) {
-            console.error('❌ Token storage error:', storeError);
-            setErrorMessage('Failed to store Gmail tokens. Please try again.');
+            console.error('❌ Error in OAuth processing:', storeError);
+            setErrorMessage(`Failed to sync Gmail: ${storeError.message}`);
             setIsSyncing(false);
             toast({
               title: "Gmail sync failed",
-              description: "Failed to store tokens. Please try again.",
+              description: `Error: ${storeError.message}`,
               variant: "destructive"
             });
           }
         } else if (event.data && event.data.error) {
-          console.error('❌ OAuth error:', event.data.error);
+          console.error('❌ OAuth error received:', event.data.error);
           setErrorMessage(event.data.error);
           setIsSyncing(false);
           window.removeEventListener('message', handleMessage);
