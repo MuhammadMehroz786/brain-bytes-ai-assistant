@@ -114,14 +114,7 @@ Deno.serve(async (req) => {
 
       return new Response(`
         <html>
-          <head>
-            <title>Gmail Connected Successfully</title>
-          </head>
           <body>
-            <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
-              <h2>✅ Gmail Connected Successfully!</h2>
-              <p>Redirecting back to dashboard...</p>
-            </div>
             <script>
               console.log('Sending success message to parent window');
               window.opener.postMessage({ 
@@ -130,11 +123,8 @@ Deno.serve(async (req) => {
                 userInfo: ${JSON.stringify(userInfo)} 
               }, '*');
               
-              // Close after a short delay to ensure message is received
-              setTimeout(() => {
-                console.log('Closing popup window');
-                window.close();
-              }, 1000);
+              // Close immediately without showing any content
+              window.close();
             </script>
           </body>
         </html>
