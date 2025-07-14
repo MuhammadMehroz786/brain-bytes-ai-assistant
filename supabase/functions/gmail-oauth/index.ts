@@ -112,40 +112,41 @@ Deno.serve(async (req) => {
 
       const userInfo = await userInfoResponse.json()
 
+      // Send success message and close popup immediately
       return new Response(`
         <!DOCTYPE html>
         <html>
           <head>
             <meta charset="utf-8">
-            <title>Gmail Connected</title>
+            <style>body { margin: 0; background: white; }</style>
           </head>
           <body>
             <script>
-              try {
-                console.log('Sending success message to parent window');
-                if (window.opener) {
-                  window.opener.postMessage({ 
-                    success: true, 
-                    tokens: ${JSON.stringify(tokens)}, 
-                    userInfo: ${JSON.stringify(userInfo)} 
-                  }, '*');
-                  console.log('Message sent successfully');
-                  window.close();
-                } else {
-                  console.error('No opener window found');
-                  window.close();
+              (function() {
+                try {
+                  console.log('OAuth success - sending message to parent');
+                  if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage({ 
+                      success: true, 
+                      tokens: ${JSON.stringify(tokens)}, 
+                      userInfo: ${JSON.stringify(userInfo)} 
+                    }, window.opener.location.origin);
+                    console.log('Success message sent to parent');
+                  }
+                } catch (error) {
+                  console.error('Error sending message:', error);
+                } finally {
+                  // Close popup immediately
+                  setTimeout(() => window.close(), 100);
                 }
-              } catch (error) {
-                console.error('Error in popup script:', error);
-                window.close();
-              }
+              })();
             </script>
           </body>
         </html>
       `, {
         headers: { 
           'Content-Type': 'text/html; charset=utf-8',
-          'Cache-Control': 'no-cache'
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
         }
       })
     }

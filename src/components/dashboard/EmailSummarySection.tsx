@@ -131,25 +131,10 @@ export const EmailSummarySection = () => {
       // Set up message listener first
       const handleMessage = async (event: MessageEvent) => {
         console.log('Received message from origin:', event.origin, 'data:', event.data);
-        console.log('Message event type:', typeof event.data, 'has success:', event.data?.success);
         
-        // Accept messages from the Supabase function domain or localhost for development
-        if (!event.origin.includes('supabase.co') && !event.origin.includes('localhost')) {
-          console.log('Ignoring message from non-Supabase/localhost origin:', event.origin);
-          return;
-        }
-
-        // Check if this is the OAuth success message we're expecting
-        if (!event.data || (typeof event.data !== 'object')) {
-          console.log('Invalid message data, ignoring');
-          return;
-        }
-
-        console.log('Processing OAuth message:', event.data);
-
-        if (event.data.success) {
-          console.log('OAuth successful, closing popup and storing tokens...');
-          popup?.close();
+        // Check if this is our OAuth success message
+        if (event.data && typeof event.data === 'object' && event.data.success === true) {
+          console.log('OAuth successful, processing tokens...');
           
           try {
             // Store tokens using POST request directly to the edge function
@@ -193,8 +178,7 @@ export const EmailSummarySection = () => {
           }
           
           window.removeEventListener('message', handleMessage);
-        } else if (event.data.error) {
-          popup?.close();
+        } else if (event.data && event.data.error) {
           console.error('OAuth error:', event.data.error);
           setErrorMessage(event.data.error);
           toast({
