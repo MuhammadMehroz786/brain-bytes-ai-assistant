@@ -128,95 +128,83 @@ export const EmailSummarySection = () => {
 
       console.log('Opening OAuth popup...');
 
-      // Set up message listener with comprehensive debugging
+      // Set up message listener to handle OAuth success
       const handleMessage = async (event: MessageEvent) => {
         console.log('=== MESSAGE RECEIVED ===');
-        console.log('Origin:', event.origin);
-        console.log('Data:', event.data);
-        console.log('Data type:', typeof event.data);
+        console.log('Event origin:', event.origin);
+        console.log('Event data:', JSON.stringify(event.data, null, 2));
         
-        // Accept messages from any origin for debugging (we'll validate the data structure instead)
         // Check if this is our OAuth success message
-        if (event.data && typeof event.data === 'object' && event.data.success === true) {
-          console.log('✅ OAuth SUCCESS detected - processing...');
+        if (event.data && event.data.success === true && event.data.tokens) {
+          console.log('✅ OAuth SUCCESS detected - processing tokens...');
           
-          // Remove listener immediately to prevent duplicate processing
+          // Remove listener to prevent duplicate processing
           window.removeEventListener('message', handleMessage);
           
           try {
-            console.log('Step 1: Getting current session...');
-            const { data: sessionData } = await supabase.auth.getSession();
-            console.log('Session data:', sessionData);
-            
-            if (!sessionData.session) {
-              throw new Error('No active session found');
+            // Get current user session
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+              throw new Error('No authenticated user found');
             }
 
-            console.log('Step 2: Storing tokens via direct database insert...');
+            console.log('Storing tokens for user:', user.id);
             
-            // Instead of calling the edge function, directly insert tokens into database
-            const { data, error } = await supabase
+            // Store tokens directly in database
+            const { error: insertError } = await supabase
               .from('gmail_tokens')
               .upsert({
-                user_id: sessionData.session.user.id,
+                user_id: user.id,
                 access_token: event.data.tokens.access_token,
-                refresh_token: event.data.tokens.refresh_token,
-                expires_at: new Date(Date.now() + (event.data.tokens.expires_in * 1000)).toISOString(),
-                email: event.data.userInfo.email,
+                refresh_token: event.data.tokens.refresh_token || null,
+                expires_at: event.data.tokens.expires_in 
+                  ? new Date(Date.now() + (event.data.tokens.expires_in * 1000)).toISOString()
+                  : null,
+                email: event.data.userInfo?.email || null,
                 updated_at: new Date().toISOString()
-              })
-              .select();
+              });
 
-            if (error) {
-              console.error('❌ Database insert failed:', error);
-              throw error;
+            if (insertError) {
+              console.error('Database insert error:', insertError);
+              throw insertError;
             }
 
-            console.log('✅ Tokens stored successfully in database:', data);
+            console.log('✅ Tokens stored successfully');
             
-            console.log('Step 3: Updating UI state...');
+            // Update UI state
             setIsConnected(true);
-            setIsSyncing(false);
             setErrorMessage('');
             
-            console.log('Step 4: Fetching Gmail emails...');
-            try {
-              await fetchGmailEmails();
-              console.log('✅ Emails fetched successfully');
-            } catch (emailError) {
-              console.warn('⚠️ Email fetch failed, but connection established:', emailError);
-              // Don't fail the whole process if email fetch fails
-            }
-            
-            console.log('✅ Gmail sync complete!');
+            // Fetch emails
+            console.log('Fetching Gmail emails...');
+            await fetchGmailEmails();
             
             toast({
-              title: "Gmail synced successfully!",
-              description: "Your Gmail account has been connected.",
+              title: "Gmail Connected",
+              description: "Your Gmail account has been synced successfully!",
             });
             
-          } catch (storeError) {
-            console.error('❌ Error in OAuth processing:', storeError);
-            setErrorMessage(`Failed to sync Gmail: ${storeError.message}`);
-            setIsSyncing(false);
+          } catch (error) {
+            console.error('❌ OAuth processing error:', error);
+            setErrorMessage(`Failed to connect Gmail: ${error.message}`);
             toast({
-              title: "Gmail sync failed",
-              description: `Error: ${storeError.message}`,
+              title: "Connection Failed",
+              description: `Error: ${error.message}`,
               variant: "destructive"
             });
+          } finally {
+            setIsSyncing(false);
           }
         } else if (event.data && event.data.error) {
           console.error('❌ OAuth error received:', event.data.error);
+          window.removeEventListener('message', handleMessage);
           setErrorMessage(event.data.error);
           setIsSyncing(false);
-          window.removeEventListener('message', handleMessage);
           toast({
-            title: "Gmail sync failed",
+            title: "Gmail Connection Failed", 
             description: event.data.error,
             variant: "destructive"
           });
-        } else {
-          console.log('Ignoring non-OAuth message:', event.data);
         }
       };
 
