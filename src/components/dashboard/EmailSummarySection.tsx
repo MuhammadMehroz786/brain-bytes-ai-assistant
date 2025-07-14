@@ -128,24 +128,40 @@ export const EmailSummarySection = () => {
 
       console.log('Opening OAuth popup...');
 
-      // Set up message listener first
+      // Set up message listener with comprehensive debugging
       const handleMessage = async (event: MessageEvent) => {
-        console.log('Received message from origin:', event.origin, 'data:', event.data);
+        console.log('=== MESSAGE RECEIVED ===');
+        console.log('Origin:', event.origin);
+        console.log('Data:', event.data);
+        console.log('Data type:', typeof event.data);
+        console.log('Has success property:', event.data?.success);
+        console.log('Success value:', event.data?.success === true);
+        
+        // Accept messages from Supabase functions domain
+        if (!event.origin.includes('supabase.co')) {
+          console.log('Ignoring message from non-Supabase origin:', event.origin);
+          return;
+        }
         
         // Check if this is our OAuth success message
         if (event.data && typeof event.data === 'object' && event.data.success === true) {
-          console.log('OAuth successful, processing tokens...');
+          console.log('✅ OAuth SUCCESS - processing tokens...');
           
           // Remove listener immediately to prevent duplicate processing
           window.removeEventListener('message', handleMessage);
           
           try {
+            console.log('Storing tokens...');
+            
+            // Get current session
+            const { data: session } = await supabase.auth.getSession();
+            
             // Store tokens using POST request directly to the edge function
             const storeResponse = await fetch(`https://tvbetqvpiypncjtkchcc.supabase.co/functions/v1/gmail-oauth`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+                'Authorization': `Bearer ${session.session?.access_token}`,
               },
               body: JSON.stringify({
                 tokens: event.data.tokens,
@@ -154,17 +170,26 @@ export const EmailSummarySection = () => {
             });
 
             const storeResult = await storeResponse.json();
+            console.log('Store response:', storeResult);
             
             if (!storeResponse.ok) {
-              console.error('Token storage failed:', storeResult);
+              console.error('❌ Token storage failed:', storeResult);
               throw new Error(storeResult.error || 'Failed to store tokens');
             }
 
-            console.log('Tokens stored successfully:', storeResult);
+            console.log('✅ Tokens stored successfully');
             
+            // Update UI state
+            console.log('Updating connection state...');
             setIsConnected(true);
-            await fetchGmailEmails();
             setIsSyncing(false);
+            setErrorMessage('');
+            
+            // Fetch emails
+            console.log('Fetching Gmail emails...');
+            await fetchGmailEmails();
+            
+            console.log('✅ Gmail sync complete!');
             
             toast({
               title: "Gmail synced successfully!",
@@ -172,7 +197,7 @@ export const EmailSummarySection = () => {
             });
             
           } catch (storeError) {
-            console.error('Token storage error:', storeError);
+            console.error('❌ Token storage error:', storeError);
             setErrorMessage('Failed to store Gmail tokens. Please try again.');
             setIsSyncing(false);
             toast({
@@ -182,7 +207,7 @@ export const EmailSummarySection = () => {
             });
           }
         } else if (event.data && event.data.error) {
-          console.error('OAuth error:', event.data.error);
+          console.error('❌ OAuth error:', event.data.error);
           setErrorMessage(event.data.error);
           setIsSyncing(false);
           window.removeEventListener('message', handleMessage);
@@ -191,6 +216,8 @@ export const EmailSummarySection = () => {
             description: event.data.error,
             variant: "destructive"
           });
+        } else {
+          console.log('Ignoring non-OAuth message:', event.data);
         }
       };
 
