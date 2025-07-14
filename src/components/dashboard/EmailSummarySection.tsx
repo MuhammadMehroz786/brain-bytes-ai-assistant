@@ -133,9 +133,10 @@ export const EmailSummarySection = () => {
         console.log('=== MESSAGE RECEIVED ===');
         console.log('Event origin:', event.origin);
         console.log('Event data:', JSON.stringify(event.data, null, 2));
+        console.log('Data type:', typeof event.data);
         
-        // Check if this is our OAuth success message
-        if (event.data && event.data.success === true && event.data.tokens) {
+        // Check if this is our OAuth success message - look for tokens directly
+        if (event.data && (event.data.tokens || event.data.access_token)) {
           console.log('✅ OAuth SUCCESS detected - processing tokens...');
           
           // Remove listener to prevent duplicate processing
@@ -150,17 +151,24 @@ export const EmailSummarySection = () => {
 
             console.log('Storing tokens for user:', user.id);
             
+            // Extract tokens from either nested or direct structure
+            const tokens = event.data.tokens || event.data;
+            const userInfo = event.data.userInfo || {};
+            
+            console.log('Extracted tokens:', tokens);
+            console.log('Extracted userInfo:', userInfo);
+            
             // Store tokens directly in database
             const { error: insertError } = await supabase
               .from('gmail_tokens')
               .upsert({
                 user_id: user.id,
-                access_token: event.data.tokens.access_token,
-                refresh_token: event.data.tokens.refresh_token || null,
-                expires_at: event.data.tokens.expires_in 
-                  ? new Date(Date.now() + (event.data.tokens.expires_in * 1000)).toISOString()
+                access_token: tokens.access_token,
+                refresh_token: tokens.refresh_token || null,
+                expires_at: tokens.expires_in 
+                  ? new Date(Date.now() + (tokens.expires_in * 1000)).toISOString()
                   : null,
-                email: event.data.userInfo?.email || null,
+                email: userInfo?.email || null,
                 updated_at: new Date().toISOString()
               });
 
