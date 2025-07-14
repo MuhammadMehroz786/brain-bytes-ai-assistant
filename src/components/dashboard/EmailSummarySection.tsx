@@ -128,18 +128,7 @@ export const EmailSummarySection = () => {
 
       console.log('Opening OAuth popup...');
 
-      // Open OAuth popup
-      const popup = window.open(
-        authData.authUrl, 
-        'gmail-oauth', 
-        'width=500,height=600,scrollbars=yes,resizable=yes'
-      );
-
-      if (!popup) {
-        throw new Error('Popup blocked. Please allow popups for this site.');
-      }
-
-      // Listen for OAuth completion
+      // Set up message listener first
       const handleMessage = async (event: MessageEvent) => {
         console.log('Received message from origin:', event.origin, 'data:', event.data);
         console.log('Message event type:', typeof event.data, 'has success:', event.data?.success);
@@ -217,11 +206,25 @@ export const EmailSummarySection = () => {
         }
       };
 
+      // Add message listener before opening popup
       window.addEventListener('message', handleMessage);
-      
-      // Check if popup was closed without completion
+
+      // Open OAuth popup
+      const popup = window.open(
+        authData.authUrl, 
+        'gmail-oauth', 
+        'width=500,height=600,scrollbars=yes,resizable=yes'
+      );
+
+      if (!popup) {
+        window.removeEventListener('message', handleMessage);
+        throw new Error('Popup blocked. Please allow popups for this site.');
+      }
+
+      // Check if popup was closed manually
       const checkClosed = setInterval(() => {
-        if (popup?.closed) {
+        if (popup.closed) {
+          console.log('Popup closed manually');
           clearInterval(checkClosed);
           window.removeEventListener('message', handleMessage);
           setIsSyncing(false);
