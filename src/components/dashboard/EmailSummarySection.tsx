@@ -136,6 +136,9 @@ export const EmailSummarySection = () => {
         if (event.data && typeof event.data === 'object' && event.data.success === true) {
           console.log('OAuth successful, processing tokens...');
           
+          // Remove listener immediately to prevent duplicate processing
+          window.removeEventListener('message', handleMessage);
+          
           try {
             // Store tokens using POST request directly to the edge function
             const storeResponse = await fetch(`https://tvbetqvpiypncjtkchcc.supabase.co/functions/v1/gmail-oauth`, {
@@ -161,6 +164,7 @@ export const EmailSummarySection = () => {
             
             setIsConnected(true);
             await fetchGmailEmails();
+            setIsSyncing(false);
             
             toast({
               title: "Gmail synced successfully!",
@@ -170,23 +174,23 @@ export const EmailSummarySection = () => {
           } catch (storeError) {
             console.error('Token storage error:', storeError);
             setErrorMessage('Failed to store Gmail tokens. Please try again.');
+            setIsSyncing(false);
             toast({
               title: "Gmail sync failed",
               description: "Failed to store tokens. Please try again.",
               variant: "destructive"
             });
           }
-          
-          window.removeEventListener('message', handleMessage);
         } else if (event.data && event.data.error) {
           console.error('OAuth error:', event.data.error);
           setErrorMessage(event.data.error);
+          setIsSyncing(false);
+          window.removeEventListener('message', handleMessage);
           toast({
             title: "Gmail sync failed",
             description: event.data.error,
             variant: "destructive"
           });
-          window.removeEventListener('message', handleMessage);
         }
       };
 
