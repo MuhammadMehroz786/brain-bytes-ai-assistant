@@ -113,23 +113,40 @@ Deno.serve(async (req) => {
       const userInfo = await userInfoResponse.json()
 
       return new Response(`
+        <!DOCTYPE html>
         <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Gmail Connected</title>
+          </head>
           <body>
             <script>
-              console.log('Sending success message to parent window');
-              window.opener.postMessage({ 
-                success: true, 
-                tokens: ${JSON.stringify(tokens)}, 
-                userInfo: ${JSON.stringify(userInfo)} 
-              }, '*');
-              
-              // Close immediately without showing any content
-              window.close();
+              try {
+                console.log('Sending success message to parent window');
+                if (window.opener) {
+                  window.opener.postMessage({ 
+                    success: true, 
+                    tokens: ${JSON.stringify(tokens)}, 
+                    userInfo: ${JSON.stringify(userInfo)} 
+                  }, '*');
+                  console.log('Message sent successfully');
+                  window.close();
+                } else {
+                  console.error('No opener window found');
+                  window.close();
+                }
+              } catch (error) {
+                console.error('Error in popup script:', error);
+                window.close();
+              }
             </script>
           </body>
         </html>
       `, {
-        headers: { 'Content-Type': 'text/html' }
+        headers: { 
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-cache'
+        }
       })
     }
 
