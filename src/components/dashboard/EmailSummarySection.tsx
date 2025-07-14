@@ -135,13 +135,24 @@ export const EmailSummarySection = () => {
         'width=500,height=600,scrollbars=yes,resizable=yes'
       );
 
+      if (!popup) {
+        throw new Error('Popup blocked. Please allow popups for this site.');
+      }
+
       // Listen for OAuth completion
       const handleMessage = async (event: MessageEvent) => {
         console.log('Received message from origin:', event.origin, 'data:', event.data);
+        console.log('Message event type:', typeof event.data, 'has success:', event.data?.success);
         
-        // Accept messages from the Supabase function domain
-        if (!event.origin.includes('supabase.co')) {
-          console.log('Ignoring message from non-Supabase origin:', event.origin);
+        // Accept messages from the Supabase function domain or localhost for development
+        if (!event.origin.includes('supabase.co') && !event.origin.includes('localhost')) {
+          console.log('Ignoring message from non-Supabase/localhost origin:', event.origin);
+          return;
+        }
+
+        // Check if this is the OAuth success message we're expecting
+        if (!event.data || (typeof event.data !== 'object')) {
+          console.log('Invalid message data, ignoring');
           return;
         }
 
