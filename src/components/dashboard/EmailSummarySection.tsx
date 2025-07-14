@@ -148,38 +148,61 @@ export const EmailSummarySection = () => {
         console.log('Processing OAuth message:', event.data);
 
         if (event.data.success) {
+          console.log('OAuth successful, closing popup and storing tokens...');
           popup?.close();
           
-          console.log('OAuth successful, storing tokens...');
-          
-          // Store tokens
-          const { error: storeError } = await supabase.functions.invoke('gmail-oauth', {
-            body: {
-              tokens: event.data.tokens,
-              userInfo: event.data.userInfo
+          try {
+            // Store tokens using POST request directly to the edge function
+            const storeResponse = await fetch(`https://tvbetqvpiypncjtkchcc.supabase.co/functions/v1/gmail-oauth`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
+              },
+              body: JSON.stringify({
+                tokens: event.data.tokens,
+                userInfo: event.data.userInfo
+              })
+            });
+
+            const storeResult = await storeResponse.json();
+            
+            if (!storeResponse.ok) {
+              console.error('Token storage failed:', storeResult);
+              throw new Error(storeResult.error || 'Failed to store tokens');
             }
-          });
 
-          if (storeError) {
+            console.log('Tokens stored successfully:', storeResult);
+            
+            setIsConnected(true);
+            await fetchGmailEmails();
+            
+            toast({
+              title: "Gmail synced successfully!",
+              description: "Your emails have been fetched and summarized.",
+            });
+            
+          } catch (storeError) {
             console.error('Token storage error:', storeError);
-            throw storeError;
+            setErrorMessage('Failed to store Gmail tokens. Please try again.');
+            toast({
+              title: "Gmail sync failed",
+              description: "Failed to store tokens. Please try again.",
+              variant: "destructive"
+            });
           }
-
-          console.log('Tokens stored successfully');
-          
-          setIsConnected(true);
-          await fetchGmailEmails();
-          
-          toast({
-            title: "Gmail synced successfully!",
-            description: "Your emails have been fetched and summarized.",
-          });
           
           window.removeEventListener('message', handleMessage);
         } else if (event.data.error) {
           popup?.close();
           console.error('OAuth error:', event.data.error);
-          throw new Error(event.data.error);
+          setErrorMessage(event.data.error);
+          toast({
+            title: "Gmail sync failed",
+            description: event.data.error,
+            variant: "destructive"
+          });
+          window.removeEventListener('message', handleMessage);
         }
       };
 
