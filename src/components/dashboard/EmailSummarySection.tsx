@@ -1,9 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Mail, 
   Inbox, 
@@ -13,7 +15,8 @@ import {
   Loader,
   Check,
   Edit3,
-  RefreshCw
+  RefreshCw,
+  AlertCircle
 } from "lucide-react";
 
 interface EmailSummary {
@@ -71,6 +74,9 @@ export const EmailSummarySection = () => {
   const [emailSummaries, setEmailSummaries] = useState<EmailSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [lastSyncTime, setLastSyncTime] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const { toast } = useToast();
 
   // Check Gmail connection status
   useEffect(() => {
@@ -82,6 +88,8 @@ export const EmailSummarySection = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      console.log('Checking Gmail connection for user:', user.id);
+
       const { data, error } = await supabase
         .from('gmail_tokens')
         .select('*')
@@ -89,22 +97,36 @@ export const EmailSummarySection = () => {
         .single();
 
       if (data && !error) {
+        console.log('Gmail connection found, fetching emails...');
         setIsConnected(true);
         await fetchGmailEmails();
+      } else {
+        console.log('No Gmail connection found');
+        setIsConnected(false);
       }
     } catch (error) {
       console.error('Error checking Gmail connection:', error);
+      setErrorMessage('Failed to check Gmail connection');
     }
   };
 
   const handleSyncGmail = async () => {
     setIsSyncing(true);
+    setErrorMessage('');
+    
     try {
+      console.log('Starting Gmail OAuth process...');
+      
       // Get authorization URL
       const response = await fetch(`https://tvbetqvpiypncjtkchcc.supabase.co/functions/v1/gmail-oauth?action=authorize`);
       const authData = await response.json();
 
-      if (!response.ok) throw new Error(authData.error);
+      if (!response.ok) {
+        console.error('OAuth authorization error:', authData);
+        throw new Error(authData.error);
+      }
+
+      console.log('Opening OAuth popup...');
 
       // Open OAuth popup
       const popup = window.open(
@@ -115,13 +137,16 @@ export const EmailSummarySection = () => {
 
       // Listen for OAuth completion
       const handleMessage = async (event: MessageEvent) => {
-        if (event.origin !== window.location.origin.replace(window.location.port, '54321')) {
-          // Allow messages from Supabase edge function domain
-          if (!event.origin.includes('supabase.co')) return;
+        if (event.origin !== window.location.origin && !event.origin.includes('supabase.co')) {
+          return;
         }
+
+        console.log('Received OAuth message:', event.data);
 
         if (event.data.success) {
           popup?.close();
+          
+          console.log('OAuth successful, storing tokens...');
           
           // Store tokens
           const { error: storeError } = await supabase.functions.invoke('gmail-oauth', {
@@ -131,13 +156,25 @@ export const EmailSummarySection = () => {
             }
           });
 
-          if (storeError) throw storeError;
+          if (storeError) {
+            console.error('Token storage error:', storeError);
+            throw storeError;
+          }
 
+          console.log('Tokens stored successfully');
+          
           setIsConnected(true);
           await fetchGmailEmails();
+          
+          toast({
+            title: "Gmail synced successfully!",
+            description: "Your emails have been fetched and summarized.",
+          });
+          
           window.removeEventListener('message', handleMessage);
         } else if (event.data.error) {
           popup?.close();
+          console.error('OAuth error:', event.data.error);
           throw new Error(event.data.error);
         }
       };
@@ -155,7 +192,12 @@ export const EmailSummarySection = () => {
 
     } catch (error) {
       console.error('Gmail sync error:', error);
-      alert('Failed to sync Gmail. Please try again.');
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to sync Gmail');
+      toast({
+        title: "Gmail sync failed",
+        description: error instanceof Error ? error.message : "Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setIsSyncing(false);
     }
@@ -163,11 +205,18 @@ export const EmailSummarySection = () => {
 
   const fetchGmailEmails = async () => {
     try {
+      console.log('Fetching Gmail emails...');
+      
       const { data, error } = await supabase.functions.invoke('fetch-gmail-emails');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Email fetch error:', error);
+        throw error;
+      }
       
-      if (data?.emails) {
+      console.log('Email fetch response:', data);
+      
+      if (data?.emails && Array.isArray(data.emails)) {
         // Format emails to match our interface
         const formattedEmails = data.emails.map((email: any) => ({
           id: email.id,
@@ -178,13 +227,36 @@ export const EmailSummarySection = () => {
           isUnread: email.isUnread,
           tags: email.tags || []
         }));
+        
+        console.log('Formatted emails:', formattedEmails);
         setEmailSummaries(formattedEmails);
+        setLastSyncTime(new Date().toLocaleTimeString());
+        
+        if (formattedEmails.length === 0) {
+          setErrorMessage('No emails found in the last 48 hours');
+        } else {
+          setErrorMessage('');
+        }
+      } else {
+        console.log('No emails in response, using mock data');
+        setEmailSummaries(mockEmailSummaries);
+        setErrorMessage('Using demo data - Gmail sync may need troubleshooting');
       }
     } catch (error) {
       console.error('Error fetching Gmail emails:', error);
+      setErrorMessage('Failed to fetch emails - using demo data');
       // Fallback to mock data if Gmail fetch fails
       setEmailSummaries(mockEmailSummaries);
     }
+  };
+
+  const handleRefreshEmails = async () => {
+    if (!isConnected) return;
+    
+    setIsSyncing(true);
+    setErrorMessage('');
+    await fetchGmailEmails();
+    setIsSyncing(false);
   };
 
   const handleConnectEmail = () => {
@@ -214,18 +286,26 @@ export const EmailSummarySection = () => {
               <Inbox className="w-8 h-8 text-primary" />
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              Connect Your Email
+              Connect Your Gmail
             </h3>
             <p className="text-sm text-muted-foreground mb-6">
               Get AI-powered summaries of your daily emails right in your dashboard. 
               Stay on top of what matters without inbox overload.
             </p>
+            
+            {errorMessage && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700 text-sm">
+                <AlertCircle className="w-4 h-4" />
+                {errorMessage}
+              </div>
+            )}
+            
             <Button 
-              onClick={handleConnectEmail}
-              disabled={isLoading}
+              onClick={handleSyncGmail}
+              disabled={isSyncing}
               className="bg-primary hover:bg-primary/90 text-white px-6 py-2"
             >
-              {isLoading ? (
+              {isSyncing ? (
                 <>
                   <Loader className="w-4 h-4 mr-2 animate-spin" />
                   Connecting...
@@ -233,7 +313,7 @@ export const EmailSummarySection = () => {
               ) : (
                 <>
                   <Mail className="w-4 h-4 mr-2" />
-                  Connect Email
+                  Connect Gmail
                 </>
               )}
             </Button>
@@ -254,7 +334,7 @@ export const EmailSummarySection = () => {
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <Button 
-            onClick={handleSyncGmail}
+            onClick={handleRefreshEmails}
             disabled={isSyncing}
             variant="outline"
             size="sm"
@@ -268,7 +348,7 @@ export const EmailSummarySection = () => {
             ) : (
               <>
                 <RefreshCw className="w-3 h-3 mr-1" />
-                Sync Gmail
+                Refresh
               </>
             )}
           </Button>
@@ -277,6 +357,13 @@ export const EmailSummarySection = () => {
           </Badge>
         </div>
       </div>
+
+      {errorMessage && (
+        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center gap-2 text-yellow-700 text-sm">
+          <AlertCircle className="w-4 h-4" />
+          {errorMessage}
+        </div>
+      )}
 
       <div className="grid gap-4 sm:gap-6">
         {emailSummaries.map((email) => (
@@ -304,17 +391,14 @@ export const EmailSummarySection = () => {
               </div>
             </div>
 
-            {/* Subject */}
             <h5 className="font-medium text-foreground text-sm sm:text-base mb-2 leading-tight">
               {email.subject}
             </h5>
 
-            {/* Summary */}
             <p className="text-sm text-muted-foreground mb-3 sm:mb-4 leading-relaxed">
               {email.summary}
             </p>
 
-            {/* Tags */}
             <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
               <span className="text-xs sm:text-sm text-muted-foreground">Tags:</span>
               {email.tags.map((tag, index) => (
@@ -352,7 +436,6 @@ export const EmailSummarySection = () => {
               ))}
             </div>
 
-            {/* Action buttons */}
             <div className="flex flex-wrap gap-2 sm:gap-3 pt-2 border-t border-gray-100">
               <Button variant="ghost" size="sm" className="text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4">
                 <Check className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
@@ -377,7 +460,7 @@ export const EmailSummarySection = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-primary/10 gap-3">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Clock className="w-3 h-3" />
-          <span>Last updated: 2 minutes ago</span>
+          <span>Last updated: {lastSyncTime || '2 minutes ago'}</span>
         </div>
         <Button variant="ghost" size="sm" className="text-xs self-start sm:self-auto">
           <ExternalLink className="w-3 h-3 mr-1" />
