@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Compass, Lightbulb, MessageSquare, Copy, Zap, RefreshCw, Target, Clock, Brain, Pencil, LifeBuoy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { FocusTimer } from "@/components/FocusTimer";
+import { StreakCounter } from "@/components/StreakCounter";
 import type { ProductivityPlan, UserResponses } from "@/types/productivity";
 
 interface DailyAINavigatorSectionProps {
@@ -17,6 +19,7 @@ export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: Dai
   const [tipIndex, setTipIndex] = useState(0);
   const [brainDumpInput, setBrainDumpInput] = useState("");
   const [showRescuePlan, setShowRescuePlan] = useState(false);
+  const [showFocusTimer, setShowFocusTimer] = useState(false);
   const { toast } = useToast();
 
   const personalizedTips = [
@@ -41,16 +44,24 @@ export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: Dai
     }
   ];
 
-  const motivationalStats = [
+  const productivityFacts = [
     "Users who plan their day are 3x more likely to achieve their goals",
     "AI-assisted productivity increases focus time by 40% on average", 
     "People who use time blocks complete 25% more important tasks daily",
-    "Daily planning reduces decision fatigue by up to 50%"
+    "Daily planning reduces decision fatigue by up to 50%",
+    "The average person checks their phone 96 times per day - focus blocks help break this habit",
+    "Studies show that multitasking can reduce productivity by up to 40%",
+    "Taking breaks every 90 minutes can increase productivity by 23%",
+    "The Pomodoro Technique was invented by Francesco Cirillo in the 1980s using a tomato timer",
+    "Your brain can only focus for about 45 minutes before needing a break",
+    "People who write down their goals are 42% more likely to achieve them",
+    "The best time for creative work is typically 10 AM to 12 PM for most people",
+    "Clutter in your workspace can reduce focus by up to 32%"
   ];
 
   const currentTip = personalizedTips[tipIndex];
   const currentPrompt = gptPrompts[tipIndex % gptPrompts.length];
-  const currentStat = motivationalStats[tipIndex % motivationalStats.length];
+  const currentFact = productivityFacts[tipIndex % productivityFacts.length];
 
   const copyPrompt = (prompt: string) => {
     navigator.clipboard.writeText(prompt);
@@ -79,10 +90,29 @@ export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: Dai
   };
 
   const handleMorningReset = () => {
+    // Force refresh of content
+    setTipIndex((prev) => (prev + 1) % personalizedTips.length);
+    
     toast({
       title: "Schedule rebuilt!",
       description: "Your flow has been optimized from the current time forward",
     });
+  };
+
+  const handleFocusStart = () => {
+    setShowFocusTimer(true);
+  };
+
+  const handleFocusComplete = () => {
+    setShowFocusTimer(false);
+    toast({
+      title: "🎉 Focus session completed!",
+      description: "Your streak has been updated. Great work!",
+    });
+  };
+
+  const handleFocusExit = () => {
+    setShowFocusTimer(false);
   };
 
   const miniWins = [
@@ -161,6 +191,9 @@ export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: Dai
         </Card>
       </div>
 
+      {/* Streak Counter */}
+      <StreakCounter />
+
       {/* Brain Dump Input */}
       <Card className="p-4">
         <div className="flex items-center gap-3 mb-3">
@@ -190,8 +223,8 @@ export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: Dai
             <Zap className="w-4 h-4 text-success" />
           </div>
           <h5 className="font-medium text-foreground mb-2">Focus Mode</h5>
-          <Button variant="outline" size="sm" className="w-full rounded-xl">
-            Start 25min Session
+          <Button variant="outline" size="sm" onClick={handleFocusStart} className="w-full rounded-xl">
+            Start 30min Session
           </Button>
         </Card>
 
@@ -226,7 +259,7 @@ export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: Dai
               <Compass className="w-4 h-4 text-success" />
             </div>
             <h5 className="font-medium text-foreground mb-2">Daily Insight</h5>
-            <p className="text-xs text-muted-foreground leading-relaxed">{currentStat}</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">{currentFact}</p>
           </div>
         </Card>
       </div>
@@ -260,6 +293,14 @@ export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: Dai
             </Button>
           </div>
         </Card>
+      )}
+
+      {/* Focus Timer Overlay */}
+      {showFocusTimer && (
+        <FocusTimer 
+          onExit={handleFocusExit}
+          onComplete={handleFocusComplete}
+        />
       )}
     </div>
   );
