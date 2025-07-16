@@ -6,11 +6,21 @@ export interface UserResponses {
   productiveTime: string;
 }
 
+export interface UserPreferences {
+  priority: string;
+  experienceLevel: string;
+  toolPreference: string;
+}
+
 export interface AITool {
   name: string;
   description: string;
   category: string;
   affiliateLink?: string;
+  url?: string;
+  categories?: string[];
+  complexity?: string;
+  setupComplexity?: string;
 }
 
 export interface ProductivityPlan {
