@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Compass, Lightbulb, MessageSquare, Copy, Zap, RefreshCw, Target, Clock, Brain, Pencil, LifeBuoy } from "lucide-react";
+import { Compass, Lightbulb, MessageSquare, Copy, Zap, RefreshCw, Target, Clock, Brain, Pencil, LifeBuoy, Shield, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { FocusTimer } from "@/components/FocusTimer";
 import { StreakCounter } from "@/components/StreakCounter";
+import { DistractionRescue } from "@/components/DistractionRescue";
+import { MorningReset } from "@/components/MorningReset";
 import type { ProductivityPlan, UserResponses } from "@/types/productivity";
 
 interface DailyAINavigatorSectionProps {
@@ -20,6 +22,8 @@ export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: Dai
   const [brainDumpInput, setBrainDumpInput] = useState("");
   const [showRescuePlan, setShowRescuePlan] = useState(false);
   const [showFocusTimer, setShowFocusTimer] = useState(false);
+  const [showDistractionRescue, setShowDistractionRescue] = useState(false);
+  const [showMorningReset, setShowMorningReset] = useState(false);
   const { toast } = useToast();
 
   const personalizedTips = [
@@ -90,8 +94,13 @@ export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: Dai
   };
 
   const handleMorningReset = () => {
-    // Force refresh of content
+    setShowMorningReset(true);
+  };
+
+  const handleScheduleUpdate = () => {
+    // Force refresh of content after morning reset
     setTipIndex((prev) => (prev + 1) % personalizedTips.length);
+    setShowMorningReset(false);
     
     toast({
       title: "Schedule rebuilt!",
@@ -223,33 +232,43 @@ export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: Dai
             <Zap className="w-4 h-4 text-success" />
           </div>
           <h5 className="font-medium text-foreground mb-2">Focus Mode</h5>
-          <Button variant="outline" size="sm" onClick={handleFocusStart} className="w-full rounded-xl">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleFocusStart} 
+            className="w-full rounded-xl bg-gradient-to-r from-success/10 to-primary/10 hover:from-success/20 hover:to-primary/20"
+          >
             Start 30min Session
           </Button>
         </Card>
 
         <Card className="p-4 text-center">
           <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3 border border-primary/20">
-            <Clock className="w-4 h-4 text-primary" />
+            <RotateCcw className="w-4 h-4 text-primary" />
           </div>
           <h5 className="font-medium text-foreground mb-2">Morning Reset</h5>
-          <Button variant="outline" size="sm" onClick={handleMorningReset} className="w-full rounded-xl text-xs">
-            Start Late? Rebuild Your Schedule
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleMorningReset} 
+            className="w-full rounded-xl text-xs hover:bg-primary/10"
+          >
+            Rebuild Your Day
           </Button>
         </Card>
 
         <Card className="p-4 text-center">
-          <div className="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-3 border border-accent/20">
-            <LifeBuoy className="w-4 h-4 text-accent" />
+          <div className="w-8 h-8 bg-warning/10 rounded-lg flex items-center justify-center mx-auto mb-3 border border-warning/20">
+            <Shield className="w-4 h-4 text-warning" />
           </div>
           <h5 className="font-medium text-foreground mb-2">Distraction Rescue</h5>
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={() => setShowRescuePlan(!showRescuePlan)} 
-            className="w-full rounded-xl"
+            onClick={() => setShowDistractionRescue(true)} 
+            className="w-full rounded-xl hover:bg-warning/10"
           >
-            Distracted or stuck?
+            Need Help Focusing?
           </Button>
         </Card>
 
@@ -264,44 +283,26 @@ export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: Dai
         </Card>
       </div>
 
-      {/* Distraction Rescue Plan */}
-      {showRescuePlan && (
-        <Card className="p-6 bg-gradient-to-br from-accent/5 to-primary/5 border-accent/20">
-          <div className="text-center space-y-4">
-            <h4 className="font-semibold text-foreground mb-4">3-Step Distraction Rescue Plan</h4>
-            <div className="space-y-3 text-left max-w-md mx-auto">
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">1</div>
-                <p className="text-sm text-foreground">Step away for 1 minute</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">2</div>
-                <p className="text-sm text-foreground">Write your next task in 1 sentence</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">3</div>
-                <p className="text-sm text-foreground">Start a 15-min timer and just begin</p>
-              </div>
-            </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => setShowRescuePlan(false)} 
-              className="rounded-xl"
-            >
-              Got it, let's refocus!
-            </Button>
-          </div>
-        </Card>
-      )}
-
-      {/* Focus Timer Overlay */}
+      {/* Focus Timer */}
       {showFocusTimer && (
         <FocusTimer 
           onExit={handleFocusExit}
           onComplete={handleFocusComplete}
         />
       )}
+
+      {/* Distraction Rescue Modal */}
+      <DistractionRescue
+        isOpen={showDistractionRescue}
+        onClose={() => setShowDistractionRescue(false)}
+      />
+
+      {/* Morning Reset Modal */}
+      <MorningReset
+        isOpen={showMorningReset}
+        onClose={() => setShowMorningReset(false)}
+        onScheduleUpdate={handleScheduleUpdate}
+      />
     </div>
   );
 };

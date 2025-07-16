@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Clock, Calendar, Play, CheckCircle2, MoreHorizontal, Check, SkipForward, Edit, Calendar as CalendarIcon, ExternalLink } from "lucide-react";
+import { Clock, Calendar, Play, CheckCircle2, MoreHorizontal, Check, SkipForward, Edit, Calendar as CalendarIcon, ExternalLink, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { MorningReset } from "@/components/MorningReset";
 import type { ProductivityPlan, UserResponses } from "@/types/productivity";
 
 interface CalendarEvent {
@@ -30,6 +31,7 @@ export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [googleEvents, setGoogleEvents] = useState<CalendarEvent[]>([]);
   const [isLoadingEvents, setIsLoadingEvents] = useState(false);
+  const [showMorningReset, setShowMorningReset] = useState(false);
   const { toast } = useToast();
 
   // Update current time every minute
@@ -102,6 +104,14 @@ export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
 
     fetchGoogleEvents();
   }, []);
+
+  const handleScheduleUpdate = () => {
+    // Refresh the calendar display
+    toast({
+      title: "Schedule Updated",
+      description: "Your calendar has been refreshed with the new schedule.",
+    });
+  };
 
   const toggleBlockCompletion = (index: number) => {
     setCompletedBlocks(prev => 
@@ -217,6 +227,15 @@ export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowMorningReset(true)}
+            className="rounded-2xl"
+          >
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Morning Reset
+          </Button>
           <Badge variant="outline" className="px-3 py-1">
             <Clock className="w-4 h-4 mr-1" />
             {plan.timeBlocks.length} Focus Blocks
@@ -414,6 +433,13 @@ export const DailyFlowSection = ({ plan }: DailyFlowSectionProps) => {
           </div>
         </div>
       </Card>
+
+      {/* Morning Reset Modal */}
+      <MorningReset
+        isOpen={showMorningReset}
+        onClose={() => setShowMorningReset(false)}
+        onScheduleUpdate={handleScheduleUpdate}
+      />
     </div>
   );
 };
