@@ -8,13 +8,14 @@ import type { ProductivityPlan, UserResponses, UserPreferences } from "@/types/p
 import { PersonalizationSurvey } from "@/components/PersonalizationSurvey";
 import { SystemUpgradeWaitlist } from "@/components/SystemUpgradeWaitlist";
 import { supabase } from "@/integrations/supabase/client";
-
 interface AIStackSectionProps {
   plan: ProductivityPlan;
   responses: UserResponses;
 }
-
-export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
+export const AIStackSection = ({
+  plan,
+  responses
+}: AIStackSectionProps) => {
   const [showSurvey, setShowSurvey] = useState(false);
   const [personalizedTools, setPersonalizedTools] = useState(plan.aiTools);
   const [userPreferences, setUserPreferences] = useState<UserPreferences | null>(null);
@@ -23,17 +24,18 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
   useEffect(() => {
     loadUserPreferences();
   }, []);
-
   const loadUserPreferences = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (user) {
-        const { data, error } = await supabase
-          .from('ai_tool_preferences')
-          .select('*')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
+        const {
+          data,
+          error
+        } = await supabase.from('ai_tool_preferences').select('*').eq('user_id', user.id).maybeSingle();
         if (data && !error) {
           const preferences = {
             priority: data.priority,
@@ -48,15 +50,12 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
       console.error('Error loading user preferences:', error);
     }
   };
-
   const generatePersonalizedTools = (preferences: UserPreferences) => {
     const toolDatabase = getToolDatabase();
     let recommendedTools = [];
 
     // Filter tools based on priority
-    const priorityTools = toolDatabase.filter(tool => 
-      tool.categories.includes(preferences.priority)
-    );
+    const priorityTools = toolDatabase.filter(tool => tool.categories.includes(preferences.priority));
 
     // Filter based on experience level
     const experienceFilteredTools = priorityTools.filter(tool => {
@@ -80,43 +79,122 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
 
     // Take top 6 tools and fallback to default if not enough
     recommendedTools = finalTools.slice(0, 6);
-    
     if (recommendedTools.length < 3) {
       // Fallback to some default tools if filtering results in too few tools
       const fallbackTools = toolDatabase.slice(0, 6 - recommendedTools.length);
       recommendedTools = [...recommendedTools, ...fallbackTools];
     }
-
     setPersonalizedTools(recommendedTools);
   };
-
   const handlePersonalizationComplete = (preferences: UserPreferences) => {
     setUserPreferences(preferences);
     generatePersonalizedTools(preferences);
   };
-
   const getToolDatabase = () => [
-    // Focus & Deep Work tools
-    { name: "Motion", description: "AI-powered calendar that automatically schedules your tasks and blocks focus time.", category: "Productivity", categories: ["focus"], complexity: "easy", setupComplexity: "simple", url: "https://motion.com" },
-    { name: "Notion AI", description: "Intelligent writing assistant built into your favorite workspace.", category: "Writing", categories: ["focus", "writing"], complexity: "medium", setupComplexity: "simple", url: "https://notion.so" },
-    { name: "ChatGPT Plus", description: "Advanced AI assistant for research, writing, and problem-solving.", category: "AI Assistant", categories: ["focus", "writing"], complexity: "easy", setupComplexity: "simple", url: "https://openai.com" },
-    
-    // Automation tools
-    { name: "Bardeen", description: "No-code automation platform that connects your favorite apps.", category: "Automation", categories: ["automation"], complexity: "medium", setupComplexity: "advanced", url: "https://bardeen.ai" },
-    { name: "Zapier", description: "Connect 5000+ apps to automate repetitive tasks without coding.", category: "Automation", categories: ["automation"], complexity: "medium", setupComplexity: "advanced", url: "https://zapier.com" },
-    { name: "Superhuman", description: "The fastest email experience ever made, with AI-powered features.", category: "Email", categories: ["automation", "collaboration"], complexity: "easy", setupComplexity: "simple", url: "https://superhuman.com" },
-    
-    // Writing tools
-    { name: "Jasper", description: "AI copywriter that creates high-quality content for marketing and business.", category: "Writing", categories: ["writing"], complexity: "easy", setupComplexity: "simple", url: "https://jasper.ai" },
-    { name: "Grammarly", description: "AI writing assistant that helps you write clearly and confidently.", category: "Writing", categories: ["writing"], complexity: "easy", setupComplexity: "simple", url: "https://grammarly.com" },
-    { name: "Quillbot", description: "AI-powered paraphrasing tool and writing assistant.", category: "Writing", categories: ["writing"], complexity: "easy", setupComplexity: "simple", url: "https://quillbot.com" },
-    
-    // Project Management tools
-    { name: "Linear", description: "Issue tracking and project management tool built for software teams.", category: "Project Management", categories: ["collaboration"], complexity: "medium", setupComplexity: "simple", url: "https://linear.app" },
-    { name: "ClickUp", description: "All-in-one productivity platform with AI-powered project management.", category: "Project Management", categories: ["collaboration"], complexity: "medium", setupComplexity: "advanced", url: "https://clickup.com" },
-    { name: "Notion", description: "Connected workspace for notes, docs, projects, and knowledge management.", category: "Productivity", categories: ["collaboration", "focus"], complexity: "medium", setupComplexity: "simple", url: "https://notion.so" }
-  ];
-
+  // Focus & Deep Work tools
+  {
+    name: "Motion",
+    description: "AI-powered calendar that automatically schedules your tasks and blocks focus time.",
+    category: "Productivity",
+    categories: ["focus"],
+    complexity: "easy",
+    setupComplexity: "simple",
+    url: "https://motion.com"
+  }, {
+    name: "Notion AI",
+    description: "Intelligent writing assistant built into your favorite workspace.",
+    category: "Writing",
+    categories: ["focus", "writing"],
+    complexity: "medium",
+    setupComplexity: "simple",
+    url: "https://notion.so"
+  }, {
+    name: "ChatGPT Plus",
+    description: "Advanced AI assistant for research, writing, and problem-solving.",
+    category: "AI Assistant",
+    categories: ["focus", "writing"],
+    complexity: "easy",
+    setupComplexity: "simple",
+    url: "https://openai.com"
+  },
+  // Automation tools
+  {
+    name: "Bardeen",
+    description: "No-code automation platform that connects your favorite apps.",
+    category: "Automation",
+    categories: ["automation"],
+    complexity: "medium",
+    setupComplexity: "advanced",
+    url: "https://bardeen.ai"
+  }, {
+    name: "Zapier",
+    description: "Connect 5000+ apps to automate repetitive tasks without coding.",
+    category: "Automation",
+    categories: ["automation"],
+    complexity: "medium",
+    setupComplexity: "advanced",
+    url: "https://zapier.com"
+  }, {
+    name: "Superhuman",
+    description: "The fastest email experience ever made, with AI-powered features.",
+    category: "Email",
+    categories: ["automation", "collaboration"],
+    complexity: "easy",
+    setupComplexity: "simple",
+    url: "https://superhuman.com"
+  },
+  // Writing tools
+  {
+    name: "Jasper",
+    description: "AI copywriter that creates high-quality content for marketing and business.",
+    category: "Writing",
+    categories: ["writing"],
+    complexity: "easy",
+    setupComplexity: "simple",
+    url: "https://jasper.ai"
+  }, {
+    name: "Grammarly",
+    description: "AI writing assistant that helps you write clearly and confidently.",
+    category: "Writing",
+    categories: ["writing"],
+    complexity: "easy",
+    setupComplexity: "simple",
+    url: "https://grammarly.com"
+  }, {
+    name: "Quillbot",
+    description: "AI-powered paraphrasing tool and writing assistant.",
+    category: "Writing",
+    categories: ["writing"],
+    complexity: "easy",
+    setupComplexity: "simple",
+    url: "https://quillbot.com"
+  },
+  // Project Management tools
+  {
+    name: "Linear",
+    description: "Issue tracking and project management tool built for software teams.",
+    category: "Project Management",
+    categories: ["collaboration"],
+    complexity: "medium",
+    setupComplexity: "simple",
+    url: "https://linear.app"
+  }, {
+    name: "ClickUp",
+    description: "All-in-one productivity platform with AI-powered project management.",
+    category: "Project Management",
+    categories: ["collaboration"],
+    complexity: "medium",
+    setupComplexity: "advanced",
+    url: "https://clickup.com"
+  }, {
+    name: "Notion",
+    description: "Connected workspace for notes, docs, projects, and knowledge management.",
+    category: "Productivity",
+    categories: ["collaboration", "focus"],
+    complexity: "medium",
+    setupComplexity: "simple",
+    url: "https://notion.so"
+  }];
   const getUseCase = (tool: any, index: number) => {
     if (!userPreferences) {
       // Default use cases
@@ -142,25 +220,16 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
         return "Productivity optimization";
     }
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-foreground mb-2">Your AI Productivity Toolkit</h2>
           <p className="text-muted-foreground">
-            {userPreferences 
-              ? `Personalized tools for ${userPreferences.priority} and ${userPreferences.experienceLevel} users`
-              : "Curated tools matched to your workflow — handpicked to boost focus, output, and clarity at every step of your day."
-            }
+            {userPreferences ? `Personalized tools for ${userPreferences.priority} and ${userPreferences.experienceLevel} users` : "Curated tools matched to your workflow — handpicked to boost focus, output, and clarity at every step of your day."}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            onClick={() => setShowSurvey(true)}
-            className="rounded-xl border-teal-300 text-teal-700 hover:bg-teal-50"
-          >
+          <Button variant="outline" onClick={() => setShowSurvey(true)} className="rounded-xl border-teal-300 text-teal-700 hover:bg-teal-50">
             <Settings className="w-4 h-4 mr-2" />
             Personalize My Toolkit
           </Button>
@@ -171,30 +240,20 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
         </div>
       </div>
 
-      <PersonalizationSurvey
-        isOpen={showSurvey}
-        onClose={() => setShowSurvey(false)}
-        onComplete={handlePersonalizationComplete}
-      />
+      <PersonalizationSurvey isOpen={showSurvey} onClose={() => setShowSurvey(false)} onComplete={handlePersonalizationComplete} />
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {personalizedTools.map((tool, index) => (
-          <Card key={index} className="p-6 hover:shadow-md transition-all duration-200">
+        {personalizedTools.map((tool, index) => <Card key={index} className="p-6 hover:shadow-md transition-all duration-200">
             <div className="space-y-4">
               {/* Tool header */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-primary/20 p-2">
-                    <img 
-                      src={`https://logo.clearbit.com/${tool.name.toLowerCase().replace(/\s+/g, '')}.com`}
-                      alt={`${tool.name} logo`}
-                      className="w-full h-full object-contain"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        target.nextElementSibling?.classList.remove('hidden');
-                      }}
-                    />
+                    <img src={`https://logo.clearbit.com/${tool.name.toLowerCase().replace(/\s+/g, '')}.com`} alt={`${tool.name} logo`} className="w-full h-full object-contain" onError={e => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  target.nextElementSibling?.classList.remove('hidden');
+                }} />
                     <Zap className="w-5 h-5 text-primary hidden" />
                   </div>
                   <div>
@@ -236,11 +295,7 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
 
               {/* Action buttons */}
               <div className="flex gap-3">
-                <Button 
-                  size="sm" 
-                  className="flex-1 rounded-xl bg-teal-600 hover:bg-teal-700"
-                  onClick={() => window.open(tool.url || tool.affiliateLink || '#', '_blank')}
-                >
+                <Button size="sm" className="flex-1 rounded-xl bg-teal-600 hover:bg-teal-700" onClick={() => window.open(tool.url || tool.affiliateLink || '#', '_blank')}>
                   <ExternalLink className="w-4 h-4 mr-2" />
                   Try {tool.name}
                 </Button>
@@ -249,33 +304,13 @@ export const AIStackSection = ({ plan, responses }: AIStackSectionProps) => {
                 </Button>
               </div>
             </div>
-          </Card>
-        ))}
+          </Card>)}
       </div>
 
       {/* Toolkit summary */}
-      <Card className="p-6 bg-gradient-to-r from-teal-50 to-blue-50 border-teal-200">
-        <div className="text-center">
-          <h4 className="font-semibold text-foreground mb-2">Your Complete AI Productivity Toolkit</h4>
-          <p className="text-muted-foreground text-sm mb-4">
-            {userPreferences 
-              ? `These ${userPreferences.experienceLevel}-friendly tools are perfect for ${userPreferences.priority} workflows`
-              : `These tools work together to address your main challenge: ${responses.productivityStruggle.toLowerCase()}`
-            }
-          </p>
-          <div className="flex justify-center gap-3">
-            <Button variant="outline" className="rounded-xl border-teal-300 text-teal-700 hover:bg-teal-50">
-              Download Tool List
-            </Button>
-            <Button className="rounded-xl bg-teal-600 hover:bg-teal-700">
-              Get All Tools (Save 40%)
-            </Button>
-          </div>
-        </div>
-      </Card>
+      
 
       {/* System Upgrade Waitlist */}
       <SystemUpgradeWaitlist />
-    </div>
-  );
+    </div>;
 };
