@@ -116,86 +116,80 @@ export const UpgradeAssistantSection = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3 mb-6">
+    <div className="space-y-4">
+      <div className="flex items-center gap-3 mb-4">
         <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
           <Rocket className="w-4 h-4 text-white" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Brain Bytes Pro</h2>
+          <h2 className="text-xl font-bold text-foreground">Brain Bytes Pro</h2>
           <p className="text-sm text-muted-foreground">Unlock the premium version of your AI productivity assistant</p>
         </div>
       </div>
 
       {/* Main Upgrade Card */}
-      <Card className="p-8 bg-gradient-to-br from-primary/8 via-accent/8 to-success/8 border border-primary/30 relative overflow-hidden">
+      <Card className="p-4 bg-gradient-to-br from-primary/8 via-accent/8 to-success/8 border border-primary/30 relative overflow-hidden">
         {/* Background gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-teal-500/5 to-blue-500/5" />
         
-        <div className="relative text-center space-y-8">
-          <div className="space-y-4">
-            {/* Enrollment Status Badge with Animation */}
+        <div className="relative text-center space-y-4">
+          <div className="space-y-2">
+            {/* Enrollment Status Badge - Static with Hover */}
             <div className="inline-flex items-center justify-center">
-              <Badge className="bg-gradient-to-r from-primary/20 to-accent/20 text-primary border-primary/40 px-4 py-2 text-sm font-medium animate-pulse">
-                <span className="w-2 h-2 bg-primary rounded-full mr-2 animate-pulse"></span>
+              <Badge className="bg-gradient-to-r from-primary/20 to-accent/20 text-primary border-primary/40 px-3 py-1 text-xs font-medium hover:scale-105 hover:shadow-md transition-all duration-300 cursor-pointer">
+                <span className="w-2 h-2 bg-primary rounded-full mr-2"></span>
                 Enrollment Currently Closed — Join Waitlist
               </Badge>
             </div>
             
-            <h3 className="text-3xl font-bold text-foreground">
+            <h3 className="text-xl font-bold text-foreground">
               Brain Bytes Pro
             </h3>
-            <p className="text-lg text-muted-foreground">
-              Unlock the premium version of your AI productivity assistant
-            </p>
           </div>
 
           {/* Enhanced Pricing Display */}
-          <div className="space-y-3">
-            <div className="inline-block p-6 bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl border border-primary/20">
-              <div className="text-6xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          <div className="space-y-2">
+            <div className="inline-block p-3 bg-gradient-to-br from-primary/10 to-accent/10 rounded-xl border border-primary/20">
+              <div className="text-3xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
                 $149
               </div>
-              <div className="text-lg font-semibold text-foreground mt-2">
-                One-Time Payment
+              <div className="text-sm font-semibold text-foreground">
+                — One-Time Payment
               </div>
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground">
                 No subscriptions. Lifetime access.
               </p>
             </div>
           </div>
 
           {/* Features Grid - Individual Cards */}
-          <div className="grid gap-6 my-8">
+          <div className="grid gap-3 my-4">
             {proFeatures.map((feature, index) => {
               const Icon = feature.icon;
               return (
                 <Card 
                   key={index} 
-                  className={`group relative p-6 bg-gradient-to-br ${feature.bgGradient} backdrop-blur-sm border border-primary/20 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:border-primary/30`}
-                  style={{
-                    animationDelay: `${index * 150}ms`
-                  }}
+                  className={`group relative p-3 bg-gradient-to-br ${feature.bgGradient} backdrop-blur-sm border border-primary/20 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.01] hover:border-primary/30`}
                 >
                   {/* Background glow effect */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgGradient} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgGradient} rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
                   
-                  <div className="relative flex items-start gap-5 text-left">
-                    <div className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
-                      <Icon className="w-8 h-8 text-white" />
+                  <div className="relative flex items-start gap-3 text-left">
+                    <div className={`w-10 h-10 bg-gradient-to-br ${feature.gradient} rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:scale-105`}>
+                      <Icon className="w-5 h-5 text-white" />
                     </div>
-                    <div className="space-y-3 flex-1">
-                      <h4 className="font-bold text-foreground text-xl leading-tight group-hover:text-primary transition-colors duration-300">
+                    <div className="space-y-1 flex-1">
+                      <h4 className="font-semibold text-foreground text-sm leading-tight group-hover:text-primary transition-colors duration-300">
                         {feature.title}
                       </h4>
-                      <p className="text-muted-foreground leading-relaxed text-base">
+                      <p className="text-muted-foreground leading-relaxed text-xs">
                         {feature.description}
                       </p>
                     </div>
                   </div>
                   
                   {/* Corner accent with feature-specific color */}
-                  <div className={`absolute top-4 right-4 w-2 h-2 bg-gradient-to-br ${feature.gradient} rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300`} />
+                  <div className={`absolute top-2 right-2 w-1.5 h-1.5 bg-gradient-to-br ${feature.gradient} rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300`} />
                 </Card>
               );
             })}
@@ -207,66 +201,45 @@ export const UpgradeAssistantSection = () => {
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
             </div>
           ) : !isJoined ? (
-            <div className="space-y-4">
+            <div className="space-y-2">
               <Button 
                 onClick={handleWaitlistJoin}
                 disabled={isLoading}
-                size="lg"
-                className="rounded-xl px-12 py-4 text-lg bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white transform scale-110"
+                size="default"
+                className="rounded-lg px-8 py-2 text-sm bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white"
               >
                 {isLoading ? (
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
-                  <Star className="w-5 h-5 mr-2" />
+                  <Star className="w-4 h-4 mr-2" />
                 )}
                 Join Waitlist
               </Button>
-              <p className="text-sm text-muted-foreground">
-                Join the waitlist to get early access when enrollment opens
+              <p className="text-xs text-muted-foreground">
+                Get early access when enrollment opens
               </p>
             </div>
           ) : (
-            <div className="text-center space-y-4 animate-fade-in">
-              <div className="relative">
-                <CheckCircle className="w-16 h-16 text-green-500 mx-auto animate-pulse" />
-                {/* Success animation sparkles */}
-                <div className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full animate-ping"></div>
-                <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-green-400 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
-                <div className="absolute top-1 left-1 w-2 h-2 bg-blue-400 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
-              </div>
+            <div className="text-center space-y-2 animate-fade-in">
+              <CheckCircle className="w-8 h-8 text-green-500 mx-auto" />
               
-              <div className="space-y-2">
-                <h4 className="font-bold text-foreground text-xl">✅ You're on the waitlist!</h4>
-                <p className="text-muted-foreground">
+              <div className="space-y-1">
+                <h4 className="font-semibold text-foreground text-sm">✅ You're on the waitlist!</h4>
+                <p className="text-muted-foreground text-xs">
                   We'll notify you when enrollment opens
                 </p>
               </div>
               
               <Button 
                 disabled
-                size="lg"
-                className="rounded-xl px-12 py-4 text-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-600 cursor-not-allowed transform scale-110 border border-green-300/30"
+                size="sm"
+                className="rounded-lg px-6 py-2 text-sm bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-600 cursor-not-allowed border border-green-300/30"
               >
-                <CheckCircle className="w-5 h-5 mr-2" />
-                ✅ You're on the waitlist!
+                <CheckCircle className="w-4 h-4 mr-2" />
+                On Waitlist
               </Button>
             </div>
           )}
-        </div>
-      </Card>
-
-      {/* Current Plan Info */}
-      <Card className="p-4 bg-white/50 backdrop-blur-sm border border-primary/10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center">
-            <CheckCircle className="w-5 h-5 text-success" />
-          </div>
-          <div>
-            <h4 className="font-medium text-foreground">Current Plan: Brain Bytes Basic</h4>
-            <p className="text-sm text-muted-foreground">
-              You have access to personalized AI plans, focus playlists, and productivity tools
-            </p>
-          </div>
         </div>
       </Card>
     </div>
