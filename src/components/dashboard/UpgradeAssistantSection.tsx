@@ -224,7 +224,7 @@ export const UpgradeAssistantSection = () => {
               <CheckCircle className="w-8 h-8 text-green-500 mx-auto" />
               
               <div className="space-y-1">
-                <h4 className="font-semibold text-foreground text-sm">✅ You're on the waitlist!</h4>
+                <h4 className="font-semibold text-foreground text-sm">You're on the waitlist!</h4>
                 <p className="text-muted-foreground text-xs">
                   We'll notify you when enrollment opens
                 </p>
@@ -235,7 +235,6 @@ export const UpgradeAssistantSection = () => {
                 size="sm"
                 className="rounded-lg px-6 py-2 text-sm bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-600 cursor-not-allowed border border-green-300/30"
               >
-                <CheckCircle className="w-4 h-4 mr-2" />
                 On Waitlist
               </Button>
             </div>
