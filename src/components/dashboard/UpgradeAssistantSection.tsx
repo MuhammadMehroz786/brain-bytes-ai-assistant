@@ -129,9 +129,9 @@ export const UpgradeAssistantSection = () => {
 
       {/* Enrollment Status Badge - More Prominent */}
       <div className="text-center mb-4">
-        <Badge className="bg-gradient-to-r from-red-500/90 to-orange-500/90 text-white border-red-400/50 px-4 py-2 text-sm font-bold hover:scale-105 hover:shadow-lg transition-all duration-300 cursor-pointer shadow-md">
-          <span className="w-3 h-3 bg-white rounded-full mr-2 animate-pulse"></span>
-          🚫 ENROLLMENT CURRENTLY CLOSED — JOIN WAITLIST
+        <Badge className="bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 border-orange-200 px-3 py-1 text-xs font-medium hover:scale-102 hover:shadow-sm transition-all duration-300 cursor-pointer">
+          <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+          Enrollment Currently Closed — Join Waitlist
         </Badge>
       </div>
 
