@@ -18,17 +18,23 @@ const proFeatures = [
   {
     icon: Bot,
     title: "Custom GPT Dashboard",
-    description: "Create your own private AI assistant, trained on your unique workflows and productivity needs. Access it directly from your dashboard or ChatGPT."
+    description: "Create your own private AI assistant, trained on your unique workflows and productivity needs. Access it directly from your dashboard or ChatGPT.",
+    gradient: "from-blue-500 to-purple-600",
+    bgGradient: "from-blue-500/5 to-purple-600/10"
   },
   {
     icon: Zap,
     title: "Automation Template Vault",
-    description: "Save hours with plug-and-play automation templates for Make.com and Zapier. From AI content creation to daily task management—just copy, paste, and run."
+    description: "Save hours with plug-and-play automation templates for Make.com and Zapier. From AI content creation to daily task management—just copy, paste, and run.",
+    gradient: "from-yellow-500 to-orange-600",
+    bgGradient: "from-yellow-500/5 to-orange-600/10"
   },
   {
     icon: MessageSquare,
     title: "AI Productivity Coach (WhatsApp or Slack)",
-    description: "A real-time productivity companion that checks in with you, adjusts your plan, and provides live support throughout your day. You choose whether to pair it with WhatsApp or Slack."
+    description: "A real-time productivity companion that checks in with you, adjusts your plan, and provides live support throughout your day. You choose whether to pair it with WhatsApp or Slack.",
+    gradient: "from-green-500 to-teal-600",
+    bgGradient: "from-green-500/5 to-teal-600/10"
   }
 ];
 
@@ -122,12 +128,20 @@ export const UpgradeAssistantSection = () => {
       </div>
 
       {/* Main Upgrade Card */}
-      <Card className="p-8 bg-gradient-to-br from-primary/5 via-accent/5 to-success/5 border border-primary/20">
-        <div className="text-center space-y-6">
-          <div className="space-y-2">
-            <Badge className="bg-primary/20 text-primary border-primary/30 mb-4">
-              Enrollment Currently Closed
-            </Badge>
+      <Card className="p-8 bg-gradient-to-br from-primary/8 via-accent/8 to-success/8 border border-primary/30 relative overflow-hidden">
+        {/* Background gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-teal-500/5 to-blue-500/5" />
+        
+        <div className="relative text-center space-y-8">
+          <div className="space-y-4">
+            {/* Enrollment Status Badge with Animation */}
+            <div className="inline-flex items-center justify-center">
+              <Badge className="bg-gradient-to-r from-primary/20 to-accent/20 text-primary border-primary/40 px-4 py-2 text-sm font-medium animate-pulse">
+                <span className="w-2 h-2 bg-primary rounded-full mr-2 animate-pulse"></span>
+                Enrollment Currently Closed — Join Waitlist
+              </Badge>
+            </div>
+            
             <h3 className="text-3xl font-bold text-foreground">
               Brain Bytes Pro
             </h3>
@@ -136,46 +150,53 @@ export const UpgradeAssistantSection = () => {
             </p>
           </div>
 
-          {/* Pricing */}
-          <div className="space-y-2">
-            <div className="text-4xl font-bold text-primary">$149</div>
-            <p className="text-sm text-muted-foreground">
-              One-time fee
-            </p>
+          {/* Enhanced Pricing Display */}
+          <div className="space-y-3">
+            <div className="inline-block p-6 bg-gradient-to-br from-primary/10 to-accent/10 rounded-2xl border border-primary/20">
+              <div className="text-6xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+                $149
+              </div>
+              <div className="text-lg font-semibold text-foreground mt-2">
+                One-Time Payment
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">
+                No subscriptions. Lifetime access.
+              </p>
+            </div>
           </div>
 
-          {/* Features Grid */}
-          <div className="grid gap-4 my-6">
+          {/* Features Grid - Individual Cards */}
+          <div className="grid gap-6 my-8">
             {proFeatures.map((feature, index) => {
               const Icon = feature.icon;
               return (
-                <div 
+                <Card 
                   key={index} 
-                  className="group relative p-4 bg-gradient-to-br from-white/80 via-primary/5 to-accent/10 backdrop-blur-sm border border-primary/20 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] hover:border-primary/30"
+                  className={`group relative p-6 bg-gradient-to-br ${feature.bgGradient} backdrop-blur-sm border border-primary/20 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:border-primary/30`}
                   style={{
                     animationDelay: `${index * 150}ms`
                   }}
                 >
                   {/* Background glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgGradient} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
                   
-                  <div className="relative flex items-start gap-4 text-left">
-                    <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                      <Icon className="w-6 h-6 text-white" />
+                  <div className="relative flex items-start gap-5 text-left">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}>
+                      <Icon className="w-8 h-8 text-white" />
                     </div>
-                    <div className="space-y-2 flex-1">
-                      <h4 className="font-bold text-foreground text-lg leading-tight group-hover:text-primary transition-colors duration-300">
+                    <div className="space-y-3 flex-1">
+                      <h4 className="font-bold text-foreground text-xl leading-tight group-hover:text-primary transition-colors duration-300">
                         {feature.title}
                       </h4>
-                      <p className="text-muted-foreground leading-relaxed text-sm">
+                      <p className="text-muted-foreground leading-relaxed text-base">
                         {feature.description}
                       </p>
                     </div>
                   </div>
                   
-                  {/* Corner accent */}
-                  <div className="absolute top-3 right-3 w-1.5 h-1.5 bg-gradient-to-br from-primary to-accent rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
+                  {/* Corner accent with feature-specific color */}
+                  <div className={`absolute top-4 right-4 w-2 h-2 bg-gradient-to-br ${feature.gradient} rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300`} />
+                </Card>
               );
             })}
           </div>
@@ -205,19 +226,29 @@ export const UpgradeAssistantSection = () => {
               </p>
             </div>
           ) : (
-            <div className="text-center space-y-3">
-              <CheckCircle className="w-12 h-12 text-green-500 mx-auto" />
-              <h4 className="font-semibold text-foreground">🎉 You're on the waitlist!</h4>
-              <p className="text-sm text-muted-foreground">
-                We'll notify you when enrollment opens
-              </p>
+            <div className="text-center space-y-4 animate-fade-in">
+              <div className="relative">
+                <CheckCircle className="w-16 h-16 text-green-500 mx-auto animate-pulse" />
+                {/* Success animation sparkles */}
+                <div className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full animate-ping"></div>
+                <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-green-400 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
+                <div className="absolute top-1 left-1 w-2 h-2 bg-blue-400 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
+              </div>
+              
+              <div className="space-y-2">
+                <h4 className="font-bold text-foreground text-xl">✅ You're on the waitlist!</h4>
+                <p className="text-muted-foreground">
+                  We'll notify you when enrollment opens
+                </p>
+              </div>
+              
               <Button 
                 disabled
                 size="lg"
-                className="rounded-xl px-12 py-4 text-lg bg-green-500/20 text-green-600 cursor-not-allowed transform scale-110"
+                className="rounded-xl px-12 py-4 text-lg bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-600 cursor-not-allowed transform scale-110 border border-green-300/30"
               >
                 <CheckCircle className="w-5 h-5 mr-2" />
-                ✔️ Waitlist Joined
+                ✅ You're on the waitlist!
               </Button>
             </div>
           )}
