@@ -145,36 +145,36 @@ export const UpgradeAssistantSection = () => {
           </div>
 
           {/* Features Grid */}
-          <div className="grid gap-8 my-12">
+          <div className="grid gap-4 my-6">
             {proFeatures.map((feature, index) => {
               const Icon = feature.icon;
               return (
                 <div 
                   key={index} 
-                  className="group relative p-8 bg-gradient-to-br from-white/80 via-primary/5 to-accent/10 backdrop-blur-sm border border-primary/20 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] hover:border-primary/30"
+                  className="group relative p-4 bg-gradient-to-br from-white/80 via-primary/5 to-accent/10 backdrop-blur-sm border border-primary/20 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.01] hover:border-primary/30"
                   style={{
                     animationDelay: `${index * 150}ms`
                   }}
                 >
                   {/* Background glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
-                  <div className="relative flex items-start gap-6 text-left">
-                    <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
-                      <Icon className="w-8 h-8 text-white" />
+                  <div className="relative flex items-start gap-4 text-left">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                      <Icon className="w-6 h-6 text-white" />
                     </div>
-                    <div className="space-y-3 flex-1">
-                      <h4 className="font-bold text-foreground text-xl leading-tight group-hover:text-primary transition-colors duration-300">
+                    <div className="space-y-2 flex-1">
+                      <h4 className="font-bold text-foreground text-lg leading-tight group-hover:text-primary transition-colors duration-300">
                         {feature.title}
                       </h4>
-                      <p className="text-muted-foreground leading-relaxed text-base">
+                      <p className="text-muted-foreground leading-relaxed text-sm">
                         {feature.description}
                       </p>
                     </div>
                   </div>
                   
                   {/* Corner accent */}
-                  <div className="absolute top-4 right-4 w-2 h-2 bg-gradient-to-br from-primary to-accent rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute top-3 right-3 w-1.5 h-1.5 bg-gradient-to-br from-primary to-accent rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               );
             })}
