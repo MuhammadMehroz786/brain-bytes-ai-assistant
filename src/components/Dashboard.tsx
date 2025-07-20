@@ -269,10 +269,6 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
       {/* Footer */}
       <div className="p-3 sm:p-4 border-t border-primary/10">
         <div className="bg-gradient-to-r from-primary/5 to-accent/5 rounded-xl p-3 sm:p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Star className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
-            <span className="text-xs sm:text-sm font-medium text-foreground">Premium Plan</span>
-          </div>
           <p className="text-xs text-muted-foreground">
             Unlock automation and advanced integrations
           </p>

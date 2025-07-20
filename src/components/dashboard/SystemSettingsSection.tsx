@@ -17,8 +17,6 @@ import { useToast } from "@/hooks/use-toast";
 
 export const SystemSettingsSection = () => {
   const [emailNotifications, setEmailNotifications] = useState(true);
-  const [dailySummary, setDailySummary] = useState(false);
-  const [focusReminders, setFocusReminders] = useState(true);
   const { toast } = useToast();
 
   const handleSaveSettings = () => {
@@ -68,32 +66,6 @@ export const SystemSettingsSection = () => {
               <Switch 
                 checked={emailNotifications}
                 onCheckedChange={setEmailNotifications}
-              />
-            </div>
-
-            <Separator />
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <Label className="text-sm font-medium">Daily Summary Emails</Label>
-                <p className="text-xs text-muted-foreground">Morning productivity reports and tips</p>
-              </div>
-              <Switch 
-                checked={dailySummary}
-                onCheckedChange={setDailySummary}
-              />
-            </div>
-
-            <Separator />
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <Label className="text-sm font-medium">Focus Reminders</Label>
-                <p className="text-xs text-muted-foreground">Gentle nudges to stay on track</p>
-              </div>
-              <Switch 
-                checked={focusReminders}
-                onCheckedChange={setFocusReminders}
               />
             </div>
           </div>
