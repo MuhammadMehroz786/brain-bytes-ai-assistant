@@ -150,21 +150,6 @@ export const UpgradeAssistantSection = () => {
             </p>
           </div>
 
-          {/* Enhanced Pricing Display */}
-          <div className="space-y-2">
-            <div className="inline-block p-3 bg-gradient-to-br from-primary/10 to-accent/10 rounded-xl border border-primary/20">
-              <div className="text-3xl font-bold bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
-                $149
-              </div>
-              <div className="text-sm font-semibold text-foreground">
-                — One-Time Payment
-              </div>
-              <p className="text-xs text-muted-foreground">
-                No subscriptions. Lifetime access.
-              </p>
-            </div>
-          </div>
-
           {/* Features Grid - Individual Cards */}
           <div className="grid gap-3 my-4">
             {proFeatures.map((feature, index) => {
