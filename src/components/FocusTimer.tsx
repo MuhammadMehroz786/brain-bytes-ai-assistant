@@ -83,8 +83,8 @@ export const FocusTimer = ({ onExit, onComplete }: FocusTimerProps) => {
       });
 
       toast({
-        title: "🎉 Focus Session Complete!",
-        description: "Great job! You've completed your 30-minute focus session.",
+        title: "Great job! Your focus session is complete.",
+        description: "Want to reflect or start another session?",
       });
 
       // Show confetti animation
@@ -160,8 +160,8 @@ export const FocusTimer = ({ onExit, onComplete }: FocusTimerProps) => {
       <Card className="p-12 bg-white/90 backdrop-blur-sm border-primary/20 text-center max-w-md mx-auto">
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Focus Session</h1>
-            <p className="text-muted-foreground">Stay focused, you've got this!</p>
+            <h1 className="text-3xl font-bold text-foreground mb-2">Focus Mode Started!</h1>
+            <p className="text-muted-foreground">Your 30-minute deep work sprint is now running. Minimize distractions—I'll notify you when time's up.</p>
           </div>
 
           {/* Large Timer Display */}
