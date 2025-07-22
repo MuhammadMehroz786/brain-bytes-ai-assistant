@@ -144,29 +144,29 @@ export const FocusTimer = ({ onExit, onComplete }: FocusTimerProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-primary-light via-accent-light to-success-light z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-gradient-to-br from-primary-light via-accent-light to-success-light z-50 flex items-center justify-center p-4 overflow-hidden">
       {/* Exit Button */}
       <Button
         variant="ghost"
         size="sm"
         onClick={handleExit}
-        className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 text-white border-white/30 rounded-xl"
+        className="absolute top-4 right-4 bg-foreground/10 hover:bg-foreground/20 text-foreground border-foreground/20 rounded-xl"
       >
         <X className="w-4 h-4 mr-2" />
         Leave Focus Mode
       </Button>
 
       {/* Main Timer */}
-      <Card className="p-12 bg-white/90 backdrop-blur-sm border-primary/20 text-center max-w-md mx-auto">
-        <div className="space-y-8">
+      <Card className="p-8 md:p-12 bg-white/90 backdrop-blur-sm border-primary/20 text-center w-full max-w-md mx-auto">
+        <div className="space-y-6 md:space-y-8">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Focus Mode Started!</h1>
-            <p className="text-muted-foreground">Your 30-minute deep work sprint is now running. Minimize distractions—I'll notify you when time's up.</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Focus Mode Started!</h1>
+            <p className="text-muted-foreground text-sm md:text-base">Your 30-minute deep work sprint is now running. Minimize distractions—I'll notify you when time's up.</p>
           </div>
 
           {/* Large Timer Display */}
-          <div className="py-8">
-            <div className="text-8xl font-bold text-primary mb-4 font-mono">
+          <div className="py-6 md:py-8">
+            <div className="text-6xl md:text-8xl font-bold text-primary mb-4 font-mono">
               {formatTime(timeLeft)}
             </div>
             <div className="w-full bg-muted rounded-full h-2">

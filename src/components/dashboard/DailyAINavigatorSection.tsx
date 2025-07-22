@@ -151,24 +151,6 @@ export const DailyAINavigatorSection = ({ plan, responses, todaysPriority }: Dai
         </Button>
       </div>
 
-      {/* Yesterday's Recap */}
-      <Card className="p-4 bg-gradient-to-r from-success/5 to-primary/5 border-success/20">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-success/10 rounded-lg flex items-center justify-center border border-success/20">
-              <Clock className="w-4 h-4 text-success" />
-            </div>
-            <div>
-              <h4 className="font-medium text-foreground">Yesterday's Recap</h4>
-              <p className="text-sm text-muted-foreground">You focused for 2h yesterday. Want to increase or maintain that today?</p>
-            </div>
-          </div>
-          <Button variant="outline" size="sm" onClick={refreshContent} className="rounded-xl">
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Regenerate Today's Plan
-          </Button>
-        </div>
-      </Card>
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* Today's AI Tip */}

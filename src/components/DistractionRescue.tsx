@@ -15,127 +15,82 @@ interface DistractionRescueProps {
 }
 
 export const DistractionRescue = ({ isOpen, onClose }: DistractionRescueProps) => {
-  const [selectedOption, setSelectedOption] = useState<'sprint' | 'reset' | 'easier' | null>(null);
-  const [sprintTimeLeft, setSprintTimeLeft] = useState(300); // 5 minutes in seconds
-  const [isSprintActive, setIsSprintActive] = useState(false);
+  const [step, setStep] = useState<'ask' | 'coaching' | 'followup'>('ask');
   const [userInput, setUserInput] = useState("");
-  const [aiResponse, setAiResponse] = useState("");
-  const [isLoadingAI, setIsLoadingAI] = useState(false);
-  const [sprintCompleted, setSprintCompleted] = useState(false);
+  const [coachingResponse, setCoachingResponse] = useState("");
+  const [isLoadingResponse, setIsLoadingResponse] = useState(false);
   const { toast } = useToast();
 
-  // Sprint timer effect
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isSprintActive && sprintTimeLeft > 0) {
-      interval = setInterval(() => {
-        setSprintTimeLeft(prev => {
-          if (prev <= 1) {
-            setIsSprintActive(false);
-            setSprintCompleted(true);
-            toast({
-              title: "Sprint Complete! 🎉",
-              description: "Nice job! You're back in focus.",
-            });
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+  const generateCoachingResponse = (input: string) => {
+    const inputLower = input.toLowerCase();
+    
+    if (inputLower.includes('email') || inputLower.includes('inbox')) {
+      return "Overwhelmed by emails is normal. Let's contain it: Set a 10-minute timer, reply to only 3 urgent messages, then close your inbox. You'll feel lighter without losing your flow.";
     }
-    return () => clearInterval(interval);
-  }, [isSprintActive, sprintTimeLeft, toast]);
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    
+    if (inputLower.includes('social media') || inputLower.includes('phone') || inputLower.includes('scroll')) {
+      return "Thanks for being honest! Put your phone in another room for 30 mins or try the Focus Mode timer right now. Let's protect your brain space.";
+    }
+    
+    if (inputLower.includes('stress') || inputLower.includes('anxious') || inputLower.includes('worry') || inputLower.includes('thoughts')) {
+      return "Got it. Open your Brain Dump and write down everything on your mind for 2 minutes. That will clear mental space so you can focus again.";
+    }
+    
+    if (inputLower.includes('tired') || inputLower.includes('energy') || inputLower.includes('sleepy')) {
+      return "Your energy is signaling something important. Take a 5-minute walk or do 10 jumping jacks to reset your system. Sometimes we need to move before we can focus.";
+    }
+    
+    if (inputLower.includes('meeting') || inputLower.includes('people') || inputLower.includes('interruption')) {
+      return "Interruptions break flow, but you can reclaim it. Block 30 minutes on your calendar right now and put on noise-canceling headphones. Guard your focus like it's precious—because it is.";
+    }
+    
+    // Default response for other distractions
+    return "I hear you. Distractions are normal, but recognizing them shows self-awareness. Try this: take 3 deep breaths, remind yourself why this work matters to you, then tackle just the next 15 minutes. You've got this.";
   };
 
-  const handleQuickSprint = () => {
-    setSelectedOption('sprint');
-    setIsSprintActive(true);
-    setSprintTimeLeft(300); // Reset to 5 minutes
-    setSprintCompleted(false);
-  };
-
-  const handleMentalReset = async () => {
+  const handleSubmitDistraction = async () => {
     if (!userInput.trim()) {
       toast({
-        title: "Input Required",
-        description: "Please describe what's distracting you.",
+        title: "Tell me more",
+        description: "Please describe what's pulling your focus away.",
         variant: "destructive",
       });
       return;
     }
 
-    setIsLoadingAI(true);
-    try {
-      // Mock AI response - in a real app, you'd call your OpenAI endpoint
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const mockResponses = [
-        "I understand that feeling. Sometimes our minds wander when we're feeling overwhelmed. Try breaking your current task into smaller, 10-minute chunks. Focus on just the next small step, not the entire project.",
-        "It's completely normal to feel distracted. Take three deep breaths and remind yourself why this task matters to you. What will completing it give you? Hold onto that feeling.",
-        "Distractions often signal that we need a moment to reset. Consider this: what would make you feel most accomplished by the end of today? Start there, even if it's just for 15 minutes.",
-        "You're not alone in this struggle. Every productive person has moments like these. The fact that you're addressing it shows self-awareness. Now, what's the smallest possible action you can take right now?"
-      ];
-      
-      const response = mockResponses[Math.floor(Math.random() * mockResponses.length)];
-      setAiResponse(response);
-      
-      toast({
-        title: "Mindful Response Ready",
-        description: "Take a moment to read this thoughtful perspective.",
-      });
-    } catch (error) {
-      console.error('Error getting AI response:', error);
-      toast({
-        title: "Error",
-        description: "Failed to get response. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoadingAI(false);
-    }
+    setIsLoadingResponse(true);
+    
+    // Simulate thinking time for more natural feel
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    const response = generateCoachingResponse(userInput);
+    setCoachingResponse(response);
+    setStep('coaching');
+    setIsLoadingResponse(false);
   };
 
-  const handleEasierTask = async () => {
-    setSelectedOption('easier');
+  const handleLogDistraction = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("User not authenticated");
-
-      // Mock reordering logic
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Tasks Reordered",
-        description: "Moved the easiest task to the top of your focus stack.",
-      });
-      
-      // Close after showing success
-      setTimeout(() => {
-        onClose();
-      }, 1500);
+      if (user && userInput.trim()) {
+        // In a real app, you'd log this to a distractions table
+        toast({
+          title: "Distraction logged",
+          description: "This will help us spot patterns and improve your focus over time.",
+        });
+      }
     } catch (error) {
-      console.error('Error reordering tasks:', error);
-      toast({
-        title: "Error",
-        description: "Failed to reorder tasks. Please try again.",
-        variant: "destructive",
-      });
+      console.error('Error logging distraction:', error);
     }
+    
+    handleClose();
   };
 
   const resetState = () => {
-    setSelectedOption(null);
-    setSprintTimeLeft(300);
-    setIsSprintActive(false);
+    setStep('ask');
     setUserInput("");
-    setAiResponse("");
-    setIsLoadingAI(false);
-    setSprintCompleted(false);
+    setCoachingResponse("");
+    setIsLoadingResponse(false);
   };
 
   const handleClose = () => {
@@ -143,102 +98,15 @@ export const DistractionRescue = ({ isOpen, onClose }: DistractionRescueProps) =
     onClose();
   };
 
-  // Sprint view
-  if (selectedOption === 'sprint') {
-    return (
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <div className="flex items-center justify-between">
-              <DialogTitle className="text-xl font-bold text-foreground">
-                Quick Focus Sprint
-              </DialogTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleClose}
-                className="h-8 w-8 p-0"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-          </DialogHeader>
-
-          <div className="space-y-6 pt-4">
-            {sprintCompleted ? (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 bg-gradient-to-br from-success/20 to-success/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle2 className="w-8 h-8 text-success" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">Sprint Complete!</h3>
-                <p className="text-muted-foreground mb-6">Nice job! You're back in focus.</p>
-                <Button onClick={handleClose} className="w-full rounded-2xl">
-                  Continue Working
-                </Button>
-              </div>
-            ) : (
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Timer className="w-8 h-8 text-primary" />
-                </div>
-                <div className="text-4xl font-bold text-foreground mb-2">
-                  {formatTime(sprintTimeLeft)}
-                </div>
-                <p className="text-muted-foreground mb-6">
-                  Stay focused for this quick sprint. You've got this!
-                </p>
-                
-                <div className="mb-6">
-                  <Progress 
-                    value={((300 - sprintTimeLeft) / 300) * 100} 
-                    className="h-2" 
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  {!isSprintActive ? (
-                    <Button 
-                      onClick={() => setIsSprintActive(true)} 
-                      className="w-full rounded-2xl bg-gradient-to-r from-primary to-accent"
-                    >
-                      <Timer className="w-4 h-4 mr-2" />
-                      Start Sprint
-                    </Button>
-                  ) : (
-                    <Button 
-                      variant="outline"
-                      onClick={() => setIsSprintActive(false)} 
-                      className="w-full rounded-2xl"
-                    >
-                      Pause
-                    </Button>
-                  )}
-                  
-                  <Button 
-                    variant="ghost"
-                    onClick={handleClose} 
-                    className="w-full rounded-2xl text-muted-foreground"
-                  >
-                    Cancel Sprint
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  // Mental reset view
-  if (selectedOption === 'reset') {
+  // Step 1: Ask what's distracting
+  if (step === 'ask') {
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <div className="flex items-center justify-between">
               <DialogTitle className="text-xl font-bold text-foreground">
-                Mental Reset
+                Let's Get You Back on Track
               </DialogTitle>
               <Button
                 variant="ghost"
@@ -253,78 +121,51 @@ export const DistractionRescue = ({ isOpen, onClose }: DistractionRescueProps) =
 
           <div className="space-y-6 pt-4">
             <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-accent/20 to-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <Brain className="w-6 h-6 text-accent" />
+              <div className="w-12 h-12 bg-gradient-to-br from-warning/20 to-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <Brain className="w-6 h-6 text-warning" />
               </div>
-              <p className="text-muted-foreground">
-                Let's understand what's pulling your attention away and find a gentle way back to focus.
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                What's pulling your focus away right now?
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                Be specific so I can give you the most helpful guidance.
               </p>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-foreground mb-2 block">
-                  What's distracting you right now?
-                </label>
-                <Textarea
-                  value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  placeholder="I'm feeling overwhelmed by..."
-                  className="rounded-xl resize-none"
-                  rows={3}
-                />
-              </div>
+            <Textarea
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              placeholder="I'm getting distracted by emails / social media / my phone / random thoughts..."
+              className="rounded-xl resize-none min-h-[100px]"
+              rows={4}
+            />
 
-              {aiResponse && (
-                <Card className="p-4 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg flex items-center justify-center mt-1">
-                      <Sparkles className="w-4 h-4 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm text-foreground leading-relaxed">{aiResponse}</p>
-                    </div>
-                  </div>
-                </Card>
-              )}
-
-              <div className="space-y-3">
-                {!aiResponse ? (
-                  <Button 
-                    onClick={handleMentalReset} 
-                    disabled={!userInput.trim() || isLoadingAI}
-                    className="w-full rounded-2xl bg-gradient-to-r from-accent to-primary"
-                  >
-                    {isLoadingAI ? (
-                      <>
-                        <Brain className="w-4 h-4 mr-2 animate-pulse" />
-                        Getting mindful response...
-                      </>
-                    ) : (
-                      <>
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Get Mindful Response
-                      </>
-                    )}
-                  </Button>
+            <div className="space-y-3">
+              <Button 
+                onClick={handleSubmitDistraction} 
+                disabled={!userInput.trim() || isLoadingResponse}
+                className="w-full rounded-2xl bg-gradient-to-r from-primary to-accent"
+              >
+                {isLoadingResponse ? (
+                  <>
+                    <Brain className="w-4 h-4 mr-2 animate-pulse" />
+                    Getting your personalized coaching...
+                  </>
                 ) : (
-                  <Button 
-                    onClick={handleClose} 
-                    className="w-full rounded-2xl"
-                  >
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Ready to Refocus
-                  </Button>
+                  <>
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Get My Coaching Response
+                  </>
                 )}
-                
-                <Button 
-                  variant="ghost"
-                  onClick={handleClose} 
-                  className="w-full rounded-2xl text-muted-foreground"
-                >
-                  Maybe Later
-                </Button>
-              </div>
+              </Button>
+              
+              <Button 
+                variant="ghost"
+                onClick={handleClose} 
+                className="w-full rounded-2xl text-muted-foreground"
+              >
+                Maybe Later
+              </Button>
             </div>
           </div>
         </DialogContent>
@@ -332,14 +173,70 @@ export const DistractionRescue = ({ isOpen, onClose }: DistractionRescueProps) =
     );
   }
 
-  // Main menu view
+  // Step 2: Show coaching response
+  if (step === 'coaching') {
+    return (
+      <Dialog open={isOpen} onOpenChange={handleClose}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-xl font-bold text-foreground">
+                Your Personal Coach
+              </DialogTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClose}
+                className="h-8 w-8 p-0"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          </DialogHeader>
+
+          <div className="space-y-6 pt-4">
+            <Card className="p-5 bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl flex items-center justify-center mt-1">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-foreground leading-relaxed">{coachingResponse}</p>
+                </div>
+              </div>
+            </Card>
+
+            <div className="space-y-3">
+              <Button 
+                onClick={() => setStep('followup')} 
+                className="w-full rounded-2xl bg-gradient-to-r from-success to-primary"
+              >
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                This Helps - Let's Move Forward
+              </Button>
+              
+              <Button 
+                variant="outline"
+                onClick={() => setStep('ask')} 
+                className="w-full rounded-2xl"
+              >
+                Let Me Try Describing It Differently
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // Step 3: Follow-up action
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="text-xl font-bold text-foreground">
-              Feeling Distracted? Let's Get Back On Track
+              One More Thing
             </DialogTitle>
             <Button
               variant="ghost"
@@ -352,88 +249,31 @@ export const DistractionRescue = ({ isOpen, onClose }: DistractionRescueProps) =
           </div>
         </DialogHeader>
 
-        <div className="space-y-4 pt-4">
-          <div className="text-center mb-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-warning/20 to-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-              <Zap className="w-6 h-6 text-warning" />
+        <div className="space-y-6 pt-4">
+          <div className="text-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-success/20 to-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <CheckCircle2 className="w-6 h-6 text-success" />
             </div>
             <p className="text-muted-foreground">
-              It's okay to feel scattered sometimes. Choose your rescue strategy:
+              Would you like me to log this distraction to help spot patterns later?
             </p>
           </div>
 
-          <div className="grid gap-4">
-            {/* Option 1: Quick Focus Sprint */}
-            <Card 
-              className="p-6 border-2 border-transparent hover:border-primary/20 transition-all duration-300 cursor-pointer group"
-              onClick={handleQuickSprint}
+          <div className="space-y-3">
+            <Button 
+              onClick={handleLogDistraction} 
+              className="w-full rounded-2xl bg-gradient-to-r from-success to-primary"
             >
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-primary/10 rounded-2xl flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <Timer className="w-5 h-5 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-foreground mb-2">Quick Focus Sprint</h3>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Start a 5-minute focused work session to build momentum and get back in the zone.
-                  </p>
-                  <Badge variant="secondary" className="bg-primary/10 text-primary">
-                    <Timer className="w-3 h-3 mr-1" />
-                    5 minutes
-                  </Badge>
-                </div>
-              </div>
-            </Card>
-
-            {/* Option 2: Mental Reset */}
-            <Card 
-              className="p-6 border-2 border-transparent hover:border-accent/20 transition-all duration-300 cursor-pointer group"
-              onClick={() => setSelectedOption('reset')}
+              Yes, Log This Pattern
+            </Button>
+            
+            <Button 
+              variant="outline"
+              onClick={handleClose} 
+              className="w-full rounded-2xl"
             >
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-accent/10 rounded-2xl flex items-center justify-center group-hover:bg-accent/20 transition-colors">
-                  <Brain className="w-5 h-5 text-accent" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-foreground mb-2">Mental Reset</h3>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Share what's distracting you and get a thoughtful, personalized reframe to help you refocus.
-                  </p>
-                  <Badge variant="secondary" className="bg-accent/10 text-accent">
-                    <MessageCircle className="w-3 h-3 mr-1" />
-                    AI-powered guidance
-                  </Badge>
-                </div>
-              </div>
-            </Card>
-
-            {/* Option 3: Skip to Easier Task */}
-            <Card 
-              className="p-6 border-2 border-transparent hover:border-success/20 transition-all duration-300 cursor-pointer group"
-              onClick={handleEasierTask}
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-success/10 rounded-2xl flex items-center justify-center group-hover:bg-success/20 transition-colors">
-                  <List className="w-5 h-5 text-success" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-foreground mb-2">Skip to Easier Task</h3>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Reorder your focus stack to start with the smallest, easiest task and build momentum.
-                  </p>
-                  <Badge variant="secondary" className="bg-success/10 text-success">
-                    <ArrowRight className="w-3 h-3 mr-1" />
-                    Quick wins
-                  </Badge>
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          <div className="pt-4 border-t border-border">
-            <p className="text-xs text-muted-foreground text-center">
-              Remember: every productive person has moments like these. You're not alone.
-            </p>
+              No Thanks, Just Get Back to Work
+            </Button>
           </div>
         </div>
       </DialogContent>
