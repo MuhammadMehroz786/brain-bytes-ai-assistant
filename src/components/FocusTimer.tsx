@@ -16,7 +16,7 @@ export const FocusTimer = ({ onExit, onComplete }: FocusTimerProps) => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const { toast } = useToast();
 
-  // Create session on mount
+  // Create session on mount and lock scroll
   useEffect(() => {
     const createSession = async () => {
       try {
@@ -45,7 +45,18 @@ export const FocusTimer = ({ onExit, onComplete }: FocusTimerProps) => {
       }
     };
 
+    // Lock body scroll when component mounts
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
     createSession();
+
+    // Cleanup: restore scroll when component unmounts
+    return () => {
+      document.body.style.overflow = originalStyle;
+      document.documentElement.style.overflow = '';
+    };
   }, []);
 
   // Timer logic
@@ -144,51 +155,68 @@ export const FocusTimer = ({ onExit, onComplete }: FocusTimerProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-primary-light via-accent-light to-success-light z-[9999] flex items-center justify-center p-4" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden' }}>
-      {/* Exit Button */}
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={handleExit}
-        className="absolute top-4 right-4 bg-foreground/10 hover:bg-foreground/20 text-foreground border-foreground/20 rounded-xl z-10"
+    <>
+      {/* Full screen overlay that completely covers everything */}
+      <div 
+        className="fixed inset-0 z-[9999] bg-gradient-to-br from-primary-light via-accent-light to-success-light"
+        style={{ 
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          right: 0, 
+          bottom: 0, 
+          width: '100vw',
+          height: '100vh',
+          overflow: 'hidden'
+        }}
       >
-        <X className="w-4 h-4 mr-2" />
-        Leave Focus Mode
-      </Button>
+        <div className="flex items-center justify-center h-full w-full p-4">
+          {/* Exit Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleExit}
+            className="absolute top-4 right-4 bg-foreground/10 hover:bg-foreground/20 text-foreground border-foreground/20 rounded-xl z-10"
+          >
+            <X className="w-4 h-4 mr-2" />
+            Leave Focus Mode
+          </Button>
 
-      {/* Main Timer */}
-      <Card className="p-8 md:p-12 bg-white/90 backdrop-blur-sm border-primary/20 text-center w-full max-w-md mx-auto relative z-10">
-        <div className="space-y-6 md:space-y-8">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Focus Mode Started!</h1>
-            <p className="text-muted-foreground text-sm md:text-base">Your 30-minute deep work sprint is now running. Minimize distractions—I'll notify you when time's up.</p>
-          </div>
+          {/* Main Timer */}
+          <Card className="p-8 md:p-12 bg-white/90 backdrop-blur-sm border-primary/20 text-center w-full max-w-md mx-auto relative z-10">
+            <div className="space-y-6 md:space-y-8">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Focus Mode Started!</h1>
+                <p className="text-muted-foreground text-sm md:text-base">Your 30-minute deep work sprint is now running. Minimize distractions—I'll notify you when time's up.</p>
+              </div>
 
-          {/* Large Timer Display */}
-          <div className="py-6 md:py-8">
-            <div className="text-6xl md:text-8xl font-bold text-primary mb-4 font-mono">
-              {formatTime(timeLeft)}
+              {/* Large Timer Display */}
+              <div className="py-6 md:py-8">
+                <div className="text-6xl md:text-8xl font-bold text-primary mb-4 font-mono">
+                  {formatTime(timeLeft)}
+                </div>
+                <div className="w-full bg-muted rounded-full h-2">
+                  <div 
+                    className="h-2 bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-1000"
+                    style={{ width: `${((30 * 60 - timeLeft) / (30 * 60)) * 100}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Controls */}
+              <div className="flex gap-4 justify-center">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsActive(!isActive)}
+                  className="rounded-xl"
+                >
+                  {isActive ? 'Pause' : 'Resume'}
+                </Button>
+              </div>
             </div>
-            <div className="w-full bg-muted rounded-full h-2">
-              <div 
-                className="h-2 bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-1000"
-                style={{ width: `${((30 * 60 - timeLeft) / (30 * 60)) * 100}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Controls */}
-          <div className="flex gap-4 justify-center">
-            <Button
-              variant="outline"
-              onClick={() => setIsActive(!isActive)}
-              className="rounded-xl"
-            >
-              {isActive ? 'Pause' : 'Resume'}
-            </Button>
-          </div>
+          </Card>
         </div>
-      </Card>
+      </div>
 
       {/* Add confetti animation styles */}
       <style>{`
@@ -207,6 +235,6 @@ export const FocusTimer = ({ onExit, onComplete }: FocusTimerProps) => {
           }
         }
       `}</style>
-    </div>
+    </>
   );
 };
