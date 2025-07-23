@@ -50,13 +50,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile Header */}
-      <div className="md:hidden bg-gradient-to-r from-primary-light via-accent-light to-success-light px-4 py-6">
+      <div className="md:hidden bg-background px-4 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center flex-1">
-            <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-2xl mr-3 shadow-lg">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-light rounded-2xl mr-3">
               <img alt="Brain Bytes Logo" className="w-7 h-7 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Brain Bytes</span>
+            <span className="text-2xl font-bold text-foreground">Brain Bytes</span>
           </div>
           <Button variant="outline" onClick={onAuth} className="px-3 py-1 text-sm border-primary/30 hover:bg-primary/10 transition-all duration-300">
             Log In
