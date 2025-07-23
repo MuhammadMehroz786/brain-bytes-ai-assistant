@@ -37,28 +37,28 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   return (
     <div className="min-h-screen bg-background">
       {/* Desktop Header */}
-      <div className="hidden md:flex sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-primary/10 px-6 py-4 justify-between items-center">
-        <div className="flex items-center">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-light rounded-2xl mr-3">
-            <img alt="Brain Bytes Logo" className="w-8 h-8 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
+      <div className="hidden md:flex sticky top-0 z-50 bg-gradient-to-r from-primary-light via-accent-light to-success-light backdrop-blur-sm px-6 py-6 justify-between items-center shadow-lg">
+        <div className="flex items-center justify-center flex-1">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-2xl mr-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <img alt="Brain Bytes Logo" className="w-9 h-9 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
           </div>
-          <span className="text-xl font-bold text-foreground">Brain Bytes</span>
+          <span className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Brain Bytes</span>
         </div>
-        <Button variant="outline" onClick={onAuth} className="px-4 py-2">
+        <Button variant="outline" onClick={onAuth} className="px-6 py-3 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
           Log In
         </Button>
       </div>
 
       {/* Mobile Header */}
-      <div className="md:hidden bg-white/95 backdrop-blur-sm border-b border-primary/10 px-4 py-3 shadow-sm">
+      <div className="md:hidden bg-gradient-to-r from-primary-light via-accent-light to-success-light px-4 py-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-light rounded-2xl mr-3">
-              <img alt="Brain Bytes Logo" className="w-6 h-6 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
+          <div className="flex items-center justify-center flex-1">
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-2xl mr-3 shadow-lg">
+              <img alt="Brain Bytes Logo" className="w-7 h-7 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
             </div>
-            <span className="text-lg font-bold text-foreground">Brain Bytes</span>
+            <span className="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Brain Bytes</span>
           </div>
-          <Button variant="outline" onClick={onAuth} className="px-3 py-1 text-sm">
+          <Button variant="outline" onClick={onAuth} className="px-3 py-1 text-sm border-primary/30 hover:bg-primary/10 transition-all duration-300">
             Log In
           </Button>
         </div>
@@ -67,7 +67,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       {/* Mobile Layout */}
       <div className="md:hidden px-4 py-6 space-y-6">
         {/* Headline */}
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-6">
           <h1 className="text-2xl font-bold text-foreground leading-tight">
             Answer 5 questions.
             <br />
@@ -77,37 +77,37 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             <br />
             in under 2 minutes.
           </h1>
-        </div>
-
-        {/* CTA Button */}
-        <Button 
-          onClick={onStart} 
-          size="lg" 
-          className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-base px-6 py-4 rounded-xl shadow-lg"
-        >
-          Get Your AI Assistant – $29 One-Time
-        </Button>
-
-        {/* Demo Link */}
-        <div className="text-center">
-          <Link 
-            to="/demo" 
-            className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4"
+          
+          {/* CTA Button */}
+          <Button 
+            onClick={onStart} 
+            size="lg" 
+            className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-base px-6 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
           >
-            👀 Not ready? Watch a 60-second demo →
-          </Link>
+            Get Your AI Assistant – $29 One-Time Fee
+          </Button>
+
+          {/* Demo Link */}
+          <div className="text-center">
+            <Link 
+              to="/demo" 
+              className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2"
+            >
+              👀 Not ready? Watch a 60-second demo →
+            </Link>
+          </div>
         </div>
 
         {/* ROI Sliders */}
-        <Card className="p-4 bg-white border border-border shadow-sm rounded-xl">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-foreground">
+        <Card className="p-6 bg-gradient-to-br from-white via-primary-light/50 to-accent-light/50 border border-primary/20 shadow-xl rounded-2xl backdrop-blur-sm">
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-foreground">
                 How many tasks do you complete per day?
               </label>
-              <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+              <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
                 <span>5</span>
-                <span className="font-semibold text-primary">{tasksPerDay[0]} tasks</span>
+                <span className="font-semibold text-primary bg-primary-light px-2 py-1 rounded-lg">{tasksPerDay[0]} tasks</span>
                 <span>50</span>
               </div>
               <Slider
@@ -120,13 +120,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-medium text-foreground">
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-foreground">
                 How much is your time worth per hour?
               </label>
-              <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+              <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
                 <span>$10</span>
-                <span className="font-semibold text-primary">${hourlyRate[0]}</span>
+                <span className="font-semibold text-primary bg-primary-light px-2 py-1 rounded-lg">${hourlyRate[0]}</span>
                 <span>$500</span>
               </div>
               <Slider
@@ -140,23 +140,23 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </div>
 
             {/* Live Calculation Display */}
-            <div className="bg-white rounded-lg p-3 border border-border shadow-sm">
-              <div className="text-center space-y-2">
+            <div className="bg-gradient-to-r from-success-light to-primary-light rounded-xl p-4 border border-success/20 shadow-lg">
+              <div className="text-center space-y-3">
                 <p className="text-base font-semibold text-foreground">
                   You're saving{" "}
-                  <span className="text-lg font-bold text-success">
+                  <span className="text-xl font-bold bg-gradient-to-r from-success to-primary bg-clip-text text-transparent">
                     ${Math.round(monthlyValueGained).toLocaleString()}
                   </span>
                   /month
                 </p>
-                <p className="text-xs text-muted-foreground font-medium">
+                <p className="text-sm text-muted-foreground font-medium">
                   Brain Bytes helps you unlock it for the price of lunch.
                 </p>
                 
                 {/* Visual Progress Bar */}
-                <div className="w-full bg-muted rounded-full h-2">
+                <div className="w-full bg-muted rounded-full h-3 shadow-inner">
                   <div 
-                    className="bg-gradient-to-r from-success to-primary h-2 rounded-full transition-all duration-500"
+                    className="bg-gradient-to-r from-success via-accent to-primary h-3 rounded-full transition-all duration-700 shadow-sm"
                     style={{ width: `${getProgressPercentage()}%` }}
                   ></div>
                 </div>
@@ -186,9 +186,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           <Button 
             onClick={onStart} 
             size="lg" 
-            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 transform"
           >
-            Get Your AI Assistant – $29 One-Time
+            Get Your AI Assistant – $29 One-Time Fee
           </Button>
         </div>
 
@@ -199,7 +199,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             <h2 className="text-2xl font-semibold text-foreground">
               See Brain Bytes in Action
             </h2>
-            <div className="rounded-xl overflow-hidden bg-black/5 border border-primary/10 shadow-lg">
+            <div className="rounded-xl overflow-hidden bg-gradient-to-br from-primary-light to-accent-light border border-primary/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
               <iframe 
                 src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ" 
                 width="100%" 
@@ -215,15 +215,15 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
           {/* Right Side - ROI Sliders */}
           <div>
-            <Card className="p-6 bg-white border border-border shadow-sm rounded-xl">
-              <div className="space-y-4">
-                <div className="space-y-2">
+            <Card className="p-8 bg-gradient-to-br from-white via-primary-light/30 to-accent-light/30 border border-primary/20 shadow-xl rounded-2xl backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
+              <div className="space-y-6">
+                <div className="space-y-4">
                   <label className="text-sm font-medium text-foreground">
                     How many tasks do you complete per day?
                   </label>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
                     <span>5 tasks</span>
-                    <span className="font-semibold text-primary">{tasksPerDay[0]} tasks</span>
+                    <span className="font-semibold text-primary bg-primary-light px-3 py-1 rounded-lg">{tasksPerDay[0]} tasks</span>
                     <span>50 tasks</span>
                   </div>
                   <Slider
@@ -236,13 +236,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-4">
                   <label className="text-sm font-medium text-foreground">
                     How much is your time worth per hour?
                   </label>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
                     <span>$10</span>
-                    <span className="font-semibold text-primary">${hourlyRate[0]}</span>
+                    <span className="font-semibold text-primary bg-primary-light px-3 py-1 rounded-lg">${hourlyRate[0]}</span>
                     <span>$500</span>
                   </div>
                   <Slider
@@ -256,11 +256,11 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 </div>
 
                 {/* Live Calculation Display */}
-                <div className="bg-white rounded-lg p-4 border border-border shadow-sm">
-                  <div className="text-center space-y-3">
+                <div className="bg-gradient-to-r from-success-light to-primary-light rounded-xl p-6 border border-success/20 shadow-lg">
+                  <div className="text-center space-y-4">
                     <p className="text-lg font-semibold text-foreground">
                       You're saving{" "}
-                      <span className="text-xl font-bold text-success">
+                      <span className="text-2xl font-bold bg-gradient-to-r from-success to-primary bg-clip-text text-transparent">
                         ${Math.round(monthlyValueGained).toLocaleString()}
                       </span>
                       /month
@@ -270,9 +270,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                     </p>
                     
                     {/* Visual Progress Bar */}
-                    <div className="w-full bg-muted rounded-full h-2 mt-2">
+                    <div className="w-full bg-muted rounded-full h-3 mt-3 shadow-inner">
                       <div 
-                        className="bg-gradient-to-r from-success to-primary h-2 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-success via-accent to-primary h-3 rounded-full transition-all duration-700 shadow-sm"
                         style={{ width: `${getProgressPercentage()}%` }}
                       ></div>
                     </div>
@@ -288,7 +288,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
         {/* Testimonials Section */}
         <div className="mt-16 grid grid-cols-2 gap-6 max-w-4xl mx-auto">
-          <Card className="p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20">
+          <Card className="p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="space-y-4">
               <div className="flex items-center space-x-1">
                 {[...Array(5)].map((_, i) => (
@@ -304,7 +304,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </div>
           </Card>
           
-          <Card className="p-6 bg-gradient-to-br from-accent-light to-success-light border-accent/20">
+          <Card className="p-6 bg-gradient-to-br from-accent-light to-success-light border-accent/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div className="space-y-4">
               <div className="flex items-center space-x-1">
                 {[...Array(5)].map((_, i) => (
@@ -320,33 +320,24 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </div>
           </Card>
         </div>
-
-        {/* Repeated CTA */}
-        <div className="text-center mt-16">
-          <Button 
-            onClick={onStart} 
-            size="lg" 
-            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-          >
-            Get Your AI Assistant – $29 One-Time
-          </Button>
-        </div>
       </div>
 
       {/* Footer Links */}
-      <div className="absolute bottom-4 left-4 flex gap-4">
-        <Link 
-          to="/privacy-policy" 
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 underline"
-        >
-          Privacy Policy
-        </Link>
-        <Link 
-          to="/terms-of-service" 
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200 underline"
-        >
-          Terms of Service
-        </Link>
+      <div className="pb-6 pt-12">
+        <div className="flex justify-center gap-6">
+          <Link 
+            to="/privacy-policy" 
+            className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
+          >
+            Privacy Policy
+          </Link>
+          <Link 
+            to="/terms-of-service" 
+            className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
+          >
+            Terms of Service
+          </Link>
+        </div>
       </div>
     </div>
   );
