@@ -34,14 +34,14 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-[#f5f5ff] via-[#f0f8ff] to-[#ffffff]">
       {/* Desktop Header */}
-      <div className="hidden md:flex sticky top-0 z-50 bg-background backdrop-blur-sm px-6 py-4 justify-between items-center">
+      <div className="hidden md:flex sticky top-0 z-50 bg-gradient-to-b from-[#f5f5ff] via-[#f0f8ff] to-[#ffffff] backdrop-blur-sm px-6 py-4 justify-between items-center">
         <div className="flex items-center justify-center flex-1">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-light rounded-2xl mr-4">
             <img alt="Brain Bytes Logo" className="w-8 h-8 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
           </div>
-          <span className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Brain Bytes</span>
+          <span className="text-5xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
         </div>
         <Button variant="outline" onClick={onAuth} className="px-6 py-3 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
           Log In
@@ -49,13 +49,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile Header */}
-      <div className="md:hidden bg-background px-4 py-4">
+      <div className="md:hidden bg-gradient-to-b from-[#f5f5ff] via-[#f0f8ff] to-[#ffffff] px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center flex-1">
             <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-light rounded-2xl mr-3">
               <img alt="Brain Bytes Logo" className="w-6 h-6 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
             </div>
-            <span className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Brain Bytes</span>
+            <span className="text-4xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
           </div>
           <Button variant="outline" onClick={onAuth} className="px-3 py-1 text-sm border-primary/30 hover:bg-primary/10 transition-all duration-300">
             Log In
@@ -64,11 +64,11 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile Layout */}
-      <div className="md:hidden px-4 py-2 space-y-4 min-h-[calc(100vh-80px)] flex flex-col justify-between">
+      <div className="md:hidden px-4 py-2 space-y-3 h-[calc(100vh-80px)] flex flex-col justify-between overflow-hidden">
         <div className="flex flex-col space-y-4">
           {/* Headline */}
           <div className="text-center space-y-4">
-            <h1 className="text-xl font-bold text-foreground leading-tight">
+            <h1 className="text-2xl font-bold text-foreground leading-tight">
               Answer 5 questions.
               <br />
               <span className="bg-gradient-to-r from-primary via-accent to-success bg-clip-text text-transparent">
@@ -192,7 +192,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       <div className="hidden md:block px-8 py-8 max-w-7xl mx-auto">
         {/* Centered Hero Section */}
         <div className="text-center space-y-8 mb-16">
-          <h1 className="text-4xl lg:text-5xl font-bold text-foreground leading-tight max-w-4xl mx-auto">
+          <h1 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight max-w-4xl mx-auto">
             Answer 5 questions.
             <br />
             <span className="bg-gradient-to-r from-primary via-accent to-success bg-clip-text text-transparent">
@@ -212,17 +212,17 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
 
         {/* Two Column Layout */}
-        <div className="grid grid-cols-2 gap-12 items-start">
+        <div className="grid grid-cols-2 gap-8 items-start">
           {/* Left Side - Demo Video */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold text-foreground">
+          <div className="space-y-3">
+            <h2 className="text-xl font-semibold text-foreground">
               See Brain Bytes in Action
             </h2>
             <div className="rounded-xl overflow-hidden bg-gradient-to-br from-primary-light to-accent-light border border-primary/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
               <iframe 
                 src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ" 
                 width="100%" 
-                height="315" 
+                height="250" 
                 frameBorder="0" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                 allowFullScreen 
@@ -234,9 +234,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
           {/* Right Side - ROI Sliders */}
           <div>
-            <Card className="p-8 bg-gradient-to-br from-white via-primary-light/30 to-accent-light/30 border border-primary/20 shadow-xl rounded-2xl backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
-              <div className="space-y-6">
-                <div className="space-y-4">
+            <Card className="p-6 bg-gradient-to-br from-white via-primary-light/30 to-accent-light/30 border border-primary/20 shadow-xl rounded-2xl backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
+              <div className="space-y-4">
+                <div className="space-y-3">
                   <label className="text-sm font-medium text-foreground">
                     How many tasks do you complete per day?
                   </label>
@@ -255,7 +255,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                   />
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <label className="text-sm font-medium text-foreground">
                     How much is your time worth per hour?
                   </label>
@@ -275,11 +275,11 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 </div>
 
                 {/* Live Calculation Display */}
-                <div className="bg-gradient-to-r from-success-light to-primary-light rounded-xl p-6 border border-success/20 shadow-lg">
-                  <div className="text-center space-y-4">
+                <div className="bg-gradient-to-r from-success-light to-primary-light rounded-xl p-4 border border-success/20 shadow-lg">
+                  <div className="text-center space-y-3">
                     <p className="text-lg font-semibold text-foreground">
                       You're saving{" "}
-                      <span className="text-2xl font-bold bg-gradient-to-r from-success to-primary bg-clip-text text-transparent">
+                      <span className="text-xl font-bold bg-gradient-to-r from-success to-primary bg-clip-text text-transparent">
                         ${Math.round(monthlyValueGained).toLocaleString()}
                       </span>
                       /month
@@ -303,6 +303,39 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               </div>
             </Card>
           </div>
+        </div>
+
+        {/* Features Section */}
+        <div className="mt-12 grid md:grid-cols-3 gap-6">
+          <Card className="p-6 text-center bg-gradient-to-br from-primary-light to-accent-light border-primary/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <div className="w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center mx-auto mb-4">
+              <span className="text-xl">⚡</span>
+            </div>
+            <h3 className="font-semibold text-foreground mb-2">2-Minute Setup</h3>
+            <p className="text-sm text-muted-foreground">
+              Answer 5 quick questions and get your personalized AI assistant instantly.
+            </p>
+          </Card>
+
+          <Card className="p-6 text-center bg-gradient-to-br from-accent-light to-success-light border-accent/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <div className="w-12 h-12 bg-accent text-white rounded-xl flex items-center justify-center mx-auto mb-4">
+              <span className="text-xl">🧠</span>
+            </div>
+            <h3 className="font-semibold text-foreground mb-2">Smart Calendar Sync</h3>
+            <p className="text-sm text-muted-foreground">
+              Automatically sync your Google Calendar and get AI insights on your schedule.
+            </p>
+          </Card>
+
+          <Card className="p-6 text-center bg-gradient-to-br from-success-light to-primary-light border-success/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <div className="w-12 h-12 bg-success text-white rounded-xl flex items-center justify-center mx-auto mb-4">
+              <span className="text-xl">📧</span>
+            </div>
+            <h3 className="font-semibold text-foreground mb-2">Email Summary</h3>
+            <p className="text-sm text-muted-foreground">
+              Get curated daily email recaps without inbox overload.
+            </p>
+          </Card>
         </div>
 
         {/* Testimonials Section */}
