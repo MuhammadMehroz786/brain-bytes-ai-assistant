@@ -11,7 +11,7 @@ interface IntroScreenProps {
 }
 
 export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
-  const [hoursPerWeek, setHoursPerWeek] = useState([10]);
+  const [tasksPerDay, setTasksPerDay] = useState([15]);
   const [hourlyRate, setHourlyRate] = useState([50]);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -24,69 +24,69 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
-  const calculatedValue = hoursPerWeek[0] * hourlyRate[0] * 4;
+  // New calculation logic: tasks per day * 10 minutes / 60 * 20 workdays * hourly rate
+  const hoursSavedPerDay = (tasksPerDay[0] * 10) / 60;
+  const monthlyHoursSaved = hoursSavedPerDay * 20;
+  const monthlyValueGained = monthlyHoursSaved * hourlyRate[0];
 
   const getProgressPercentage = () => {
-    const maxValue = 30 * 500 * 4; // 30 hours * $500/hour * 4 weeks
-    return Math.min((calculatedValue / maxValue) * 100, 100);
+    const maxValue = 50 * 10 / 60 * 20 * 500; // 50 tasks * 10 min / 60 * 20 days * $500/hour
+    return Math.min((monthlyValueGained / maxValue) * 100, 100);
   };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Desktop Sticky Header */}
-      <div className="hidden md:flex sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-primary/10 px-6 py-4 justify-between items-center">
+      <div className="hidden md:flex sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-primary/10 px-6 py-4">
         <div className="flex items-center">
           <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-light rounded-2xl mr-3">
             <img alt="Brain Bytes Logo" className="w-8 h-8 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
           </div>
           <span className="text-xl font-bold text-foreground">Brain Bytes</span>
         </div>
-        <Link to="/demo">
-          <Button variant="outline" className="bg-white border-primary/30 hover:bg-primary/5 text-primary font-semibold">
-            See Demo
-          </Button>
-        </Link>
       </div>
 
       {/* Mobile Header */}
-      <div className="md:hidden flex items-center justify-center pt-8 pb-4">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-light rounded-2xl mr-4">
-          <img alt="Brain Bytes Logo" className="w-10 h-10 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
+      <div className="md:hidden bg-white/95 backdrop-blur-sm border-b border-primary/10 px-4 py-3 shadow-sm">
+        <div className="flex items-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-light rounded-2xl mr-3">
+            <img alt="Brain Bytes Logo" className="w-8 h-8 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
+          </div>
+          <span className="text-xl font-bold text-foreground">Brain Bytes</span>
         </div>
-        <span className="text-2xl font-bold text-foreground">Brain Bytes</span>
       </div>
 
       {/* Main Content */}
       <div className="px-4 md:px-8 py-4 md:py-8 max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-8 md:gap-16 items-center">
+        <div className="grid md:grid-cols-2 gap-6 md:gap-12 items-center">
           {/* Left Side - ROI Sliders (Mobile: full width, Desktop: left column) */}
-          <div className="order-2 md:order-1 space-y-6">
-            <Card className="p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20">
-              <div className="space-y-6">
-                <div className="space-y-3">
-                  <label className="text-sm font-semibold text-foreground">
-                    How many hours do you waste each week?
+          <div className="order-2 md:order-1">
+            <Card className="p-4 md:p-6 bg-white border border-border shadow-sm rounded-xl">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-foreground">
+                    How many tasks do you complete per day?
                   </label>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-                    <span>1 hour</span>
-                    <span className="font-semibold text-primary">{hoursPerWeek[0]} hours</span>
-                    <span>30 hours</span>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                    <span>5 tasks</span>
+                    <span className="font-semibold text-primary">{tasksPerDay[0]} tasks</span>
+                    <span>50 tasks</span>
                   </div>
                   <Slider
-                    value={hoursPerWeek}
-                    onValueChange={setHoursPerWeek}
-                    min={1}
-                    max={30}
+                    value={tasksPerDay}
+                    onValueChange={setTasksPerDay}
+                    min={5}
+                    max={50}
                     step={1}
                     className="w-full"
                   />
                 </div>
 
-                <div className="space-y-3">
-                  <label className="text-sm font-semibold text-foreground">
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-foreground">
                     How much is your time worth per hour?
                   </label>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                     <span>$10</span>
                     <span className="font-semibold text-primary">${hourlyRate[0]}</span>
                     <span>$500</span>
@@ -102,28 +102,28 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 </div>
 
                 {/* Live Calculation Display */}
-                <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-primary/10">
+                <div className="bg-white rounded-lg p-4 border border-border shadow-sm">
                   <div className="text-center space-y-3">
                     <p className="text-lg font-semibold text-foreground">
-                      You're losing{" "}
-                      <span className="text-2xl font-bold text-destructive">
-                        ${calculatedValue.toLocaleString()}
+                      You're saving{" "}
+                      <span className="text-xl font-bold text-success">
+                        ${Math.round(monthlyValueGained).toLocaleString()}
                       </span>
                       /month
                     </p>
                     <p className="text-sm text-muted-foreground font-medium">
-                      Brain Bytes helps you win it back.
+                      Brain Bytes helps you unlock it for the price of lunch.
                     </p>
                     
                     {/* Visual Progress Bar */}
-                    <div className="w-full bg-gray-200 rounded-full h-3 mt-3">
+                    <div className="w-full bg-muted rounded-full h-2 mt-2">
                       <div 
-                        className="bg-gradient-to-r from-warning to-destructive h-3 rounded-full transition-all duration-300"
+                        className="bg-gradient-to-r from-success to-primary h-2 rounded-full transition-all duration-500"
                         style={{ width: `${getProgressPercentage()}%` }}
                       ></div>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Monthly productivity loss visualization
+                      Based on saving 10 minutes per task. Actual savings may vary.
                     </p>
                   </div>
                 </div>
