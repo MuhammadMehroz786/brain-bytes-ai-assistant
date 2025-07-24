@@ -6,10 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Brain, Mail, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { validateEmail, validatePassword, normalizeEmail, RateLimiter, logSecurityEvent } from "@/utils/security";
 
 interface CreateAccountProps {
   onAccountCreated: () => void;
 }
+
+const rateLimiter = new RateLimiter(3, 10 * 60 * 1000); // 3 attempts per 10 minutes
 
 export const CreateAccount = ({ onAccountCreated }: CreateAccountProps) => {
   const [email, setEmail] = useState("");
@@ -19,11 +22,46 @@ export const CreateAccount = ({ onAccountCreated }: CreateAccountProps) => {
 
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Rate limiting check
+    const clientId = `signup_${email || 'unknown'}`;
+    if (!rateLimiter.isAllowed(clientId)) {
+      const remainingTime = Math.ceil(rateLimiter.getRemainingTime(clientId) / 1000 / 60);
+      logSecurityEvent('signup_rate_limit_exceeded', { email: email?.substring(0, 3) + '***' });
+      toast({
+        title: "Too many attempts",
+        description: `Please wait ${remainingTime} minutes before trying again.`,
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Enhanced input validation using security utils
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      toast({
+        title: "Invalid Email",
+        description: emailValidation.error,
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      toast({
+        title: "Invalid Password",
+        description: passwordValidation.error,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
       const { error } = await supabase.auth.signUp({
-        email,
+        email: normalizeEmail(email),
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/`

@@ -253,6 +253,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      safe_inet_cast: {
+        Args: { ip_text: string }
+        Returns: unknown
+      }
       update_user_streak: {
         Args: { user_id_param: string }
         Returns: undefined

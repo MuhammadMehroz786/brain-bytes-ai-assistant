@@ -6,11 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Brain, Mail, Lock, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { validateEmail, normalizeEmail, RateLimiter, logSecurityEvent } from "@/utils/security";
 
 interface AuthFlowProps {
   onAuthSuccess: () => void;
   onBack: () => void;
 }
+
+const rateLimiter = new RateLimiter(5, 15 * 60 * 1000); // 5 attempts per 15 minutes
 
 export const AuthFlow = ({ onAuthSuccess, onBack }: AuthFlowProps) => {
   // Remove sign up functionality - only allow login
@@ -41,11 +44,45 @@ export const AuthFlow = ({ onAuthSuccess, onBack }: AuthFlowProps) => {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Rate limiting check
+    const clientId = `login_${email || 'unknown'}`;
+    if (!rateLimiter.isAllowed(clientId)) {
+      const remainingTime = Math.ceil(rateLimiter.getRemainingTime(clientId) / 1000 / 60);
+      logSecurityEvent('login_rate_limit_exceeded', { email: email?.substring(0, 3) + '***' });
+      toast({
+        title: "Too many login attempts",
+        description: `Please wait ${remainingTime} minutes before trying again.`,
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Enhanced input validation using security utils
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      toast({
+        title: "Invalid Email",
+        description: emailValidation.error,
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!password) {
+      toast({
+        title: "Password required",
+        description: "Please enter your password.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: normalizeEmail(email),
         password,
       });
       

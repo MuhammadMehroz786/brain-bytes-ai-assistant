@@ -70,11 +70,15 @@ serve(async (req) => {
     );
 
     try {
+      // Safely parse IP address - take first valid IP from potentially comma-separated list
+      const rawIp = req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || "unknown";
+      const cleanIp = rawIp.split(',')[0].trim();
+      
       await supabaseService.from("security_audit").insert({
         user_id: null, // Guest checkout
         event_type: "payment_session_created",
         event_data: { session_id: session.id, amount: 2900, email: guestEmail },
-        ip_address: req.headers.get("x-forwarded-for") || "unknown",
+        ip_address: cleanIp !== "unknown" ? cleanIp : null,
         user_agent: req.headers.get("user-agent") || "unknown"
       });
     } catch (auditError) {

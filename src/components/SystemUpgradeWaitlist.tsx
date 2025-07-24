@@ -15,10 +15,29 @@ export const SystemUpgradeWaitlist = () => {
   const handleJoinWaitlist = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !email.includes('@')) {
+    // Enhanced input validation
+    if (!email || !email.trim()) {
       toast({
-        title: "Invalid Email",
+        title: "Email required",
+        description: "Please enter an email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      toast({
+        title: "Invalid email format",
         description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (email.length > 320) {
+      toast({
+        title: "Email too long",
+        description: "Email address must be less than 320 characters.",
         variant: "destructive",
       });
       return;
@@ -31,7 +50,7 @@ export const SystemUpgradeWaitlist = () => {
       const { error } = await supabase
         .from('system_upgrade_waitlist')
         .insert({
-          email: email,
+          email: email.trim().toLowerCase(),
           user_id: user?.id || null
         });
 
