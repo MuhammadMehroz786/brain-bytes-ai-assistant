@@ -52,14 +52,14 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8f9ff] via-[#f5f7ff] to-[#f2f4ff]">
       {/* Desktop Header */}
-      <div className="hidden md:flex sticky top-0 z-50 bg-gradient-to-b from-[#f8f9ff] via-[#f5f7ff] to-[#f2f4ff] backdrop-blur-sm px-6 py-4 justify-between items-center">
+      <div className="hidden md:flex sticky top-0 z-50 bg-gradient-to-b from-[#f8f9ff] via-[#f5f7ff] to-[#f2f4ff] backdrop-blur-sm px-6 py-3 justify-between items-center">
         <div className="flex items-center justify-center flex-1">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-primary-light rounded-2xl mr-4">
-            <img alt="Brain Bytes Logo" className="w-8 h-8 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
+          <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-light rounded-2xl mr-3">
+            <img alt="Brain Bytes Logo" className="w-6 h-6 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
           </div>
-          <span className="text-5xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
+          <span className="text-4xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
         </div>
-        <Button variant="outline" onClick={onAuth} className="px-6 py-3 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
+        <Button variant="outline" onClick={onAuth} className="px-4 py-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
           Log In
         </Button>
       </div>
@@ -204,53 +204,46 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </div>
 
-      {/* Desktop Layout */}
-      <div className="hidden md:block px-8 py-8 max-w-7xl mx-auto">
-        {/* Centered Hero Section */}
-        <div className="text-center space-y-8 mb-16">
-          <h1 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight max-w-4xl mx-auto">
-            Answer 5 questions.
-            <br />
-            <span className="bg-gradient-to-r from-primary via-accent to-success bg-clip-text text-transparent">
-              Unlock your personalized AI Assistant
-            </span>
-            <br />
-            in under 2 minutes.
-          </h1>
-          
-          <Button 
-            onClick={handlePaymentClick} 
-            size="lg" 
-            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 transform"
-          >
-            Get Your AI Assistant – $29 One-Time Fee
-          </Button>
-        </div>
+      {/* Desktop Layout - Redesigned */}
+      <div className="hidden md:block px-6 py-4 max-w-7xl mx-auto min-h-[calc(100vh-100px)] flex flex-col justify-center">
+        {/* Main Hero Section - Centered Above the Fold */}
+        <div className="grid grid-cols-2 gap-12 items-center mb-12">
+          {/* Left Side - Value Prop */}
+          <div className="space-y-6">
+            <h1 className="text-4xl lg:text-5xl font-bold text-foreground leading-tight">
+              Answer 5 questions.
+              <br />
+              <span className="bg-gradient-to-r from-primary via-accent to-success bg-clip-text text-transparent">
+                Unlock your personalized AI Assistant
+              </span>
+              <br />
+              in under 2 minutes.
+            </h1>
+            
+            <div className="space-y-3">
+              <Button 
+                onClick={handlePaymentClick} 
+                size="lg" 
+                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-10 py-5 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 transform"
+              >
+                Get Your AI Assistant – $29 One-Time Fee
+              </Button>
 
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-2 gap-8 items-start">
-          {/* Left Side - Demo Video */}
-          <div className="space-y-3">
-            <h2 className="text-xl font-semibold text-foreground">
-              See Brain Bytes in Action
-            </h2>
-            <div className="rounded-xl overflow-hidden bg-gradient-to-br from-primary-light to-accent-light border border-primary/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
-              <iframe 
-                src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ" 
-                width="100%" 
-                height="250" 
-                frameBorder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowFullScreen 
-                className="w-full"
-                title="Brain Bytes Demo"
-              />
+              {/* Demo Link */}
+              <div>
+                <Link 
+                  to="/demo" 
+                  className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2"
+                >
+                  👀 Not ready? Watch a 60-second demo →
+                </Link>
+              </div>
             </div>
           </div>
 
           {/* Right Side - ROI Sliders */}
           <div>
-            <Card className="p-6 bg-gradient-to-br from-white via-primary-light/30 to-accent-light/30 border border-primary/20 shadow-xl rounded-2xl backdrop-blur-sm hover:shadow-2xl transition-all duration-300">
+            <Card className="p-6 bg-white/90 backdrop-blur-sm border border-primary/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300">
               <div className="space-y-4">
                 <div className="space-y-3">
                   <label className="text-sm font-medium text-foreground">
@@ -321,9 +314,30 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
         </div>
 
-        {/* Features Section */}
-        <div className="mt-12 grid md:grid-cols-3 gap-6">
-          <Card className="p-6 text-center bg-gradient-to-br from-primary-light to-accent-light border-primary/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
+        {/* Demo Section - Below main content */}
+        <div className="space-y-4 mb-8">
+          <h2 className="text-xl font-semibold text-foreground text-center opacity-80">
+            See Brain Bytes in Action
+          </h2>
+          <div className="max-w-3xl mx-auto">
+            <div className="rounded-xl overflow-hidden bg-gradient-to-br from-primary-light to-accent-light border border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
+              <iframe 
+                src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ" 
+                width="100%" 
+                height="300" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen 
+                className="w-full"
+                title="Brain Bytes Demo"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Features Section - Pushed further down */}
+        <div className="mt-16 grid md:grid-cols-3 gap-6 opacity-90">
+          <Card className="p-6 text-center bg-white/70 backdrop-blur-sm border-primary/10 hover:shadow-lg transition-all duration-300 hover:scale-102">
             <div className="w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center mx-auto mb-4">
               <span className="text-xl">⚡</span>
             </div>
@@ -333,7 +347,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </p>
           </Card>
 
-          <Card className="p-6 text-center bg-gradient-to-br from-accent-light to-success-light border-accent/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="p-6 text-center bg-white/70 backdrop-blur-sm border-accent/10 hover:shadow-lg transition-all duration-300 hover:scale-102">
             <div className="w-12 h-12 bg-accent text-white rounded-xl flex items-center justify-center mx-auto mb-4">
               <span className="text-xl">🧠</span>
             </div>
@@ -343,7 +357,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </p>
           </Card>
 
-          <Card className="p-6 text-center bg-gradient-to-br from-success-light to-primary-light border-success/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="p-6 text-center bg-white/70 backdrop-blur-sm border-success/10 hover:shadow-lg transition-all duration-300 hover:scale-102">
             <div className="w-12 h-12 bg-success text-white rounded-xl flex items-center justify-center mx-auto mb-4">
               <span className="text-xl">📧</span>
             </div>
@@ -354,9 +368,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </Card>
         </div>
 
-        {/* Testimonials Section */}
-        <div className="mt-16 grid grid-cols-2 gap-6 max-w-4xl mx-auto">
-          <Card className="p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
+        {/* Testimonials Section - Further down */}
+        <div className="mt-16 grid grid-cols-2 gap-6 max-w-4xl mx-auto opacity-90">
+          <Card className="p-6 bg-white/70 backdrop-blur-sm border-primary/10 hover:shadow-lg transition-all duration-300">
             <div className="space-y-4">
               <div className="flex items-center space-x-1">
                 {[...Array(5)].map((_, i) => (
@@ -372,7 +386,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </div>
           </Card>
           
-          <Card className="p-6 bg-gradient-to-br from-accent-light to-success-light border-accent/20 hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="p-6 bg-white/70 backdrop-blur-sm border-accent/10 hover:shadow-lg transition-all duration-300">
             <div className="space-y-4">
               <div className="flex items-center space-x-1">
                 {[...Array(5)].map((_, i) => (
