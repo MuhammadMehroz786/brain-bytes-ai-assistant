@@ -16,42 +16,17 @@ serve(async (req) => {
   try {
     console.log("Creating payment session...");
     
-    // Create Supabase client for user authentication
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") || "",
-      Deno.env.get("SUPABASE_ANON_KEY") || ""
-    );
-
-    // Get authenticated user
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      throw new Error("Authentication required");
-    }
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError || !userData.user) {
-      throw new Error("Invalid authentication token");
-    }
-
-    const user = userData.user;
-    console.log("Authenticated user:", user.id);
-    
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2023-10-16",
     });
 
-    // Create a one-time payment session for $29
-    // Create Stripe customer if needed
-    let customerId;
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
-    }
+    // Get email from request body for guest checkout
+    const body = req.method === "POST" ? await req.json() : {};
+    const guestEmail = body.email || "guest@brainbytes.app";
 
+    // Create a one-time payment session for $29
     const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      customer_email: customerId ? undefined : user.email,
+      customer_email: guestEmail,
       line_items: [
         {
           price_data: {
@@ -73,20 +48,24 @@ serve(async (req) => {
 
     console.log("Payment session created:", session.id);
 
-    // Log security event
+    // Log payment session creation for analytics (optional)
     const supabaseService = createClient(
       Deno.env.get("SUPABASE_URL") || "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "",
       { auth: { persistSession: false } }
     );
 
-    await supabaseService.from("security_audit").insert({
-      user_id: user.id,
-      event_type: "payment_session_created",
-      event_data: { session_id: session.id, amount: 2900 },
-      ip_address: req.headers.get("x-forwarded-for") || "unknown",
-      user_agent: req.headers.get("user-agent") || "unknown"
-    });
+    try {
+      await supabaseService.from("security_audit").insert({
+        user_id: null, // Guest checkout
+        event_type: "payment_session_created",
+        event_data: { session_id: session.id, amount: 2900, email: guestEmail },
+        ip_address: req.headers.get("x-forwarded-for") || "unknown",
+        user_agent: req.headers.get("user-agent") || "unknown"
+      });
+    } catch (auditError) {
+      console.log("Audit log failed (non-critical):", auditError);
+    }
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -97,12 +76,12 @@ serve(async (req) => {
     
     // Sanitize error message for security
     const sanitizedError = error instanceof Error ? 
-      (error.message.includes("Authentication") ? "Authentication required" : "Payment processing failed") :
+      "Payment processing failed" :
       "Payment processing failed";
     
     return new Response(JSON.stringify({ error: sanitizedError }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: error instanceof Error && error.message.includes("Authentication") ? 401 : 500,
+      status: 500,
     });
   }
 });

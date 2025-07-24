@@ -17,19 +17,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
   const handlePaymentClick = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        // If no session, trigger auth flow first
-        console.log('No session, triggering auth flow...');
-        onAuth(); // This will trigger the auth flow
-        return;
-      }
-
-      const { data, error } = await supabase.functions.invoke('create-payment', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
+      const { data, error } = await supabase.functions.invoke('create-payment');
       
       if (error) throw error;
       
