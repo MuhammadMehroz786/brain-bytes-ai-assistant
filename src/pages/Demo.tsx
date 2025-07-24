@@ -9,8 +9,9 @@ const handlePaymentClick = async () => {
   try {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
-      console.log('No session, redirecting to auth...');
-      // If no session, you might want to trigger auth flow or redirect to login
+      // If no session, redirect to home page where auth flow can be triggered
+      console.log('No session, redirecting to home for auth...');
+      window.location.href = '/';
       return;
     }
 

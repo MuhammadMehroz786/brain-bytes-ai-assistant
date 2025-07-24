@@ -10,36 +10,37 @@ interface IntroScreenProps {
   onAuth: () => void;
 }
 
-const handlePaymentClick = async () => {
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      console.log('No session, redirecting to auth...');
-      // If no session, you might want to trigger auth flow or redirect to login
-      return;
-    }
-
-    const { data, error } = await supabase.functions.invoke('create-payment', {
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
-    });
-    
-    if (error) throw error;
-    
-    if (data?.url) {
-      // Open Stripe checkout in a new tab
-      window.open(data.url, '_blank');
-    }
-  } catch (error) {
-    console.error('Payment error:', error);
-  }
-};
-
 export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   const [tasksPerDay, setTasksPerDay] = useState([15]);
   const [hourlyRate, setHourlyRate] = useState([50]);
   const [isMobile, setIsMobile] = useState(false);
+
+  const handlePaymentClick = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        // If no session, trigger auth flow first
+        console.log('No session, triggering auth flow...');
+        onAuth(); // This will trigger the auth flow
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-payment', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+      
+      if (error) throw error;
+      
+      if (data?.url) {
+        // Open Stripe checkout in a new tab
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+    }
+  };
 
   useEffect(() => {
     const checkIsMobile = () => {
