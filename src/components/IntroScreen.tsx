@@ -34,7 +34,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f5f5ff] via-[#f0f8ff] to-[#ffffff]">
+    <div className="min-h-screen bg-gradient-to-b from-[#f8f9ff] via-[#f5f7ff] to-[#f2f4ff]">
       {/* Desktop Header */}
       <div className="hidden md:flex sticky top-0 z-50 bg-gradient-to-b from-[#f5f5ff] via-[#f0f8ff] to-[#ffffff] backdrop-blur-sm px-6 py-4 justify-between items-center">
         <div className="flex items-center justify-center flex-1">

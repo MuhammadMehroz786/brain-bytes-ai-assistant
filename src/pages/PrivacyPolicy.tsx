@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 const PrivacyPolicy = () => {
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-b from-[#f8f9ff] via-[#f5f7ff] to-[#f2f4ff] p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Link to="/">

@@ -6,9 +6,9 @@ import { Link } from "react-router-dom";
 
 const Demo = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f5f5ff] via-[#f0f8ff] to-[#ffffff]">
+    <div className="min-h-screen bg-gradient-to-b from-[#f8f9ff] via-[#f5f7ff] to-[#f2f4ff]">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-gradient-to-b from-[#f5f5ff] via-[#f0f8ff] to-[#ffffff] backdrop-blur-sm border-b border-primary/10 px-6 py-4">
+      <div className="sticky top-0 z-50 bg-gradient-to-b from-[#f8f9ff] via-[#f5f7ff] to-[#f2f4ff] backdrop-blur-sm border-b border-primary/10 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link to="/" className="flex items-center text-primary hover:text-accent transition-colors">
             <ArrowLeft className="w-5 h-5 mr-2" />
@@ -54,21 +54,21 @@ const Demo = () => {
         </div>
 
         {/* Mobile Layout */}
-        <div className="md:hidden h-screen flex flex-col overflow-hidden">
-          <div className="text-center mb-4">
-            <h1 className="text-2xl font-bold text-foreground mb-2">
+        <div className="md:hidden min-h-screen flex flex-col overflow-hidden">
+          <div className="text-center mb-3 px-4">
+            <h1 className="text-xl font-bold text-foreground">
               Brain Bytes Demo
             </h1>
           </div>
 
           {/* Mobile Video Section */}
-          <div className="flex-1 px-2 space-y-4">
-            <Card className="p-3 bg-gradient-to-br from-primary-light to-accent-light border-primary/20">
+          <div className="px-4 space-y-4 flex-1">
+            <Card className="p-2 bg-white/80 backdrop-blur-sm border-primary/20">
               <div className="rounded-lg overflow-hidden bg-black/5 border border-primary/10 shadow-lg">
                 <iframe 
                   src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ" 
                   width="100%" 
-                  height="200" 
+                  height="160" 
                   frameBorder="0" 
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                   allowFullScreen 
@@ -78,12 +78,89 @@ const Demo = () => {
               </div>
             </Card>
 
-            {/* Mobile CTA */}
-            <div className="text-center px-2">
+            {/* Primary CTA */}
+            <div className="text-center">
               <Link to="/">
                 <Button 
                   size="sm"
-                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Get Your AI Assistant – $29 One-Time Fee
+                </Button>
+              </Link>
+            </div>
+
+            {/* Benefit Blocks */}
+            <div className="space-y-2">
+              <div className="flex items-center p-2 bg-white/60 rounded-lg border border-primary/10">
+                <div className="w-6 h-6 bg-primary text-white rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                  <span className="text-xs">⚡</span>
+                </div>
+                <span className="text-xs text-foreground font-medium">Save hours every week on repetitive tasks</span>
+              </div>
+              
+              <div className="flex items-center p-2 bg-white/60 rounded-lg border border-primary/10">
+                <div className="w-6 h-6 bg-accent text-white rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                  <span className="text-xs">🧠</span>
+                </div>
+                <span className="text-xs text-foreground font-medium">Unlock personalized AI insights instantly</span>
+              </div>
+              
+              <div className="flex items-center p-2 bg-white/60 rounded-lg border border-primary/10">
+                <div className="w-6 h-6 bg-success text-white rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                  <span className="text-xs">💰</span>
+                </div>
+                <span className="text-xs text-foreground font-medium">Gain thousands in productivity value for $29</span>
+              </div>
+            </div>
+
+            {/* What You'll Unlock */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-foreground text-center">What You'll Unlock</h3>
+              
+              <div className="grid grid-cols-1 gap-2">
+                <div className="p-2 bg-white/60 rounded-lg border border-primary/10 text-center">
+                  <div className="w-5 h-5 bg-primary text-white rounded-lg flex items-center justify-center mx-auto mb-1">
+                    <span className="text-xs">📋</span>
+                  </div>
+                  <div className="text-xs font-medium text-foreground">Daily Briefing</div>
+                  <div className="text-xs text-muted-foreground">Stay ahead every morning</div>
+                </div>
+                
+                <div className="p-2 bg-white/60 rounded-lg border border-primary/10 text-center">
+                  <div className="w-5 h-5 bg-accent text-white rounded-lg flex items-center justify-center mx-auto mb-1">
+                    <span className="text-xs">📧</span>
+                  </div>
+                  <div className="text-xs font-medium text-foreground">Email Summary</div>
+                  <div className="text-xs text-muted-foreground">No more inbox overwhelm</div>
+                </div>
+                
+                <div className="p-2 bg-white/60 rounded-lg border border-primary/10 text-center">
+                  <div className="w-5 h-5 bg-success text-white rounded-lg flex items-center justify-center mx-auto mb-1">
+                    <span className="text-xs">🎵</span>
+                  </div>
+                  <div className="text-xs font-medium text-foreground">Focus Playlist</div>
+                  <div className="text-xs text-muted-foreground">Get in the zone instantly</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Social Proof */}
+            <div className="text-center py-2">
+              <div className="p-2 bg-gradient-to-r from-primary-light/50 to-accent-light/50 rounded-lg border border-primary/10">
+                <p className="text-xs text-foreground italic">
+                  "It helped me reclaim 5+ hours a week instantly."
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">– Beta User</p>
+              </div>
+            </div>
+
+            {/* Final CTA */}
+            <div className="text-center pb-4">
+              <Link to="/">
+                <Button 
+                  size="sm"
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Get Your AI Assistant – $29 One-Time Fee
                 </Button>
