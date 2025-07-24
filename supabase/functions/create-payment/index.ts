@@ -14,16 +14,30 @@ serve(async (req) => {
   }
 
   try {
-    console.log("Creating payment session...");
+    console.log("=== CREATE PAYMENT FUNCTION STARTED ===");
     
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+    // Check if Stripe key exists
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    console.log("Stripe key exists:", !!stripeKey);
+    console.log("Stripe key prefix:", stripeKey?.substring(0, 10));
+    
+    if (!stripeKey) {
+      throw new Error("STRIPE_SECRET_KEY environment variable is not set");
+    }
+    
+    console.log("Creating Stripe instance...");
+    const stripe = new Stripe(stripeKey, {
       apiVersion: "2023-10-16",
     });
+    console.log("Stripe instance created successfully");
 
     // Get email from request body for guest checkout
-    const body = req.method === "POST" ? await req.json() : {};
+    console.log("Parsing request body...");
+    const body = req.method === "POST" ? await req.json().catch(() => ({})) : {};
     const guestEmail = body.email || "guest@brainbytes.app";
+    console.log("Guest email:", guestEmail);
 
+    console.log("Creating Stripe checkout session...");
     // Create a one-time payment session for $29
     const session = await stripe.checkout.sessions.create({
       customer_email: guestEmail,
@@ -46,7 +60,7 @@ serve(async (req) => {
       allow_promotion_codes: true,
     });
 
-    console.log("Payment session created:", session.id);
+    console.log("Payment session created successfully:", session.id);
 
     // Log payment session creation for analytics (optional)
     const supabaseService = createClient(
@@ -67,19 +81,26 @@ serve(async (req) => {
       console.log("Audit log failed (non-critical):", auditError);
     }
 
+    console.log("Returning session URL:", session.url);
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
-    console.error("Error in create-payment function:", error);
+    console.error("=== ERROR IN CREATE-PAYMENT FUNCTION ===");
+    console.error("Error type:", typeof error);
+    console.error("Error message:", error instanceof Error ? error.message : String(error));
+    console.error("Error stack:", error instanceof Error ? error.stack : "No stack");
+    console.error("Full error object:", error);
     
-    // Sanitize error message for security
-    const sanitizedError = error instanceof Error ? 
-      "Payment processing failed" :
-      "Payment processing failed";
+    // Return detailed error for debugging
+    const errorMessage = error instanceof Error ? error.message : String(error);
     
-    return new Response(JSON.stringify({ error: sanitizedError }), {
+    return new Response(JSON.stringify({ 
+      error: "Payment processing failed",
+      details: errorMessage,
+      timestamp: new Date().toISOString()
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
