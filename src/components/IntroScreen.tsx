@@ -3,11 +3,26 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 interface IntroScreenProps {
   onStart: () => void;
   onAuth: () => void;
 }
+
+const handlePaymentClick = async () => {
+  try {
+    const { data, error } = await supabase.functions.invoke('create-payment');
+    if (error) throw error;
+    
+    if (data?.url) {
+      // Open Stripe checkout in a new tab
+      window.open(data.url, '_blank');
+    }
+  } catch (error) {
+    console.error('Payment error:', error);
+  }
+};
 
 export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   const [tasksPerDay, setTasksPerDay] = useState([15]);
@@ -64,10 +79,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile Layout */}
-      <div className="md:hidden px-4 py-2 h-[calc(100vh-80px)] flex flex-col justify-between overflow-hidden">
-        <div className="flex flex-col space-y-3">
+      <div className="md:hidden px-4 py-4 h-[calc(100vh-80px)] flex flex-col justify-between overflow-hidden">
+        <div className="flex flex-col space-y-4">
           {/* Headline */}
-          <div className="text-center space-y-3">
+          <div className="text-center space-y-4">
             <h1 className="text-2xl font-bold text-foreground leading-tight">
               Answer 5 questions.
               <br />
@@ -80,7 +95,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             
             {/* CTA Button */}
             <Button 
-              onClick={onStart} 
+              onClick={handlePaymentClick} 
               size="sm" 
               className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
             >
@@ -99,8 +114,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
 
           {/* ROI Sliders */}
-          <Card className="p-3 bg-white/80 backdrop-blur-sm border border-primary/20 shadow-xl rounded-2xl">
-            <div className="space-y-3">
+          <Card className="p-4 bg-white/80 backdrop-blur-sm border border-primary/20 shadow-xl rounded-2xl">
+            <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-xs font-medium text-foreground">
                   How many tasks do you complete per day?
@@ -170,7 +185,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
         
         {/* Footer Links */}
-        <div className="pt-2 pb-2">
+        <div className="pt-4 pb-2">
           <div className="flex justify-center gap-4">
             <Link 
               to="/privacy-policy" 
@@ -203,7 +218,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </h1>
           
           <Button 
-            onClick={onStart} 
+            onClick={handlePaymentClick} 
             size="lg" 
             className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 transform"
           >

@@ -3,6 +3,21 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+
+const handlePaymentClick = async () => {
+  try {
+    const { data, error } = await supabase.functions.invoke('create-payment');
+    if (error) throw error;
+    
+    if (data?.url) {
+      // Open Stripe checkout in a new tab
+      window.open(data.url, '_blank');
+    }
+  } catch (error) {
+    console.error('Payment error:', error);
+  }
+};
 
 const Demo = () => {
   return (
@@ -80,14 +95,13 @@ const Demo = () => {
 
             {/* Primary CTA */}
             <div className="text-center">
-              <Link to="/">
-                <Button 
-                  size="sm"
-                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  Get Your AI Assistant – $29 One-Time Fee
-                </Button>
-              </Link>
+              <Button 
+                onClick={handlePaymentClick}
+                size="sm"
+                className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Get Your AI Assistant – $29 One-Time Fee
+              </Button>
             </div>
 
             {/* Benefit Blocks */}
@@ -157,14 +171,13 @@ const Demo = () => {
 
             {/* Final CTA */}
             <div className="text-center pb-4">
-              <Link to="/">
-                <Button 
-                  size="sm"
-                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  Get Your AI Assistant – $29 One-Time Fee
-                </Button>
-              </Link>
+              <Button 
+                onClick={handlePaymentClick}
+                size="sm"
+                className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Get Your AI Assistant – $29 One-Time Fee
+              </Button>
             </div>
           </div>
         </div>
@@ -215,14 +228,13 @@ const Demo = () => {
             </div>
             
             <div className="mt-8 space-y-4">
-              <Link to="/">
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                >
-                  Get Your AI Assistant – $29 One-Time Fee
-                </Button>
-              </Link>
+              <Button 
+                onClick={handlePaymentClick}
+                size="lg" 
+                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              >
+                Get Your AI Assistant – $29 One-Time Fee
+              </Button>
               
               <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
