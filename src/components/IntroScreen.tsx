@@ -64,10 +64,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile Layout */}
-      <div className="md:hidden px-4 py-2 space-y-3 h-[calc(100vh-80px)] flex flex-col justify-between overflow-hidden">
-        <div className="flex flex-col space-y-4">
+      <div className="md:hidden px-4 py-2 h-[calc(100vh-80px)] flex flex-col justify-between overflow-hidden">
+        <div className="flex flex-col space-y-3">
           {/* Headline */}
-          <div className="text-center space-y-4">
+          <div className="text-center space-y-3">
             <h1 className="text-2xl font-bold text-foreground leading-tight">
               Answer 5 questions.
               <br />
@@ -82,7 +82,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             <Button 
               onClick={onStart} 
               size="sm" 
-              className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-3 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
             >
               Get Your AI Assistant – $29 One-Time Fee
             </Button>
@@ -99,8 +99,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
 
           {/* ROI Sliders */}
-          <Card className="p-4 bg-gradient-to-br from-white via-primary-light/50 to-accent-light/50 border border-primary/20 shadow-xl rounded-2xl backdrop-blur-sm">
-            <div className="space-y-4">
+          <Card className="p-3 bg-white/80 backdrop-blur-sm border border-primary/20 shadow-xl rounded-2xl">
+            <div className="space-y-3">
               <div className="space-y-2">
                 <label className="text-xs font-medium text-foreground">
                   How many tasks do you complete per day?
@@ -140,8 +140,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               </div>
 
               {/* Live Calculation Display */}
-              <div className="bg-gradient-to-r from-success-light to-primary-light rounded-xl p-3 border border-success/20 shadow-lg">
-                <div className="text-center space-y-2">
+              <div className="bg-gradient-to-r from-success-light to-primary-light rounded-xl p-2 border border-success/20 shadow-lg">
+                <div className="text-center space-y-1">
                   <p className="text-sm font-semibold text-foreground">
                     You're saving{" "}
                     <span className="text-lg font-bold bg-gradient-to-r from-success to-primary bg-clip-text text-transparent">
@@ -170,7 +170,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
         
         {/* Footer Links */}
-        <div className="pt-2">
+        <div className="pt-2 pb-2">
           <div className="flex justify-center gap-4">
             <Link 
               to="/privacy-policy" 
@@ -374,23 +374,6 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </div>
 
-      {/* Footer Links */}
-      <div className="pb-6 pt-12">
-        <div className="flex justify-center gap-6">
-          <Link 
-            to="/privacy-policy" 
-            className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
-          >
-            Privacy Policy
-          </Link>
-          <Link 
-            to="/terms-of-service" 
-            className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
-          >
-            Terms of Service
-          </Link>
-        </div>
-      </div>
     </div>
   );
 };
