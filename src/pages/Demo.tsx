@@ -7,7 +7,19 @@ import { supabase } from "@/integrations/supabase/client";
 
 const handlePaymentClick = async () => {
   try {
-    const { data, error } = await supabase.functions.invoke('create-payment');
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      console.log('No session, redirecting to auth...');
+      // If no session, you might want to trigger auth flow or redirect to login
+      return;
+    }
+
+    const { data, error } = await supabase.functions.invoke('create-payment', {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+    
     if (error) throw error;
     
     if (data?.url) {
