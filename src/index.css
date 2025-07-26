@@ -41,6 +41,11 @@ All colors MUST be HSL.
     --gradient-mid: 174 72% 56%;
     --gradient-end: 142 76% 73%;
     
+    /* Background gradient - light blue tones */
+    --background-gradient-start: 220 100% 98%;
+    --background-gradient-mid: 210 100% 97%;
+    --background-gradient-end: 200 100% 96%;
+    
     /* Light accent backgrounds */
     --accent-light: 262 50% 97%;
     --primary-light: 262 50% 96%;
