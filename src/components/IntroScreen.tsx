@@ -207,7 +207,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       {/* Desktop Layout - Redesigned */}
       <div className="hidden md:block px-6 py-4 max-w-7xl mx-auto min-h-[calc(100vh-100px)] flex flex-col justify-center">
         {/* Main Hero Section - Centered Above the Fold */}
-        <div className="grid grid-cols-2 gap-12 items-center mb-12">
+        <div className="grid grid-cols-2 gap-12 items-center mb-16">
           {/* Left Side - Value Prop */}
           <div className="space-y-6">
             <h1 className="text-4xl lg:text-5xl font-bold text-foreground leading-tight">
@@ -314,29 +314,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
         </div>
 
-        {/* Demo Section - Below main content */}
-        <div className="space-y-4 mb-8">
-          <h2 className="text-xl font-semibold text-foreground text-center opacity-80">
-            See Brain Bytes in Action
-          </h2>
-          <div className="max-w-3xl mx-auto">
-            <div className="rounded-xl overflow-hidden bg-gradient-to-br from-primary-light to-accent-light border border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300">
-              <iframe 
-                src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ" 
-                width="100%" 
-                height="300" 
-                frameBorder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowFullScreen 
-                className="w-full"
-                title="Brain Bytes Demo"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Features Section - Pushed further down */}
-        <div className="mt-16 grid md:grid-cols-3 gap-6 opacity-90">
+        {/* Features Section */}
+        <div className="mt-8 grid md:grid-cols-3 gap-6 opacity-90">
           <Card className="p-6 text-center bg-white/70 backdrop-blur-sm border-primary/10 hover:shadow-lg transition-all duration-300 hover:scale-102">
             <div className="w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center mx-auto mb-4">
               <span className="text-xl">⚡</span>
@@ -368,8 +347,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </Card>
         </div>
 
-        {/* Testimonials Section - Further down */}
-        <div className="mt-16 grid grid-cols-2 gap-6 max-w-4xl mx-auto opacity-90">
+        {/* Testimonials Section */}
+        <div className="mt-12 grid grid-cols-2 gap-6 max-w-4xl mx-auto opacity-90">
           <Card className="p-6 bg-white/70 backdrop-blur-sm border-primary/10 hover:shadow-lg transition-all duration-300">
             <div className="space-y-4">
               <div className="flex items-center space-x-1">
@@ -401,6 +380,24 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               </div>
             </div>
           </Card>
+        </div>
+
+        {/* Footer Links */}
+        <div className="mt-12 pt-8">
+          <div className="flex justify-center gap-6">
+            <Link 
+              to="/privacy-policy" 
+              className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
+            >
+              Privacy Policy
+            </Link>
+            <Link 
+              to="/terms-of-service" 
+              className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
+            >
+              Terms of Service
+            </Link>
+          </div>
         </div>
       </div>
 
