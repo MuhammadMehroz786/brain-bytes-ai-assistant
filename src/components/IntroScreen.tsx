@@ -50,9 +50,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#f8f9ff] via-[#f5f7ff] to-[#f2f4ff]">
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
       {/* Desktop Header */}
-      <div className="hidden md:flex sticky top-0 z-50 bg-gradient-to-b from-[#f8f9ff] via-[#f5f7ff] to-[#f2f4ff] backdrop-blur-sm px-6 py-3 justify-between items-center">
+      <div className="hidden md:flex sticky top-0 z-50 bg-gradient-to-b from-background via-background to-muted/20 backdrop-blur-sm px-6 py-3 justify-between items-center">
         <div className="flex items-center justify-center flex-1">
           <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-light rounded-2xl mr-3">
             <img alt="Brain Bytes Logo" className="w-6 h-6 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
@@ -65,7 +65,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile Header */}
-      <div className="md:hidden bg-gradient-to-b from-[#f8f9ff] via-[#f5f7ff] to-[#f2f4ff] px-4 py-4">
+      <div className="md:hidden bg-gradient-to-b from-background via-background to-muted/20 px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center flex-1">
             <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-light rounded-2xl mr-3">
