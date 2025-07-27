@@ -105,6 +105,55 @@ export const SystemSettingsSection = () => {
         </div>
       </Card>
 
+      {/* Legal & Support */}
+      <Card className="p-6 bg-white/50 backdrop-blur-sm border border-primary/10">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 mb-4">
+            <ExternalLink className="w-5 h-5 text-primary" />
+            <h3 className="text-lg font-semibold text-foreground">Legal & Support</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start rounded-xl text-sm"
+              onClick={() => window.open('/privacy-policy', '_blank')}
+            >
+              Privacy Policy
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start rounded-xl text-sm"
+              onClick={() => window.open('/terms-of-service', '_blank')}
+            >
+              Terms of Service
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start rounded-xl text-sm"
+              onClick={() => window.open('/refund-policy', '_blank')}
+            >
+              Refund Policy
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start rounded-xl text-sm"
+              onClick={() => window.open('/cookie-policy', '_blank')}
+            >
+              Cookie Policy
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full justify-start rounded-xl text-sm md:col-span-2"
+              onClick={() => window.open('/contact', '_blank')}
+            >
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Contact Support
+            </Button>
+          </div>
+        </div>
+      </Card>
+
       {/* Save Button */}
       <div className="flex justify-end">
         <Button 
@@ -114,6 +163,11 @@ export const SystemSettingsSection = () => {
           <Save className="w-4 h-4 mr-2" />
           Save Settings
         </Button>
+      </div>
+
+      {/* Subtle Branding */}
+      <div className="text-center pt-4">
+        <p className="text-xs text-muted-foreground/60">Brain Bytes • 2025</p>
       </div>
     </div>
   );
