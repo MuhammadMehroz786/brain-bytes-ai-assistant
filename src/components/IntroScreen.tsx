@@ -53,9 +53,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
     <div className="min-h-screen bg-secondary">
       {/* Desktop Header */}
       <div className="hidden md:flex sticky top-0 z-50 bg-secondary px-6 py-3 justify-between items-center">
-        <div className="flex items-center justify-center flex-1">
-          <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-light rounded-2xl mr-3">
-            <img alt="Brain Bytes Logo" className="w-6 h-6 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
+        <div className="flex items-center flex-1">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-light rounded-2xl mr-3">
+            <img alt="Brain Bytes Logo" className="w-8 h-8 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
           </div>
           <span className="text-4xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
         </div>
