@@ -238,13 +238,25 @@ export const IntroScreen = ({
         
         {/* Footer Links */}
         <div className="pt-4 pb-2">
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-4 flex-wrap">
             <Link to="/privacy-policy" className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
               Privacy Policy
             </Link>
             <Link to="/terms-of-service" className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
               Terms of Service
             </Link>
+            <Link to="/refund-policy" className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
+              Refund Policy
+            </Link>
+            <Link to="/cookie-policy" className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
+              Cookie Policy
+            </Link>
+            <Link to="/contact" className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
+              Contact
+            </Link>
+            <span className="text-xs text-muted-foreground">
+              © 2025 Brain Bytes
+            </span>
           </div>
         </div>
       </div>
@@ -482,13 +494,25 @@ export const IntroScreen = ({
         {/* Footer */}
         <div className="bg-white/30 py-12">
           <div className="max-w-7xl mx-auto px-6">
-            <div className="flex justify-center gap-8">
+            <div className="flex justify-center gap-8 flex-wrap">
               <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
                 Privacy Policy
               </Link>
               <Link to="/terms-of-service" className="text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
                 Terms of Service
               </Link>
+              <Link to="/refund-policy" className="text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
+                Refund Policy
+              </Link>
+              <Link to="/cookie-policy" className="text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
+                Cookie Policy
+              </Link>
+              <Link to="/contact" className="text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
+                Contact
+              </Link>
+              <span className="text-muted-foreground">
+                © 2025 Brain Bytes
+              </span>
             </div>
           </div>
         </div>
