@@ -60,13 +60,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <div className="relative">
-            {/* 1. Floating micro icon behind "Brain Bytes" - brain icon with subtle animation */}
-            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-32 h-32 opacity-8 z-0">
-              <svg className="w-full h-full text-purple-400/30 animate-pulse" style={{ animation: 'float 6s ease-in-out infinite' }} viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C8.69 2 6 4.69 6 8c0 1.5.6 2.86 1.56 3.86L9 13.3c.14.14.36.14.5 0L11 11.86c.96-1 1.56-2.36 1.56-3.86 0-3.31-2.69-6-6-6zm0 8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
-                <path d="M18 8c0-1.66-1.34-3-3-3s-3 1.34-3 3c0 .8.32 1.52.84 2.05l1.16 1.16c.39.39 1.02.39 1.41 0l1.16-1.16c.52-.53.84-1.25.84-2.05z"/>
-              </svg>
-            </div>
+            {/* Slow-moving radial gradient background */}
+            <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 w-96 h-24 bg-gradient-radial from-purple-400/20 via-blue-400/15 to-cyan-400/10 rounded-full blur-2xl opacity-60 z-0" 
+                 style={{ animation: 'float 8s ease-in-out infinite' }}></div>
             
             {/* Primary floating blob behind title - larger and more visible */}
             <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-80 h-32 bg-gradient-to-br from-purple-300/50 via-blue-300/50 to-cyan-300/50 rounded-full blur-2xl animate-pulse opacity-70 z-0"></div>
@@ -77,14 +73,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             {/* Tertiary accent blob */}
             <div className="absolute -bottom-4 -left-12 w-16 h-10 bg-gradient-to-br from-cyan-300/30 via-sky-300/30 to-blue-300/30 rounded-full blur-lg opacity-50 z-0" style={{ animation: 'pulse 3s ease-in-out infinite' }}></div>
             
-            {/* 4. Gradient stroke outline around "Brain Bytes" text */}
-            <span className="relative z-10 text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent drop-shadow-lg" style={{ 
-              WebkitTextStroke: '1px transparent',
-              backgroundClip: 'text',
-              background: 'linear-gradient(90deg, #7C3AED 0%, #2563EB 50%, #7C3AED 100%)',
-              WebkitBackgroundClip: 'text',
-              filter: 'drop-shadow(0 0 2px rgba(124, 58, 237, 0.3))'
-            }}>Brain Bytes</span>
+            <div className="relative z-10">
+              <span className="text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent drop-shadow-lg">Brain Bytes</span>
+              {/* Hand-drawn scribble underline */}
+              <svg className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-full h-4" viewBox="0 0 300 20" fill="none">
+                <path d="M10 12c20-2 40-4 60-2s40 4 60 2 40-4 60-2 40 4 60 2" stroke="#7C3AED" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.7" className="animate-pulse"/>
+              </svg>
+            </div>
           </div>
         </div>
         <Button variant="outline" onClick={onAuth} className="px-4 py-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
@@ -241,6 +236,21 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         {/* Additional accent blobs */}
         <div className="absolute top-1/3 right-1/4 w-32 h-20 bg-gradient-to-br from-lavender-300/30 via-purple-300/30 to-indigo-300/30 rounded-full blur-xl opacity-40" style={{ animation: 'pulse 4s ease-in-out infinite' }}></div>
         
+        {/* Curved wave background */}
+        <div className="absolute top-0 left-0 right-0 h-32 overflow-hidden">
+          <svg className="absolute bottom-0 w-full h-16" viewBox="0 0 1200 120" preserveAspectRatio="none" fill="none">
+            <path d="M0,50 C300,80 600,20 900,50 C1000,60 1100,40 1200,50 L1200,120 L0,120 Z" 
+                  fill="url(#waveGradient)" opacity="0.3"/>
+            <defs>
+              <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.2"/>
+                <stop offset="50%" stopColor="#2563EB" stopOpacity="0.15"/>
+                <stop offset="100%" stopColor="#06B6D4" stopOpacity="0.2"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
         {/* Hero Section */}
         <div className="relative max-w-7xl mx-auto px-6 py-20">
           <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
@@ -264,27 +274,16 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               </div>
 
               <div className="space-y-4">
-                {/* 2. Interactive sparkle animation on CTA hover */}
-                <div className="relative inline-block">
+                <div className="relative">
+                  {/* Animated glow effect */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-primary via-accent to-primary rounded-2xl blur-sm opacity-50 animate-pulse"></div>
                   <Button 
                     onClick={handlePaymentClick} 
                     size="lg" 
-                    className="relative bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-base h-auto group overflow-hidden"
+                    className="relative bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-base h-auto"
                   >
                     Get started – $29 one-time fee
-                    {/* Sparkle effect on hover */}
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white/80 rounded-full opacity-0 group-hover:animate-ping group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="absolute top-1/4 right-1/4 w-1 h-1 bg-white/60 rounded-full opacity-0 group-hover:animate-pulse group-hover:opacity-100 transition-opacity delay-150 duration-300"></div>
-                    <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 bg-white/70 rounded-full opacity-0 group-hover:animate-bounce group-hover:opacity-100 transition-opacity delay-75 duration-300"></div>
                   </Button>
-                </div>
-
-                {/* 3. "Built with AI" badge */}
-                <div className="flex justify-center">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-primary/20 rounded-full text-sm font-medium text-primary shadow-sm">
-                    <span>🧠</span>
-                    <span>Built with AI</span>
-                  </div>
                 </div>
 
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -388,9 +387,6 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </div>
           </div>
         </div>
-
-        {/* 5. Gradient divider under hero section */}
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
         {/* Features Grid */}
         <div className="bg-white/50 py-20">

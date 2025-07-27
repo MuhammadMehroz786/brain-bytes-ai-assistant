@@ -119,3 +119,24 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom animations and utilities */
+@layer utilities {
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+}
+
+@layer base {
+  @keyframes float {
+    0%, 100% {
+      transform: translateX(-50%) translateY(0px) scale(1);
+    }
+    33% {
+      transform: translateX(-50%) translateY(-8px) scale(1.02);
+    }
+    66% {
+      transform: translateX(-50%) translateY(4px) scale(0.98);
+    }
+  }
+}
