@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
@@ -15,6 +15,8 @@ export const IntroScreen = ({
   const [tasksPerDay, setTasksPerDay] = useState([15]);
   const [hourlyRate, setHourlyRate] = useState([50]);
   const [isMobile, setIsMobile] = useState(false);
+  const [displayedValue, setDisplayedValue] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   const handlePaymentClick = async () => {
     try {
       const {
@@ -43,9 +45,64 @@ export const IntroScreen = ({
   const hoursSavedPerDay = tasksPerDay[0] * 10 / 60;
   const monthlyHoursSaved = hoursSavedPerDay * 20;
   const monthlyValueGained = monthlyHoursSaved * hourlyRate[0];
+  
   const getProgressPercentage = () => {
     const maxValue = 50 * 10 / 60 * 20 * 500; // 50 tasks * 10 min / 60 * 20 days * $500/hour
     return Math.min(monthlyValueGained / maxValue * 100, 100);
+  };
+
+  // Travel comparison logic
+  const getTravelComparison = (value: number) => {
+    if (value >= 6000) return "That's first-class to the Maldives with overwater bungalows.";
+    if (value >= 5000) return "That's a safari in Kenya—flights, lodge, and guide included.";
+    if (value >= 4000) return "That's Tokyo + 7 nights in a 4-star hotel.";
+    if (value >= 3000) return "That's two weeks island-hopping in Greece.";
+    if (value >= 2500) return "That's business class to NYC and back.";
+    if (value >= 2000) return "That's a food tour through Italy—Rome, Florence, and Naples.";
+    if (value >= 1500) return "That's a ski trip to the Alps.";
+    if (value >= 1000) return "That's a weekend in Barcelona—flights and hotel included.";
+    return "";
+  };
+
+  // Counting animation effect
+  useEffect(() => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    const target = Math.round(monthlyValueGained);
+    const start = displayedValue;
+    const duration = 800; // 800ms animation
+    const startTime = Date.now();
+    
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function for smooth animation
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(start + (target - start) * easeOut);
+      
+      setDisplayedValue(current);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setIsAnimating(false);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [monthlyValueGained, isAnimating]);
+
+  // Trigger animation when sliders change
+  const handleTasksChange = (value: number[]) => {
+    setTasksPerDay(value);
+    setIsAnimating(false);
+  };
+
+  const handleRateChange = (value: number[]) => {
+    setHourlyRate(value);
+    setIsAnimating(false);
   };
   return <div className="min-h-screen bg-[#f4faff]">
       {/* Desktop Header */}
@@ -118,7 +175,7 @@ export const IntroScreen = ({
                   <span className="font-semibold text-primary bg-primary-light px-2 py-1 rounded-lg text-xs">{tasksPerDay[0]} tasks</span>
                   <span>50</span>
                 </div>
-                <Slider value={tasksPerDay} onValueChange={setTasksPerDay} min={5} max={50} step={1} className="w-full" />
+                <Slider value={tasksPerDay} onValueChange={handleTasksChange} min={5} max={50} step={1} className="w-full hover:scale-105 transition-transform duration-200" />
               </div>
 
               <div className="space-y-2">
@@ -130,22 +187,27 @@ export const IntroScreen = ({
                   <span className="font-semibold text-primary bg-primary-light px-2 py-1 rounded-lg text-xs">${hourlyRate[0]}</span>
                   <span>$500</span>
                 </div>
-                <Slider value={hourlyRate} onValueChange={setHourlyRate} min={10} max={500} step={10} className="w-full" />
+                <Slider value={hourlyRate} onValueChange={handleRateChange} min={10} max={500} step={10} className="w-full hover:scale-105 transition-transform duration-200" />
               </div>
 
               {/* Live Calculation Display */}
               <div className="bg-gradient-to-r from-success-light to-primary-light rounded-xl p-2 border border-success/20 shadow-lg">
                 <div className="text-center space-y-1">
-                  <p className="text-sm font-semibold text-foreground">
-                    You're saving{" "}
-                    <span className="text-lg font-bold bg-gradient-to-r from-success to-primary bg-clip-text text-transparent">
-                      ${Math.round(monthlyValueGained).toLocaleString()}
-                    </span>
-                    /month
-                  </p>
-                  <p className="text-xs text-muted-foreground font-medium">
-                    Brain Bytes helps you unlock it for the price of lunch.
-                  </p>
+                   <p className="text-sm font-semibold text-foreground">
+                     You're saving{" "}
+                     <span className="text-lg font-bold bg-gradient-to-r from-success to-primary bg-clip-text text-transparent">
+                       ${displayedValue.toLocaleString()}
+                     </span>
+                     /month
+                   </p>
+                   {getTravelComparison(displayedValue) && (
+                     <p className="text-xs italic text-muted-foreground/80 transition-opacity duration-500">
+                       {getTravelComparison(displayedValue)}
+                     </p>
+                   )}
+                   <p className="text-xs text-muted-foreground font-medium">
+                     Brain Bytes helps you unlock it for the price of lunch.
+                   </p>
                   
                   {/* Visual Progress Bar */}
                   <div className="w-full bg-muted rounded-full h-2 shadow-inner">
@@ -235,48 +297,59 @@ export const IntroScreen = ({
               </div>
             </div>
 
-            {/* Right Side - Interactive ROI Calculator */}
+            {/* Right Side - Interactive ROI Calculator with enhanced 3D depth */}
             <div className="lg:ml-8">
-              <div className="bg-gradient-to-br from-white/95 via-purple-50/30 to-blue-50/30 backdrop-blur-sm border border-primary/20 shadow-2xl rounded-3xl p-8 hover:shadow-3xl transition-all duration-500">
-                <div className="space-y-6">
-                  <div className="text-center space-y-2">
-                    <h3 className="text-xl font-bold text-foreground">How many repetitive tasks do you handle each day?</h3>
-                  </div>
-
-                  <div className="space-y-8">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-                        <span>1 task</span>
-                        <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{tasksPerDay[0]} tasks</span>
-                        <span>50 tasks</span>
-                      </div>
-                      <Slider value={tasksPerDay} onValueChange={setTasksPerDay} min={1} max={50} step={1} className="w-full slider-purple" />
+              <div className="bg-gradient-to-br from-white/95 via-purple-50/30 to-blue-50/30 backdrop-blur-sm border border-primary/20 shadow-2xl shadow-primary/10 rounded-3xl p-8 hover:shadow-3xl transition-all duration-500 relative overflow-hidden hover:scale-[1.02]">
+                {/* Inner glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-primary/5 rounded-3xl"></div>
+                <div className="relative">
+                  <div className="space-y-6">
+                    <div className="text-center space-y-2">
+                      <h3 className="text-xl font-bold text-foreground">How many repetitive tasks do you handle each day?</h3>
                     </div>
 
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-bold text-foreground text-center">What's your hourly rate?</h3>
-                      <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-                        <span>$10</span>
-                        <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">${hourlyRate[0]}</span>
-                        <span>$200</span>
-                      </div>
-                      <Slider value={hourlyRate} onValueChange={setHourlyRate} min={10} max={200} step={10} className="w-full slider-purple" />
-                    </div>
-
-                    {/* Results Display */}
-                    <div className="bg-gradient-to-br from-purple-100/60 via-blue-100/60 to-purple-100/60 rounded-2xl p-6 border border-primary/30 shadow-lg">
-                      <div className="text-center space-y-4">
-                        <div>
-                          <p className="text-lg font-bold text-foreground mb-1">You're losing <span className="text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">${Math.round(monthlyValueGained).toLocaleString()}/month</span></p>
-                          <p className="text-sm text-muted-foreground font-medium">
-                            Brain Bytes helps you win it back, for the price of lunch.
-                          </p>
+                    <div className="space-y-8">
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
+                          <span>1 task</span>
+                          <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{tasksPerDay[0]} tasks</span>
+                          <span>50 tasks</span>
                         </div>
-                        
-                        <div className="space-y-2">
-                          <p className="text-xs text-muted-foreground">
-                            Based on saving 10 minutes per task. Actual savings may vary.
-                          </p>
+                        <Slider value={tasksPerDay} onValueChange={handleTasksChange} min={1} max={50} step={1} className="w-full slider-purple hover:scale-105 transition-transform duration-200" />
+                      </div>
+
+                      <div className="space-y-4">
+                        <h3 className="text-xl font-bold text-foreground text-center">What's your hourly rate?</h3>
+                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
+                          <span>$10</span>
+                          <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">${hourlyRate[0]}</span>
+                          <span>$200</span>
+                        </div>
+                        <Slider value={hourlyRate} onValueChange={handleRateChange} min={10} max={200} step={10} className="w-full slider-purple hover:scale-105 transition-transform duration-200" />
+                      </div>
+
+                       {/* Results Display with enhanced 3D depth */}
+                      <div className="bg-gradient-to-br from-purple-100/60 via-blue-100/60 to-purple-100/60 rounded-2xl p-6 border border-primary/30 shadow-2xl shadow-primary/20 relative overflow-hidden">
+                        {/* Inner shadow effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-transparent rounded-2xl"></div>
+                        <div className="relative text-center space-y-4">
+                          <div>
+                            <p className="text-lg font-bold text-foreground mb-1">You're losing <span className="text-3xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">${displayedValue.toLocaleString()}/month</span></p>
+                            {getTravelComparison(displayedValue) && (
+                              <p className="text-sm italic text-muted-foreground/80 transition-opacity duration-500 mb-2">
+                                {getTravelComparison(displayedValue)}
+                              </p>
+                            )}
+                            <p className="text-sm text-muted-foreground font-medium">
+                              Brain Bytes helps you win it back, for the price of lunch.
+                            </p>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <p className="text-xs text-muted-foreground">
+                              Based on saving 10 minutes per task. Actual savings may vary.
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -396,6 +469,6 @@ export const IntroScreen = ({
           </div>
         </div>
       </div>
-
-    </div>;
+    </div>
+  );
 };
