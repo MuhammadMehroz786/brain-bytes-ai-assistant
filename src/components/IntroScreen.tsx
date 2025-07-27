@@ -206,199 +206,257 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </div>
 
-      {/* Desktop Layout - Redesigned */}
-      <div className="hidden md:block px-6 py-4 max-w-7xl mx-auto min-h-[calc(100vh-100px)] flex flex-col justify-center">
-        {/* Main Hero Section - Centered Above the Fold */}
-        <div className="grid grid-cols-2 gap-12 items-center mb-16">
-          {/* Left Side - Value Prop */}
-          <div className="space-y-6">
-            <h1 className="text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-              Answer 5 questions.
-              <br />
-              <span className="bg-gradient-to-r from-primary via-accent to-success bg-clip-text text-transparent">
-                Unlock your personalized AI Assistant
-              </span>
-              <br />
-              in under 2 minutes.
-            </h1>
-            
-            <div className="space-y-3">
-              <Button 
-                onClick={handlePaymentClick} 
-                size="lg" 
-                className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-10 py-5 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 transform"
-              >
-                Get Your AI Assistant – $29 One-Time Fee
-              </Button>
-
-              {/* Demo Link */}
-              <div>
-                <Link 
-                  to="/demo" 
-                  className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2"
-                >
-                  👀 Not ready? Watch a 60-second demo →
-                </Link>
+      {/* Desktop Layout - Professional Redesign */}
+      <div className="hidden md:block">
+        {/* Hero Section */}
+        <div className="max-w-7xl mx-auto px-6 py-20">
+          <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
+            {/* Left Side - Hero Content */}
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <h1 className="text-5xl lg:text-6xl font-black text-foreground leading-[1.1] tracking-tight">
+                  Get your time back
+                  <br />
+                  <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                    with AI.
+                  </span>
+                </h1>
+                
+                <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
+                  #1 AI productivity assistant for{" "}
+                  <span className="text-primary font-semibold">individuals</span>,{" "}
+                  <span className="text-accent font-semibold">teams</span>, and{" "}
+                  <span className="text-success font-semibold">organizations</span>.
+                </p>
               </div>
-            </div>
-          </div>
 
-          {/* Right Side - ROI Sliders */}
-          <div>
-            <Card className="p-6 bg-white/90 backdrop-blur-sm border border-primary/20 shadow-xl rounded-2xl hover:shadow-2xl transition-all duration-300">
               <div className="space-y-4">
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-foreground">
-                    How many tasks do you complete per day?
-                  </label>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-                    <span>5 tasks</span>
-                    <span className="font-semibold text-primary bg-primary-light px-3 py-1 rounded-lg">{tasksPerDay[0]} tasks</span>
-                    <span>50 tasks</span>
+                <Button 
+                  onClick={handlePaymentClick} 
+                  size="lg" 
+                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-base h-auto"
+                >
+                  Get started – $29 one-time fee
+                </Button>
+
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🎯</span>
+                    <span>100% personalized setup</span>
                   </div>
-                  <Slider
-                    value={tasksPerDay}
-                    onValueChange={setTasksPerDay}
-                    min={5}
-                    max={50}
-                    step={1}
-                    className="w-full"
-                  />
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">🚀</span>
+                    <span>2-minute onboarding</span>
+                  </div>
                 </div>
 
-                <div className="space-y-3">
-                  <label className="text-sm font-medium text-foreground">
-                    How much is your time worth per hour?
-                  </label>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
-                    <span>$10</span>
-                    <span className="font-semibold text-primary bg-primary-light px-3 py-1 rounded-lg">${hourlyRate[0]}</span>
-                    <span>$500</span>
-                  </div>
-                  <Slider
-                    value={hourlyRate}
-                    onValueChange={setHourlyRate}
-                    min={10}
-                    max={500}
-                    step={10}
-                    className="w-full"
-                  />
+                <div>
+                  <Link 
+                    to="/demo" 
+                    className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2"
+                  >
+                    👀 Not ready? Watch a 60-second demo →
+                  </Link>
                 </div>
+              </div>
+            </div>
 
-                {/* Live Calculation Display */}
-                <div className="bg-gradient-to-r from-success-light to-primary-light rounded-xl p-4 border border-success/20 shadow-lg">
-                  <div className="text-center space-y-3">
-                    <p className="text-lg font-semibold text-foreground">
-                      You're saving{" "}
-                      <span className="text-xl font-bold bg-gradient-to-r from-success to-primary bg-clip-text text-transparent">
-                        ${Math.round(monthlyValueGained).toLocaleString()}
-                      </span>
-                      /month
-                    </p>
-                    <p className="text-sm text-muted-foreground font-medium">
-                      Brain Bytes helps you unlock it for the price of lunch.
-                    </p>
-                    
-                    {/* Visual Progress Bar */}
-                    <div className="w-full bg-muted rounded-full h-3 mt-3 shadow-inner">
-                      <div 
-                        className="bg-gradient-to-r from-success via-accent to-primary h-3 rounded-full transition-all duration-700 shadow-sm"
-                        style={{ width: `${getProgressPercentage()}%` }}
-                      ></div>
+            {/* Right Side - Interactive ROI Calculator */}
+            <div className="lg:ml-8">
+              <div className="bg-white/95 backdrop-blur-sm border border-primary/10 shadow-2xl rounded-3xl p-8 hover:shadow-3xl transition-all duration-500">
+                <div className="space-y-6">
+                  <div className="text-center space-y-2">
+                    <h3 className="text-lg font-semibold text-foreground">Calculate Your Time Savings</h3>
+                    <p className="text-sm text-muted-foreground">See how much Brain Bytes can save you</p>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                        <span className="text-primary">📋</span>
+                        Tasks completed per day
+                      </label>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+                        <span>5</span>
+                        <span className="font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">{tasksPerDay[0]} tasks</span>
+                        <span>50</span>
+                      </div>
+                      <Slider
+                        value={tasksPerDay}
+                        onValueChange={setTasksPerDay}
+                        min={5}
+                        max={50}
+                        step={1}
+                        className="w-full"
+                      />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Based on saving 10 minutes per task. Actual savings may vary.
-                    </p>
+
+                    <div className="space-y-3">
+                      <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                        <span className="text-accent">💰</span>
+                        Your time value per hour
+                      </label>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+                        <span>$10</span>
+                        <span className="font-semibold text-accent bg-accent/10 px-3 py-1 rounded-full">${hourlyRate[0]}</span>
+                        <span>$500</span>
+                      </div>
+                      <Slider
+                        value={hourlyRate}
+                        onValueChange={setHourlyRate}
+                        min={10}
+                        max={500}
+                        step={10}
+                        className="w-full"
+                      />
+                    </div>
+
+                    {/* Results Display */}
+                    <div className="bg-gradient-to-br from-success/10 via-primary/10 to-accent/10 rounded-2xl p-6 border border-success/20">
+                      <div className="text-center space-y-4">
+                        <div>
+                          <p className="text-sm text-muted-foreground font-medium mb-1">Monthly time savings value</p>
+                          <p className="text-3xl font-bold bg-gradient-to-r from-success via-primary to-accent bg-clip-text text-transparent">
+                            ${Math.round(monthlyValueGained).toLocaleString()}
+                          </p>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <div className="w-full bg-muted/50 rounded-full h-2">
+                            <div 
+                              className="bg-gradient-to-r from-success via-primary to-accent h-2 rounded-full transition-all duration-700"
+                              style={{ width: `${getProgressPercentage()}%` }}
+                            ></div>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Brain Bytes pays for itself in the first week
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </Card>
+            </div>
           </div>
         </div>
 
-        {/* Features Section */}
-        <div className="mt-8 grid md:grid-cols-3 gap-6 opacity-90">
-          <Card className="p-6 text-center bg-white/70 backdrop-blur-sm border-primary/10 hover:shadow-lg transition-all duration-300 hover:scale-102">
-            <div className="w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center mx-auto mb-4">
-              <span className="text-xl">⚡</span>
+        {/* Features Grid */}
+        <div className="bg-white/50 py-20">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-foreground mb-4">Everything you need to reclaim your time</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Smart automation meets personalized insights to transform how you work
+              </p>
             </div>
-            <h3 className="font-semibold text-foreground mb-2">2-Minute Setup</h3>
-            <p className="text-sm text-muted-foreground">
-              Answer 5 quick questions and get your personalized AI assistant instantly.
-            </p>
-          </Card>
 
-          <Card className="p-6 text-center bg-white/70 backdrop-blur-sm border-accent/10 hover:shadow-lg transition-all duration-300 hover:scale-102">
-            <div className="w-12 h-12 bg-accent text-white rounded-xl flex items-center justify-center mx-auto mb-4">
-              <span className="text-xl">🧠</span>
-            </div>
-            <h3 className="font-semibold text-foreground mb-2">Smart Calendar Sync</h3>
-            <p className="text-sm text-muted-foreground">
-              Automatically sync your Google Calendar and get AI insights on your schedule.
-            </p>
-          </Card>
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="group p-8 text-center bg-white/80 backdrop-blur-sm border border-primary/10 rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-2xl">⚡</span>
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-3">Lightning Setup</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Answer 5 questions and get your personalized AI assistant instantly. No complicated configuration.
+                </p>
+              </div>
 
-          <Card className="p-6 text-center bg-white/70 backdrop-blur-sm border-success/10 hover:shadow-lg transition-all duration-300 hover:scale-102">
-            <div className="w-12 h-12 bg-success text-white rounded-xl flex items-center justify-center mx-auto mb-4">
-              <span className="text-xl">📧</span>
+              <div className="group p-8 text-center bg-white/80 backdrop-blur-sm border border-accent/10 rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div className="w-16 h-16 bg-gradient-to-br from-accent to-accent/80 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-2xl">🧠</span>
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-3">Smart Calendar Sync</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Seamlessly connect with Google Calendar for AI-powered scheduling insights and optimization.
+                </p>
+              </div>
+
+              <div className="group p-8 text-center bg-white/80 backdrop-blur-sm border border-success/10 rounded-2xl hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div className="w-16 h-16 bg-gradient-to-br from-success to-success/80 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-2xl">📧</span>
+                </div>
+                <h3 className="text-xl font-semibold text-foreground mb-3">Email Intelligence</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Get curated daily email summaries without the overwhelm. Focus on what matters most.
+                </p>
+              </div>
             </div>
-            <h3 className="font-semibold text-foreground mb-2">Email Summary</h3>
-            <p className="text-sm text-muted-foreground">
-              Get curated daily email recaps without inbox overload.
-            </p>
-          </Card>
+          </div>
         </div>
 
-        {/* Testimonials Section */}
-        <div className="mt-12 grid grid-cols-2 gap-6 max-w-4xl mx-auto opacity-90">
-          <Card className="p-6 bg-white/70 backdrop-blur-sm border-primary/10 hover:shadow-lg transition-all duration-300">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-1">
-                {[...Array(5)].map((_, i) => (
-                  <span key={i} className="text-yellow-500">★</span>
-                ))}
+        {/* Social Proof */}
+        <div className="py-20">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-foreground mb-4">Trusted by productive professionals</h2>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="bg-white/80 backdrop-blur-sm border border-primary/10 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-1">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-yellow-500 text-lg">★</span>
+                    ))}
+                  </div>
+                  <p className="text-foreground leading-relaxed">
+                    "Brain Bytes transformed my daily routine. I'm saving 2+ hours every day and finally feel in control of my schedule."
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                      <span className="text-primary font-semibold">SM</span>
+                    </div>
+                    <div>
+                      <div className="font-medium text-foreground">Sarah M.</div>
+                      <div className="text-sm text-muted-foreground">Marketing Director</div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground italic">
-                "Brain Bytes transformed my daily routine. I'm saving 2+ hours every day and finally feel in control of my schedule."
-              </p>
-              <div className="text-xs text-muted-foreground font-medium">
-                — Sarah M., Marketing Director
+              
+              <div className="bg-white/80 backdrop-blur-sm border border-accent/10 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-1">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="text-yellow-500 text-lg">★</span>
+                    ))}
+                  </div>
+                  <p className="text-foreground leading-relaxed">
+                    "The personalized AI insights are incredible. It's like having a productivity coach that actually understands my workflow."
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
+                      <span className="text-accent font-semibold">DL</span>
+                    </div>
+                    <div>
+                      <div className="font-medium text-foreground">David L.</div>
+                      <div className="text-sm text-muted-foreground">Software Engineer</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </Card>
-          
-          <Card className="p-6 bg-white/70 backdrop-blur-sm border-accent/10 hover:shadow-lg transition-all duration-300">
-            <div className="space-y-4">
-              <div className="flex items-center space-x-1">
-                {[...Array(5)].map((_, i) => (
-                  <span key={i} className="text-yellow-500">★</span>
-                ))}
-              </div>
-              <p className="text-sm text-muted-foreground italic">
-                "The personalized AI insights are incredible. It's like having a productivity coach that actually understands my workflow."
-              </p>
-              <div className="text-xs text-muted-foreground font-medium">
-                — David L., Software Engineer
-              </div>
-            </div>
-          </Card>
+          </div>
         </div>
 
-        {/* Footer Links */}
-        <div className="mt-12 pt-8">
-          <div className="flex justify-center gap-6">
-            <Link 
-              to="/privacy-policy" 
-              className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
-            >
-              Privacy Policy
-            </Link>
-            <Link 
-              to="/terms-of-service" 
-              className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
-            >
-              Terms of Service
-            </Link>
+        {/* Footer */}
+        <div className="bg-white/30 py-12">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex justify-center gap-8">
+              <Link 
+                to="/privacy-policy" 
+                className="text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
+              >
+                Privacy Policy
+              </Link>
+              <Link 
+                to="/terms-of-service" 
+                className="text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
+              >
+                Terms of Service
+              </Link>
+            </div>
           </div>
         </div>
       </div>
