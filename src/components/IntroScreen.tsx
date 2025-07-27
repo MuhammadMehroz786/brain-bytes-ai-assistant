@@ -53,11 +53,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
     <div className="min-h-screen bg-secondary">
       {/* Desktop Header */}
       <div className="hidden md:flex sticky top-0 z-50 bg-secondary px-6 py-3 justify-between items-center">
-        <div className="flex items-center flex-1">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-light rounded-2xl mr-3">
+        <div className="flex items-center">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-light rounded-2xl">
             <img alt="Brain Bytes Logo" className="w-8 h-8 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
           </div>
-          <span className="text-4xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
+        </div>
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <span className="text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent drop-shadow-lg">Brain Bytes</span>
         </div>
         <Button variant="outline" onClick={onAuth} className="px-4 py-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
           Log In
