@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import brainIllustration from "@/assets/brain-circuits-illustration.png";
 
 interface IntroScreenProps {
   onStart: () => void;
@@ -209,10 +210,22 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       {/* Desktop Layout - Professional Redesign */}
       <div className="hidden md:block">
         {/* Hero Section */}
-        <div className="max-w-7xl mx-auto px-6 py-20">
+        <div className="max-w-7xl mx-auto px-6 py-20 relative">
+          {/* Floating Brain Illustration */}
+          <div className="absolute top-8 right-8 lg:right-16 xl:right-24 z-10 hidden lg:block">
+            <img 
+              src={brainIllustration} 
+              alt="AI Brain Illustration" 
+              className="w-32 h-32 xl:w-40 xl:h-40 opacity-60 animate-pulse"
+              style={{
+                animation: 'float 6s ease-in-out infinite, pulse 4s ease-in-out infinite'
+              }}
+            />
+          </div>
+          
           <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
             {/* Left Side - Hero Content */}
-            <div className="space-y-8">
+            <div className="space-y-8 relative z-20">
               <div className="space-y-6">
                 <h1 className="text-5xl lg:text-6xl font-black text-foreground leading-[1.1] tracking-tight">
                   Get your time back
