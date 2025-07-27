@@ -17,6 +17,17 @@ export const IntroScreen = ({
   const [isMobile, setIsMobile] = useState(false);
   const [displayedValue, setDisplayedValue] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  
+  // CTA variations for A/B testing
+  const ctaVariations = [
+    "Get started – $29 one-time fee",
+    "Unlock your AI setup for $29", 
+    "Start saving time now",
+    "Claim your productivity plan"
+  ];
+  
+  // For now, use the first variation (can be randomized or controlled later)
+  const currentCTA = ctaVariations[0];
   const handlePaymentClick = async () => {
     try {
       const {
@@ -256,18 +267,30 @@ export const IntroScreen = ({
                 
                 <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
                   #1 AI productivity assistant for{" "}
-                  <span className="text-primary font-semibold">individuals</span>,{" "}
-                  <span className="text-accent font-semibold">teams</span>, and{" "}
-                  <span className="text-success font-semibold">organizations</span>.
+                  <span className="text-primary font-semibold">professionals</span> and{" "}
+                  <span className="text-accent font-semibold">creators</span>.
                 </p>
               </div>
 
               <div className="space-y-4">
-                {/* 2. Interactive sparkle animation on CTA hover */}
+                {/* Enhanced CTA with A/B testing support */}
                 <div className="relative inline-block">
-                  <Button onClick={handlePaymentClick} size="lg" className="relative bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-base h-auto group overflow-hidden">
-                    Get started – $29 one-time fee
-                    {/* Sparkle effect on hover */}
+                  <Button 
+                    onClick={handlePaymentClick} 
+                    className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-lg px-7 py-[18px] rounded-2xl transition-all duration-300 text-base h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1"
+                    style={{
+                      boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
+                      animation: 'glow 4s ease-in-out infinite alternate'
+                    }}
+                  >
+                    {currentCTA}
+                    
+                    {/* Shimmer effect on hover */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    </div>
+                    
+                    {/* Sparkle effects */}
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white/80 rounded-full opacity-0 group-hover:animate-ping group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="absolute top-1/4 right-1/4 w-1 h-1 bg-white/60 rounded-full opacity-0 group-hover:animate-pulse group-hover:opacity-100 transition-opacity delay-150 duration-300"></div>
                     <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 bg-white/70 rounded-full opacity-0 group-hover:animate-bounce group-hover:opacity-100 transition-opacity delay-75 duration-300"></div>
@@ -378,7 +401,7 @@ export const IntroScreen = ({
                 </div>
                 <h3 className="text-2xl font-bold text-foreground mb-4">Answer 5 quick questions</h3>
                 <p className="text-muted-foreground leading-relaxed text-lg">
-                  Get matched with the perfect AI setup in under 2 minutes.
+                  Get instantly matched with your ideal AI setup—zero fluff, just fast results.
                 </p>
               </div>
 
@@ -388,7 +411,7 @@ export const IntroScreen = ({
                 </div>
                 <h3 className="text-2xl font-bold text-foreground mb-4">Activate your assistant</h3>
                 <p className="text-muted-foreground leading-relaxed text-lg">
-                  Sync your calendar, pick your focus tools, and start strong.
+                  Connect your tools, sync your calendar, and unlock laser focus in minutes.
                 </p>
               </div>
 
@@ -398,7 +421,7 @@ export const IntroScreen = ({
                 </div>
                 <h3 className="text-2xl font-bold text-foreground mb-4">Automate your day</h3>
                 <p className="text-muted-foreground leading-relaxed text-lg">
-                  Get daily briefings, summaries, and saved hours—on autopilot.
+                  From daily briefings to smart summaries—your time-saving copilot is ready.
                 </p>
               </div>
             </div>
@@ -406,7 +429,7 @@ export const IntroScreen = ({
         </div>
 
         {/* Social Proof */}
-        <div className="py-20">
+        <div className="py-12">
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-foreground mb-4">Trusted by productive professionals</h2>
