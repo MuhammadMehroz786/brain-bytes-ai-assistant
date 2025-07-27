@@ -60,6 +60,14 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <div className="relative">
+            {/* 1. Floating micro icon behind "Brain Bytes" - brain icon with subtle animation */}
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-32 h-32 opacity-8 z-0">
+              <svg className="w-full h-full text-purple-400/30 animate-pulse" style={{ animation: 'float 6s ease-in-out infinite' }} viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C8.69 2 6 4.69 6 8c0 1.5.6 2.86 1.56 3.86L9 13.3c.14.14.36.14.5 0L11 11.86c.96-1 1.56-2.36 1.56-3.86 0-3.31-2.69-6-6-6zm0 8c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+                <path d="M18 8c0-1.66-1.34-3-3-3s-3 1.34-3 3c0 .8.32 1.52.84 2.05l1.16 1.16c.39.39 1.02.39 1.41 0l1.16-1.16c.52-.53.84-1.25.84-2.05z"/>
+              </svg>
+            </div>
+            
             {/* Primary floating blob behind title - larger and more visible */}
             <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-80 h-32 bg-gradient-to-br from-purple-300/50 via-blue-300/50 to-cyan-300/50 rounded-full blur-2xl animate-pulse opacity-70 z-0"></div>
             
@@ -69,7 +77,14 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             {/* Tertiary accent blob */}
             <div className="absolute -bottom-4 -left-12 w-16 h-10 bg-gradient-to-br from-cyan-300/30 via-sky-300/30 to-blue-300/30 rounded-full blur-lg opacity-50 z-0" style={{ animation: 'pulse 3s ease-in-out infinite' }}></div>
             
-            <span className="relative z-10 text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent drop-shadow-lg">Brain Bytes</span>
+            {/* 4. Gradient stroke outline around "Brain Bytes" text */}
+            <span className="relative z-10 text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent drop-shadow-lg" style={{ 
+              WebkitTextStroke: '1px transparent',
+              backgroundClip: 'text',
+              background: 'linear-gradient(90deg, #7C3AED 0%, #2563EB 50%, #7C3AED 100%)',
+              WebkitBackgroundClip: 'text',
+              filter: 'drop-shadow(0 0 2px rgba(124, 58, 237, 0.3))'
+            }}>Brain Bytes</span>
           </div>
         </div>
         <Button variant="outline" onClick={onAuth} className="px-4 py-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
@@ -249,13 +264,28 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               </div>
 
               <div className="space-y-4">
-                <Button 
-                  onClick={handlePaymentClick} 
-                  size="lg" 
-                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-base h-auto"
-                >
-                  Get started – $29 one-time fee
-                </Button>
+                {/* 2. Interactive sparkle animation on CTA hover */}
+                <div className="relative inline-block">
+                  <Button 
+                    onClick={handlePaymentClick} 
+                    size="lg" 
+                    className="relative bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-base h-auto group overflow-hidden"
+                  >
+                    Get started – $29 one-time fee
+                    {/* Sparkle effect on hover */}
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white/80 rounded-full opacity-0 group-hover:animate-ping group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute top-1/4 right-1/4 w-1 h-1 bg-white/60 rounded-full opacity-0 group-hover:animate-pulse group-hover:opacity-100 transition-opacity delay-150 duration-300"></div>
+                    <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 bg-white/70 rounded-full opacity-0 group-hover:animate-bounce group-hover:opacity-100 transition-opacity delay-75 duration-300"></div>
+                  </Button>
+                </div>
+
+                {/* 3. "Built with AI" badge */}
+                <div className="flex justify-center">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-primary/20 rounded-full text-sm font-medium text-primary shadow-sm">
+                    <span>🧠</span>
+                    <span>Built with AI</span>
+                  </div>
+                </div>
 
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
@@ -358,6 +388,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </div>
           </div>
         </div>
+
+        {/* 5. Gradient divider under hero section */}
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
         {/* Features Grid */}
         <div className="bg-white/50 py-20">
