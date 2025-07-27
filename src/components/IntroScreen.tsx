@@ -104,7 +104,8 @@ export const IntroScreen = ({
     setHourlyRate(value);
     setIsAnimating(false);
   };
-  return <div className="min-h-screen bg-[#f4faff]">
+  return (
+    <div className="min-h-screen bg-[#f4faff]">
       {/* Desktop Header */}
       <div className="hidden lg:flex sticky top-0 z-50 bg-[#f4faff] px-6 py-3 justify-between items-center">
         <div className="flex items-center">
@@ -469,6 +470,7 @@ export const IntroScreen = ({
           </div>
         </div>
       </div>
+
     </div>
   );
 };
