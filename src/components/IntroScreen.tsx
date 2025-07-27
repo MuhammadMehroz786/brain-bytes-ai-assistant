@@ -162,18 +162,30 @@ export const IntroScreen = ({
               in under 2 minutes.
             </h1>
             
-            {/* CTA Button */}
-            <Button onClick={handlePaymentClick} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-              Get Your AI Assistant – $29 One-Time Fee
-            </Button>
+                {/* CTA Button */}
+                <Button onClick={handlePaymentClick} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                  Get Your AI Assistant – $29 One-Time Fee
+                </Button>
 
-            {/* Demo Link */}
-            <div className="text-center">
-              <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-xs underline underline-offset-4 hover:underline-offset-2">
-                👀 Not ready? Watch a 60-second demo →
-              </Link>
-            </div>
-          </div>
+                {/* Features moved closer to CTA */}
+                <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm">🎯</span>
+                    <span>100% personalized setup</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm">🚀</span>
+                    <span>2-minute onboarding</span>
+                  </div>
+                </div>
+
+                {/* Demo Link */}
+                <div className="text-center">
+                  <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-xs underline underline-offset-4 hover:underline-offset-2">
+                    👀 Not ready? Watch a 60-second demo →
+                  </Link>
+                </div>
+              </div>
 
           {/* ROI Sliders */}
           <Card className="p-4 bg-white/80 backdrop-blur-sm border border-primary/20 shadow-xl rounded-2xl">
@@ -216,20 +228,20 @@ export const IntroScreen = ({
                      <p className="text-xs italic text-muted-foreground/80 transition-opacity duration-500">
                        {getTravelComparison(displayedValue)}
                      </p>
-                   )}
-                   <p className="text-xs text-muted-foreground font-medium">
+                    )}
+                    <p className="text-xs text-muted-foreground font-medium">
+                      Based on saving 10 minutes per task. Actual savings may vary.
+                    </p>
+                   
+                   {/* Visual Progress Bar */}
+                   <div className="w-full bg-muted rounded-full h-2 shadow-inner">
+                     <div className="bg-gradient-to-r from-success via-accent to-primary h-2 rounded-full transition-all duration-700 shadow-sm" style={{
+                     width: `${getProgressPercentage()}%`
+                   }}></div>
+                   </div>
+                   <p className="text-xs text-muted-foreground">
                      Brain Bytes helps you unlock it for the price of lunch.
                    </p>
-                  
-                  {/* Visual Progress Bar */}
-                  <div className="w-full bg-muted rounded-full h-2 shadow-inner">
-                    <div className="bg-gradient-to-r from-success via-accent to-primary h-2 rounded-full transition-all duration-700 shadow-sm" style={{
-                    width: `${getProgressPercentage()}%`
-                  }}></div>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Based on saving 10 minutes per task. Actual savings may vary.
-                  </p>
                 </div>
               </div>
             </div>
@@ -314,13 +326,13 @@ export const IntroScreen = ({
                   
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-6 text-base text-muted-foreground">
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">🎯</span>
+                    <span className="text-xl">🎯</span>
                     <span>100% personalized setup</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">🚀</span>
+                    <span className="text-xl">🚀</span>
                     <span>2-minute onboarding</span>
                   </div>
                 </div>
