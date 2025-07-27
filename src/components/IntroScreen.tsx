@@ -4,23 +4,24 @@ import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-
 interface IntroScreenProps {
   onStart: () => void;
   onAuth: () => void;
 }
-
-export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
+export const IntroScreen = ({
+  onStart,
+  onAuth
+}: IntroScreenProps) => {
   const [tasksPerDay, setTasksPerDay] = useState([15]);
   const [hourlyRate, setHourlyRate] = useState([50]);
   const [isMobile, setIsMobile] = useState(false);
-
   const handlePaymentClick = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('create-payment');
-      
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('create-payment');
       if (error) throw error;
-      
       if (data?.url) {
         // Open Stripe checkout in a new tab
         window.open(data.url, '_blank');
@@ -29,7 +30,6 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       console.error('Payment error:', error);
     }
   };
-
   useEffect(() => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -40,17 +40,14 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   }, []);
 
   // Calculation logic: tasks per day * 10 minutes / 60 * 20 workdays * hourly rate
-  const hoursSavedPerDay = (tasksPerDay[0] * 10) / 60;
+  const hoursSavedPerDay = tasksPerDay[0] * 10 / 60;
   const monthlyHoursSaved = hoursSavedPerDay * 20;
   const monthlyValueGained = monthlyHoursSaved * hourlyRate[0];
-
   const getProgressPercentage = () => {
     const maxValue = 50 * 10 / 60 * 20 * 500; // 50 tasks * 10 min / 60 * 20 days * $500/hour
-    return Math.min((monthlyValueGained / maxValue) * 100, 100);
+    return Math.min(monthlyValueGained / maxValue * 100, 100);
   };
-
-  return (
-    <div className="min-h-screen bg-[#f4faff]">
+  return <div className="min-h-screen bg-[#f4faff]">
       {/* Desktop Header */}
       <div className="hidden lg:flex sticky top-0 z-50 bg-[#f4faff] px-6 py-3 justify-between items-center">
         <div className="flex items-center">
@@ -97,20 +94,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </h1>
             
             {/* CTA Button */}
-            <Button 
-              onClick={handlePaymentClick} 
-              size="sm" 
-              className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-            >
+            <Button onClick={handlePaymentClick} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
               Get Your AI Assistant – $29 One-Time Fee
             </Button>
 
             {/* Demo Link */}
             <div className="text-center">
-              <Link 
-                to="/demo" 
-                className="text-primary hover:text-accent transition-colors duration-200 font-medium text-xs underline underline-offset-4 hover:underline-offset-2"
-              >
+              <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-xs underline underline-offset-4 hover:underline-offset-2">
                 👀 Not ready? Watch a 60-second demo →
               </Link>
             </div>
@@ -128,14 +118,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                   <span className="font-semibold text-primary bg-primary-light px-2 py-1 rounded-lg text-xs">{tasksPerDay[0]} tasks</span>
                   <span>50</span>
                 </div>
-                <Slider
-                  value={tasksPerDay}
-                  onValueChange={setTasksPerDay}
-                  min={5}
-                  max={50}
-                  step={1}
-                  className="w-full"
-                />
+                <Slider value={tasksPerDay} onValueChange={setTasksPerDay} min={5} max={50} step={1} className="w-full" />
               </div>
 
               <div className="space-y-2">
@@ -147,14 +130,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                   <span className="font-semibold text-primary bg-primary-light px-2 py-1 rounded-lg text-xs">${hourlyRate[0]}</span>
                   <span>$500</span>
                 </div>
-                <Slider
-                  value={hourlyRate}
-                  onValueChange={setHourlyRate}
-                  min={10}
-                  max={500}
-                  step={10}
-                  className="w-full"
-                />
+                <Slider value={hourlyRate} onValueChange={setHourlyRate} min={10} max={500} step={10} className="w-full" />
               </div>
 
               {/* Live Calculation Display */}
@@ -173,10 +149,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                   
                   {/* Visual Progress Bar */}
                   <div className="w-full bg-muted rounded-full h-2 shadow-inner">
-                    <div 
-                      className="bg-gradient-to-r from-success via-accent to-primary h-2 rounded-full transition-all duration-700 shadow-sm"
-                      style={{ width: `${getProgressPercentage()}%` }}
-                    ></div>
+                    <div className="bg-gradient-to-r from-success via-accent to-primary h-2 rounded-full transition-all duration-700 shadow-sm" style={{
+                    width: `${getProgressPercentage()}%`
+                  }}></div>
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Based on saving 10 minutes per task. Actual savings may vary.
@@ -190,16 +165,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         {/* Footer Links */}
         <div className="pt-4 pb-2">
           <div className="flex justify-center gap-4">
-            <Link 
-              to="/privacy-policy" 
-              className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
-            >
+            <Link to="/privacy-policy" className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
               Privacy Policy
             </Link>
-            <Link 
-              to="/terms-of-service" 
-              className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
-            >
+            <Link to="/terms-of-service" className="text-xs text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
               Terms of Service
             </Link>
           </div>
@@ -233,11 +202,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               <div className="space-y-4">
                 {/* 2. Interactive sparkle animation on CTA hover */}
                 <div className="relative inline-block">
-                  <Button 
-                    onClick={handlePaymentClick} 
-                    size="lg" 
-                    className="relative bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-base h-auto group overflow-hidden"
-                  >
+                  <Button onClick={handlePaymentClick} size="lg" className="relative bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-base h-auto group overflow-hidden">
                     Get started – $29 one-time fee
                     {/* Sparkle effect on hover */}
                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white/80 rounded-full opacity-0 group-hover:animate-ping group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -248,10 +213,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
                 {/* 3. "Built with AI" badge */}
                 <div className="flex justify-center">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-primary/20 rounded-full text-sm font-medium text-primary shadow-sm">
-                    <span>🧠</span>
-                    <span>Built with AI</span>
-                  </div>
+                  
                 </div>
 
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -266,10 +228,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 </div>
 
                 <div>
-                  <Link 
-                    to="/demo" 
-                    className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2"
-                  >
+                  <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2">
                     👀 Not ready? Watch a 60-second demo →
                   </Link>
                 </div>
@@ -291,14 +250,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                         <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{tasksPerDay[0]} tasks</span>
                         <span>50 tasks</span>
                       </div>
-                      <Slider
-                        value={tasksPerDay}
-                        onValueChange={setTasksPerDay}
-                        min={1}
-                        max={50}
-                        step={1}
-                        className="w-full slider-purple"
-                      />
+                      <Slider value={tasksPerDay} onValueChange={setTasksPerDay} min={1} max={50} step={1} className="w-full slider-purple" />
                     </div>
 
                     <div className="space-y-4">
@@ -308,14 +260,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                         <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">${hourlyRate[0]}</span>
                         <span>$200</span>
                       </div>
-                      <Slider
-                        value={hourlyRate}
-                        onValueChange={setHourlyRate}
-                        min={10}
-                        max={200}
-                        step={10}
-                        className="w-full slider-purple"
-                      />
+                      <Slider value={hourlyRate} onValueChange={setHourlyRate} min={10} max={200} step={10} className="w-full slider-purple" />
                     </div>
 
                     {/* Results Display */}
@@ -397,9 +342,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               <div className="bg-white/80 backdrop-blur-sm border border-primary/10 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
                 <div className="space-y-4">
                   <div className="flex items-center space-x-1">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className="text-yellow-500 text-lg">★</span>
-                    ))}
+                    {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-500 text-lg">★</span>)}
                   </div>
                   <p className="text-foreground leading-relaxed">
                     "Brain Bytes transformed my daily routine. I'm saving 2+ hours every day and finally feel in control of my schedule."
@@ -419,9 +362,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               <div className="bg-white/80 backdrop-blur-sm border border-accent/10 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
                 <div className="space-y-4">
                   <div className="flex items-center space-x-1">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className="text-yellow-500 text-lg">★</span>
-                    ))}
+                    {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-500 text-lg">★</span>)}
                   </div>
                   <p className="text-foreground leading-relaxed">
                     "The personalized AI insights are incredible. It's like having a productivity coach that actually understands my workflow."
@@ -445,16 +386,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <div className="bg-white/30 py-12">
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex justify-center gap-8">
-              <Link 
-                to="/privacy-policy" 
-                className="text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
-              >
+              <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
                 Privacy Policy
               </Link>
-              <Link 
-                to="/terms-of-service" 
-                className="text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4"
-              >
+              <Link to="/terms-of-service" className="text-muted-foreground hover:text-primary transition-colors duration-200 underline underline-offset-2 hover:underline-offset-4">
                 Terms of Service
               </Link>
             </div>
@@ -462,6 +397,5 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </div>
 
-    </div>
-  );
+    </div>;
 };
