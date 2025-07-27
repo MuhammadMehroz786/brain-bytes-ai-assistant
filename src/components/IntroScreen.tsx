@@ -50,24 +50,32 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-secondary">
+    <div className="min-h-screen bg-[#f9f9ff]">
       {/* Desktop Header */}
-      <div className="hidden md:flex sticky top-0 z-50 bg-secondary px-6 py-3 justify-between items-center">
+      <div className="hidden lg:flex sticky top-0 z-50 bg-[#f9f9ff] px-6 py-3 justify-between items-center">
         <div className="flex items-center">
           <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-light rounded-2xl">
             <img alt="Brain Bytes Logo" className="w-8 h-8 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
           </div>
         </div>
         <div className="absolute left-1/2 transform -translate-x-1/2">
-          <span className="text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent drop-shadow-lg">Brain Bytes</span>
+          <div className="relative">
+            {/* Primary floating blob behind title */}
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-32 h-20 bg-gradient-to-br from-purple-200/40 via-blue-200/40 to-indigo-300/40 rounded-full blur-xl animate-pulse opacity-60"></div>
+            
+            {/* Secondary floating blob */}
+            <div className="absolute -top-4 -right-16 w-16 h-12 bg-gradient-to-br from-cyan-200/30 via-purple-200/30 to-blue-300/30 rounded-full blur-lg animate-bounce opacity-50"></div>
+            
+            <span className="relative text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent drop-shadow-lg">Brain Bytes</span>
+          </div>
         </div>
         <Button variant="outline" onClick={onAuth} className="px-4 py-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
           Log In
         </Button>
       </div>
 
-      {/* Mobile Header */}
-      <div className="md:hidden bg-secondary px-4 py-4">
+      {/* Mobile & Tablet Header */}
+      <div className="lg:hidden bg-[#f9f9ff] px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center flex-1">
             <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-light rounded-2xl mr-3">
@@ -81,8 +89,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </div>
 
-      {/* Mobile Layout */}
-      <div className="md:hidden px-4 py-4 h-[calc(100vh-80px)] flex flex-col justify-between overflow-hidden">
+      {/* Mobile & Tablet Layout */}
+      <div className="lg:hidden px-4 py-4 h-[calc(100vh-80px)] flex flex-col justify-between overflow-hidden">
         <div className="flex flex-col space-y-4">
           {/* Headline */}
           <div className="text-center space-y-4">
@@ -207,9 +215,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Desktop Layout - Professional Redesign */}
-      <div className="hidden md:block">
+      <div className="hidden lg:block relative overflow-hidden">
+        {/* Floating background blobs */}
+        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-purple-200/20 via-blue-200/20 to-indigo-300/20 rounded-full blur-3xl animate-pulse opacity-40"></div>
+        <div className="absolute bottom-32 right-16 w-72 h-72 bg-gradient-to-br from-cyan-200/15 via-purple-200/15 to-blue-300/15 rounded-full blur-2xl animate-bounce opacity-30" style={{ animationDuration: '6s' }}></div>
+        
         {/* Hero Section */}
-        <div className="max-w-7xl mx-auto px-6 py-20">
+        <div className="relative max-w-7xl mx-auto px-6 py-20">
           <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
             {/* Left Side - Hero Content */}
             <div className="space-y-8">
