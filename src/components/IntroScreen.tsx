@@ -255,9 +255,9 @@ export const IntroScreen = ({
         <div className="relative max-w-7xl mx-auto px-6 py-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
             {/* Left Side - Hero Content */}
-            <div className="space-y-8">
-              <div className="space-y-6">
-                <h1 className="text-5xl lg:text-6xl font-black text-foreground leading-[1.1] tracking-tight">
+            <div className="space-y-12">
+              <div className="space-y-8">
+                <h1 className="text-6xl lg:text-7xl xl:text-8xl font-black text-foreground leading-[1.05] tracking-tight">
                   Get your time back
                   <br />
                   <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
@@ -265,14 +265,14 @@ export const IntroScreen = ({
                   </span>
                 </h1>
                 
-                <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
+                <p className="text-2xl lg:text-3xl text-muted-foreground leading-relaxed max-w-2xl">
                   #1 AI productivity assistant for{" "}
                   <span className="text-primary font-semibold">professionals</span> and{" "}
                   <span className="text-accent font-semibold">creators</span>.
                 </p>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-8">
                 {/* Enhanced CTA with A/B testing support */}
                 <div className="relative inline-block">
                   <Button 
