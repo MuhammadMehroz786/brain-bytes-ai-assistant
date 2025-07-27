@@ -69,7 +69,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             {/* Tertiary accent blob */}
             <div className="absolute -bottom-4 -left-12 w-16 h-10 bg-gradient-to-br from-cyan-300/30 via-sky-300/30 to-blue-300/30 rounded-full blur-lg opacity-50 z-0" style={{ animation: 'pulse 3s ease-in-out infinite' }}></div>
             
-            <span className="relative z-10 text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent drop-shadow-lg">Brain Bytes</span>
+            <div className="relative z-10">
+              <span className="text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent drop-shadow-lg">Brain Bytes</span>
+              {/* Hand-drawn scribble underline */}
+              <svg className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-full h-4" viewBox="0 0 300 20" fill="none">
+                <path d="M10 12c20-2 40-4 60-2s40 4 60 2 40-4 60-2 40 4 60 2" stroke="#7C3AED" strokeWidth="3" strokeLinecap="round" fill="none" opacity="0.7" className="animate-pulse"/>
+              </svg>
+            </div>
           </div>
         </div>
         <Button variant="outline" onClick={onAuth} className="px-4 py-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
@@ -226,6 +232,21 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         {/* Additional accent blobs */}
         <div className="absolute top-1/3 right-1/4 w-32 h-20 bg-gradient-to-br from-lavender-300/30 via-purple-300/30 to-indigo-300/30 rounded-full blur-xl opacity-40" style={{ animation: 'pulse 4s ease-in-out infinite' }}></div>
         
+        {/* Curved wave background */}
+        <div className="absolute top-0 left-0 right-0 h-32 overflow-hidden">
+          <svg className="absolute bottom-0 w-full h-16" viewBox="0 0 1200 120" preserveAspectRatio="none" fill="none">
+            <path d="M0,50 C300,80 600,20 900,50 C1000,60 1100,40 1200,50 L1200,120 L0,120 Z" 
+                  fill="url(#waveGradient)" opacity="0.3"/>
+            <defs>
+              <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.2"/>
+                <stop offset="50%" stopColor="#2563EB" stopOpacity="0.15"/>
+                <stop offset="100%" stopColor="#06B6D4" stopOpacity="0.2"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+
         {/* Hero Section */}
         <div className="relative max-w-7xl mx-auto px-6 py-20">
           <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
@@ -249,13 +270,17 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               </div>
 
               <div className="space-y-4">
-                <Button 
-                  onClick={handlePaymentClick} 
-                  size="lg" 
-                  className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-base h-auto"
-                >
-                  Get started – $29 one-time fee
-                </Button>
+                <div className="relative">
+                  {/* Animated glow effect */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-primary via-accent to-primary rounded-2xl blur-sm opacity-50 animate-pulse"></div>
+                  <Button 
+                    onClick={handlePaymentClick} 
+                    size="lg" 
+                    className="relative bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 py-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 text-base h-auto"
+                  >
+                    Get started – $29 one-time fee
+                  </Button>
+                </div>
 
                 <div className="flex items-center gap-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
