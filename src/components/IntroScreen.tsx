@@ -60,6 +60,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <div className="relative">
+            {/* Slow-moving radial gradient background */}
+            <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 w-96 h-24 bg-gradient-radial from-purple-400/20 via-blue-400/15 to-cyan-400/10 rounded-full blur-2xl opacity-60 z-0" 
+                 style={{ animation: 'float 8s ease-in-out infinite' }}></div>
+            
             {/* Primary floating blob behind title - larger and more visible */}
             <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-80 h-32 bg-gradient-to-br from-purple-300/50 via-blue-300/50 to-cyan-300/50 rounded-full blur-2xl animate-pulse opacity-70 z-0"></div>
             
