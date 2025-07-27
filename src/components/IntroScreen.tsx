@@ -50,9 +50,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f9f9ff]">
+    <div className="min-h-screen bg-[#f4faff]">
       {/* Desktop Header */}
-      <div className="hidden lg:flex sticky top-0 z-50 bg-[#f9f9ff] px-6 py-3 justify-between items-center">
+      <div className="hidden lg:flex sticky top-0 z-50 bg-[#f4faff] px-6 py-3 justify-between items-center">
         <div className="flex items-center">
           <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-light rounded-2xl">
             <img alt="Brain Bytes Logo" className="w-8 h-8 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
@@ -60,13 +60,16 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <div className="relative">
-            {/* Primary floating blob behind title */}
-            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 w-32 h-20 bg-gradient-to-br from-purple-200/40 via-blue-200/40 to-indigo-300/40 rounded-full blur-xl animate-pulse opacity-60"></div>
+            {/* Primary floating blob behind title - larger and more visible */}
+            <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 w-80 h-32 bg-gradient-to-br from-purple-300/50 via-blue-300/50 to-cyan-300/50 rounded-full blur-2xl animate-pulse opacity-70 z-0"></div>
             
-            {/* Secondary floating blob */}
-            <div className="absolute -top-4 -right-16 w-16 h-12 bg-gradient-to-br from-cyan-200/30 via-purple-200/30 to-blue-300/30 rounded-full blur-lg animate-bounce opacity-50"></div>
+            {/* Secondary floating blob - positioned for balance */}
+            <div className="absolute -top-6 -right-20 w-24 h-16 bg-gradient-to-br from-indigo-300/40 via-purple-300/40 to-blue-400/40 rounded-full blur-xl animate-bounce opacity-60 z-0"></div>
             
-            <span className="relative text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent drop-shadow-lg">Brain Bytes</span>
+            {/* Tertiary accent blob */}
+            <div className="absolute -bottom-4 -left-12 w-16 h-10 bg-gradient-to-br from-cyan-300/30 via-sky-300/30 to-blue-300/30 rounded-full blur-lg opacity-50 z-0" style={{ animation: 'pulse 3s ease-in-out infinite' }}></div>
+            
+            <span className="relative z-10 text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent drop-shadow-lg">Brain Bytes</span>
           </div>
         </div>
         <Button variant="outline" onClick={onAuth} className="px-4 py-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
@@ -75,7 +78,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile & Tablet Header */}
-      <div className="lg:hidden bg-[#f9f9ff] px-4 py-4">
+      <div className="lg:hidden bg-[#f4faff] px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center flex-1">
             <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-light rounded-2xl mr-3">
@@ -216,9 +219,12 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
       {/* Desktop Layout - Professional Redesign */}
       <div className="hidden lg:block relative overflow-hidden">
-        {/* Floating background blobs */}
-        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-br from-purple-200/20 via-blue-200/20 to-indigo-300/20 rounded-full blur-3xl animate-pulse opacity-40"></div>
-        <div className="absolute bottom-32 right-16 w-72 h-72 bg-gradient-to-br from-cyan-200/15 via-purple-200/15 to-blue-300/15 rounded-full blur-2xl animate-bounce opacity-30" style={{ animationDuration: '6s' }}></div>
+        {/* Large floating background blobs for depth */}
+        <div className="absolute top-16 left-8 w-[500px] h-[300px] bg-gradient-to-br from-purple-300/25 via-blue-300/25 to-indigo-400/25 rounded-full blur-3xl animate-pulse opacity-60"></div>
+        <div className="absolute bottom-20 right-12 w-[400px] h-[250px] bg-gradient-to-br from-cyan-300/20 via-sky-300/20 to-blue-400/20 rounded-full blur-3xl animate-bounce opacity-50" style={{ animationDuration: '8s' }}></div>
+        
+        {/* Additional accent blobs */}
+        <div className="absolute top-1/3 right-1/4 w-32 h-20 bg-gradient-to-br from-lavender-300/30 via-purple-300/30 to-indigo-300/30 rounded-full blur-xl opacity-40" style={{ animation: 'pulse 4s ease-in-out infinite' }}></div>
         
         {/* Hero Section */}
         <div className="relative max-w-7xl mx-auto px-6 py-20">
