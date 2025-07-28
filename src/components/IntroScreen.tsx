@@ -316,7 +316,7 @@ export const IntroScreen = ({
                 </div>
 
                 {/* Demo Link */}
-                <div>
+                <div className="pt-2">
                   <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2">👀 Not ready? Watch a 60-second demo →</Link>
                 </div>
 
