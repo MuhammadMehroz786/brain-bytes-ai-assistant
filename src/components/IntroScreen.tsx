@@ -322,11 +322,7 @@ export const IntroScreen = ({
                   </Button>
                 </div>
 
-                {/* 3. "Built with AI" badge */}
-                <div className="flex justify-center">
-                  
-                </div>
-
+                {/* Features moved directly under CTA */}
                 <div className="flex items-center gap-6 text-base text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <span className="text-xl">🎯</span>
@@ -338,10 +334,16 @@ export const IntroScreen = ({
                   </div>
                 </div>
 
+                {/* Demo Link */}
                 <div>
                   <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2">
                     👀 Not ready? Watch a 60-second demo →
                   </Link>
+                </div>
+
+                {/* 3. "Built with AI" badge */}
+                <div className="flex justify-center">
+                  
                 </div>
               </div>
             </div>
