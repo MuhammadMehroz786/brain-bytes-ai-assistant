@@ -162,30 +162,30 @@ export const IntroScreen = ({
               in under 2 minutes.
             </h1>
             
-                {/* CTA Button */}
-                <Button onClick={handlePaymentClick} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                  Get Your AI Assistant – $29 One-Time Fee
-                </Button>
+            {/* CTA Button */}
+            <Button onClick={handlePaymentClick} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+              Get Your AI Assistant – $29 One-Time Fee
+            </Button>
 
-                {/* Features moved closer to CTA */}
-                <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm">🎯</span>
-                    <span>100% personalized setup</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-sm">🚀</span>
-                    <span>2-minute onboarding</span>
-                  </div>
-                </div>
-
-                {/* Demo Link */}
-                <div className="text-center">
-                  <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-xs underline underline-offset-4 hover:underline-offset-2">
-                    👀 Not ready? Watch a 60-second demo →
-                  </Link>
-                </div>
+            {/* Features moved closer to CTA */}
+            <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground mt-3">
+              <div className="flex items-center gap-1">
+                <span className="text-sm">🎯</span>
+                <span>100% personalized setup</span>
               </div>
+              <div className="flex items-center gap-1">
+                <span className="text-sm">🚀</span>
+                <span>2-minute onboarding</span>
+              </div>
+            </div>
+
+            {/* Demo Link */}
+            <div className="text-center mt-2">
+              <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-xs underline underline-offset-4 hover:underline-offset-2">
+                👀 Not ready? Watch a 60-second demo →
+              </Link>
+            </div>
+          </div>
 
           {/* ROI Sliders */}
           <Card className="p-4 bg-white/80 backdrop-blur-sm border border-primary/20 shadow-xl rounded-2xl">
