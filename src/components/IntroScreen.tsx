@@ -224,26 +224,29 @@ export const IntroScreen = ({
                      </span>
                      /month
                    </p>
+                   
+                   {/* Animated Progress Bar between first and second line */}
+                   <div className="w-full bg-muted/30 rounded-full h-2 shadow-inner my-2">
+                     <div className="bg-gradient-to-r from-success via-accent to-primary h-2 rounded-full transition-all duration-700 shadow-sm" style={{
+                       width: `${getProgressPercentage()}%`
+                     }}></div>
+                   </div>
+                   
                    {getTravelComparison(displayedValue) && (
                      <p className="text-xs italic text-muted-foreground/80 transition-opacity duration-500">
                        {getTravelComparison(displayedValue)}
                      </p>
                     )}
-                    <p className="text-xs text-muted-foreground font-medium">
-                      Based on saving 10 minutes per task. Actual savings may vary.
-                    </p>
-                   
-                   {/* Visual Progress Bar */}
-                   <div className="w-full bg-muted rounded-full h-2 shadow-inner">
-                     <div className="bg-gradient-to-r from-success via-accent to-primary h-2 rounded-full transition-all duration-700 shadow-sm" style={{
-                     width: `${getProgressPercentage()}%`
-                   }}></div>
-                   </div>
                    <p className="text-xs text-muted-foreground">
                      Brain Bytes helps you unlock it for the price of lunch.
                    </p>
                 </div>
               </div>
+              
+              {/* Disclaimer text below the mobile calculator */}
+              <p className="text-xs text-muted-foreground/60 text-center mt-2">
+                Based on saving 10 minutes per task. Actual savings may vary.
+              </p>
             </div>
           </Card>
         </div>
@@ -381,6 +384,14 @@ export const IntroScreen = ({
                         <div className="relative text-center space-y-4">
                           <div>
                             <p className="text-lg font-bold text-foreground mb-1">You're losing <span className="text-3xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">${displayedValue.toLocaleString()}/month</span></p>
+                            
+                            {/* Animated Progress Bar */}
+                            <div className="w-full bg-muted/30 rounded-full h-2 shadow-inner my-3">
+                              <div className="bg-gradient-to-r from-primary via-accent to-success h-2 rounded-full transition-all duration-700 shadow-sm" style={{
+                                width: `${getProgressPercentage()}%`
+                              }}></div>
+                            </div>
+                            
                             {getTravelComparison(displayedValue) && (
                               <p className="text-sm italic text-muted-foreground/80 transition-opacity duration-500 mb-2">
                                 {getTravelComparison(displayedValue)}
@@ -390,19 +401,19 @@ export const IntroScreen = ({
                               Brain Bytes helps you win it back, for the price of lunch.
                             </p>
                           </div>
-                          
-                          <div className="space-y-2">
-                            <p className="text-xs text-muted-foreground">
-                              Based on saving 10 minutes per task. Actual savings may vary.
-                            </p>
-                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+               
+               {/* Disclaimer text below the calculator */}
+               <p className="text-xs text-muted-foreground/60 text-center mt-3">
+                 Based on saving 10 minutes per task. Actual savings may vary.
+               </p>
+             </div>
+           </div>
           </div>
         </div>
 
@@ -523,7 +534,6 @@ export const IntroScreen = ({
               </Link>
             </div>
           </div>
-        </div>
       </div>
 
     </div>
