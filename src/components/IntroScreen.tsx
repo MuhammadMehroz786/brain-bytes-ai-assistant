@@ -17,15 +17,10 @@ export const IntroScreen = ({
   const [isMobile, setIsMobile] = useState(false);
   const [displayedValue, setDisplayedValue] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  
+
   // CTA variations for A/B testing
-  const ctaVariations = [
-    "Get started – $29 one-time fee",
-    "Unlock your AI setup for $29", 
-    "Start saving time now",
-    "Claim your productivity plan"
-  ];
-  
+  const ctaVariations = ["Get started – $29 one-time fee", "Unlock your AI setup for $29", "Start saving time now", "Claim your productivity plan"];
+
   // For now, use the first variation (can be randomized or controlled later)
   const currentCTA = ctaVariations[0];
   const handlePaymentClick = async () => {
@@ -56,7 +51,6 @@ export const IntroScreen = ({
   const hoursSavedPerDay = tasksPerDay[0] * 10 / 60;
   const monthlyHoursSaved = hoursSavedPerDay * 20;
   const monthlyValueGained = monthlyHoursSaved * hourlyRate[0];
-  
   const getProgressPercentage = () => {
     const maxValue = 50 * 10 / 60 * 20 * 500; // 50 tasks * 10 min / 60 * 20 days * $500/hour
     return Math.min(monthlyValueGained / maxValue * 100, 100);
@@ -78,30 +72,25 @@ export const IntroScreen = ({
   // Counting animation effect
   useEffect(() => {
     if (isAnimating) return;
-    
     setIsAnimating(true);
     const target = Math.round(monthlyValueGained);
     const start = displayedValue;
     const duration = 800; // 800ms animation
     const startTime = Date.now();
-    
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       // Easing function for smooth animation
       const easeOut = 1 - Math.pow(1 - progress, 3);
       const current = Math.round(start + (target - start) * easeOut);
-      
       setDisplayedValue(current);
-      
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
         setIsAnimating(false);
       }
     };
-    
     requestAnimationFrame(animate);
   }, [monthlyValueGained, isAnimating]);
 
@@ -110,13 +99,11 @@ export const IntroScreen = ({
     setTasksPerDay(value);
     setIsAnimating(false);
   };
-
   const handleRateChange = (value: number[]) => {
     setHourlyRate(value);
     setIsAnimating(false);
   };
-  return (
-    <div className="min-h-screen bg-[#f4faff]">
+  return <div className="min-h-screen bg-[#f4faff]">
       {/* Desktop Header */}
       <div className="hidden lg:flex sticky top-0 z-50 bg-[#f4faff] px-6 py-3 justify-between items-center">
         <div className="flex items-center">
@@ -228,15 +215,13 @@ export const IntroScreen = ({
                    {/* Animated Progress Bar between first and second line */}
                    <div className="w-full bg-muted/30 rounded-full h-2 shadow-inner my-2">
                      <div className="bg-gradient-to-r from-success via-accent to-primary h-2 rounded-full transition-all duration-700 shadow-sm" style={{
-                       width: `${getProgressPercentage()}%`
-                     }}></div>
+                    width: `${getProgressPercentage()}%`
+                  }}></div>
                    </div>
                    
-                   {getTravelComparison(displayedValue) && (
-                     <p className="text-xs italic text-muted-foreground/80 transition-opacity duration-500">
+                   {getTravelComparison(displayedValue) && <p className="text-xs italic text-muted-foreground/80 transition-opacity duration-500">
                        {getTravelComparison(displayedValue)}
-                     </p>
-                    )}
+                     </p>}
                    <p className="text-xs text-muted-foreground">
                      Brain Bytes helps you unlock it for the price of lunch.
                    </p>
@@ -300,14 +285,10 @@ export const IntroScreen = ({
               <div className="space-y-8">
                 {/* Enhanced CTA with A/B testing support */}
                 <div className="relative inline-block">
-                  <Button 
-                    onClick={handlePaymentClick} 
-                    className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1"
-                    style={{
-                      boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
-                      animation: 'glow 4s ease-in-out infinite alternate'
-                    }}
-                  >
+                  <Button onClick={handlePaymentClick} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
+                  boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
+                  animation: 'glow 4s ease-in-out infinite alternate'
+                }}>
                     {currentCTA}
                     
                     {/* Shimmer effect on hover */}
@@ -336,9 +317,7 @@ export const IntroScreen = ({
 
                 {/* Demo Link */}
                 <div>
-                  <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2">
-                    👀 Not ready? Watch a 60-second demo →
-                  </Link>
+                  <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2">👀 Not ready? Watch a 60-second demo →</Link>
                 </div>
 
                 {/* 3. "Built with AI" badge */}
@@ -390,15 +369,13 @@ export const IntroScreen = ({
                             {/* Animated Progress Bar */}
                             <div className="w-full bg-muted/30 rounded-full h-2 shadow-inner my-3">
                               <div className="bg-gradient-to-r from-primary via-accent to-success h-2 rounded-full transition-all duration-700 shadow-sm" style={{
-                                width: `${getProgressPercentage()}%`
-                              }}></div>
+                              width: `${getProgressPercentage()}%`
+                            }}></div>
                             </div>
                             
-                            {getTravelComparison(displayedValue) && (
-                              <p className="text-sm italic text-muted-foreground/80 transition-opacity duration-500 mb-2">
+                            {getTravelComparison(displayedValue) && <p className="text-sm italic text-muted-foreground/80 transition-opacity duration-500 mb-2">
                                 {getTravelComparison(displayedValue)}
-                              </p>
-                            )}
+                              </p>}
                             <p className="text-sm text-muted-foreground font-medium">
                               Brain Bytes helps you win it back, for the price of lunch.
                             </p>
@@ -538,6 +515,5 @@ export const IntroScreen = ({
           </div>
       </div>
 
-    </div>
-  );
+    </div>;
 };
