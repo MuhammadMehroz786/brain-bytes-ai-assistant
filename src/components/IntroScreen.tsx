@@ -151,7 +151,7 @@ export const IntroScreen = ({
             
             {/* CTA Button */}
             <Button onClick={handlePaymentClick} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-              <div className="text-center space-y-3 px-2">
+              <div className="text-center space-y-1">
                 <div className="flex items-center justify-center gap-2">
                   <span className="line-through text-xs opacity-75">$45</span>
                   <span>$29 One-Time Fee</span>
