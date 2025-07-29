@@ -321,7 +321,7 @@ export const IntroScreen = ({
                      {/* Sparkle effects */}
                      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white/80 rounded-full opacity-0 group-hover:animate-ping group-hover:opacity-100 transition-opacity duration-300"></div>
                      <div className="absolute top-1/4 right-1/4 w-1 h-1 bg-white/60 rounded-full opacity-0 group-hover:animate-pulse group-hover:opacity-100 transition-opacity delay-150 duration-300"></div>
-                     <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 bg-white/70 rounded-full opacity-0 group-hover:animate-bounce group-hover:opacity-100 transition-opacity delay-75 duration-300"></div>
+                      <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 bg-white/70 rounded-full opacity-0 group-hover:animate-bounce group-hover:opacity-100 transition-opacity delay-75 duration-300"></div>
                    </Button>
                  </div>
 
