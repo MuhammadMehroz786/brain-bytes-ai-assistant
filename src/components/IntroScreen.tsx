@@ -530,7 +530,7 @@ export const IntroScreen = ({
              </Link>
            </div>
          </div>
-       </div>
+        </div>
 
       </div>
 
