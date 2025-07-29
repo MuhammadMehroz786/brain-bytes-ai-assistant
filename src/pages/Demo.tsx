@@ -48,7 +48,7 @@ const Demo = () => {
               See Brain Bytes in Action
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Watch this 60-second demo to see how Brain Bytes transforms your daily productivity with personalized AI insights.
+              Watch this 60-second demo to see how Brain Bytes creates <span className="text-primary font-semibold">your own curated AI toolkit</span> that transforms your daily productivity with personalized insights.
             </p>
           </div>
 
@@ -101,7 +101,13 @@ const Demo = () => {
                 size="sm"
                 className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                Get Your AI Assistant – $29 One-Time Fee
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="line-through text-xs opacity-75">$45</span>
+                    <span>$29 One-Time Fee</span>
+                  </div>
+                  <div className="text-xs opacity-90">Brain Bytes Exclusive • Offer Ends Soon</div>
+                </div>
               </Button>
             </div>
 
@@ -131,7 +137,7 @@ const Demo = () => {
 
             {/* What You'll Unlock */}
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-foreground text-center">What You'll Unlock</h3>
+              <h3 className="text-sm font-semibold text-foreground text-center">Your Curated AI Toolkit</h3>
               
               <div className="grid grid-cols-1 gap-2">
                 <div className="p-2 bg-white/60 rounded-lg border border-primary/10 text-center">
@@ -177,7 +183,13 @@ const Demo = () => {
                 size="sm"
                 className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                Get Your AI Assistant – $29 One-Time Fee
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="line-through text-xs opacity-75">$45</span>
+                    <span>$29 One-Time Fee</span>
+                  </div>
+                  <div className="text-xs opacity-90">Brain Bytes Exclusive • Offer Ends Soon</div>
+                </div>
               </Button>
             </div>
           </div>
@@ -221,10 +233,10 @@ const Demo = () => {
           <div className="mt-12 text-center">
             <div className="space-y-4">
               <h2 className="text-2xl font-semibold text-foreground">
-                Ready to transform your productivity?
+                Ready to get your own curated AI toolkit?
               </h2>
               <p className="text-muted-foreground">
-                Join thousands of users who've already unlocked their AI productivity assistant.
+                Join thousands of users who've already unlocked their personalized productivity system.
               </p>
             </div>
             
@@ -234,7 +246,13 @@ const Demo = () => {
                 size="lg" 
                 className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
-                Get Your AI Assistant – $29 One-Time Fee
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="line-through text-lg opacity-75">$45</span>
+                    <span>$29 One-Time Fee</span>
+                  </div>
+                  <div className="text-sm opacity-90">Brain Bytes Exclusive • Offer Ends Soon</div>
+                </div>
               </Button>
               
               <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
