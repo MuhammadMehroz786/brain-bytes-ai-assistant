@@ -151,7 +151,13 @@ export const IntroScreen = ({
             
             {/* CTA Button */}
             <Button onClick={handlePaymentClick} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-              Get Your AI Assistant – $29 One-Time Fee
+              <div className="text-center">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="line-through text-xs opacity-75">$45</span>
+                  <span>$29 One-Time Fee</span>
+                </div>
+                <div className="text-xs opacity-90">Brain Bytes Exclusive • Offer Ends Soon</div>
+              </div>
             </Button>
 
             {/* Features moved closer to CTA */}
@@ -283,13 +289,19 @@ export const IntroScreen = ({
               </div>
 
               <div className="space-y-8">
-                {/* Enhanced CTA with A/B testing support */}
-                <div className="relative inline-block">
-                  <Button onClick={handlePaymentClick} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
-                  boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
-                  animation: 'glow 4s ease-in-out infinite alternate'
-                }}>
-                    {currentCTA}
+                 {/* Enhanced CTA with A/B testing support */}
+                 <div className="relative inline-block">
+                   <Button onClick={handlePaymentClick} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
+                   boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
+                   animation: 'glow 4s ease-in-out infinite alternate'
+                 }}>
+                     <div className="text-center">
+                       <div className="flex items-center justify-center gap-3">
+                         <span className="line-through text-lg opacity-75">$45</span>
+                         <span>Get started – $29 one-time fee</span>
+                       </div>
+                       <div className="text-sm opacity-90 mt-1">Brain Bytes Exclusive • Offer Ends Soon</div>
+                     </div>
                     
                     {/* Shimmer effect on hover */}
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
