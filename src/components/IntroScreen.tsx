@@ -299,245 +299,241 @@ export const IntroScreen = ({
               </div>
 
               <div className="space-y-8">
-                 {/* Enhanced CTA with A/B testing support */}
-                 <div className="relative inline-block">
-                   <Button onClick={handlePaymentClick} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
-                   boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
-                   animation: 'glow 4s ease-in-out infinite alternate'
-                 }}>
-                     <div className="text-center">
-                       <div className="flex items-center justify-center gap-3">
-                         <span className="line-through text-lg opacity-75">$45</span>
-                         <span>Get started – $29 one-time fee</span>
+                {/* Enhanced CTA with A/B testing support */}
+                <div className="relative inline-block">
+                  <Button onClick={handlePaymentClick} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
+                    boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
+                    animation: 'glow 4s ease-in-out infinite alternate'
+                  }}>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-3">
+                        <span className="line-through text-lg opacity-75">$45</span>
+                        <span>Get started – $29 one-time fee</span>
+                      </div>
+                      <div className="text-sm opacity-90 mt-1">Brain Bytes Exclusive • Offer Ends Soon</div>
+                    </div>
+                    
+                    {/* Shimmer effect on hover */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    </div>
+                    
+                    {/* Sparkle effects */}
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white/80 rounded-full opacity-0 group-hover:animate-ping group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="absolute top-1/4 right-1/4 w-1 h-1 bg-white/60 rounded-full opacity-0 group-hover:animate-pulse group-hover:opacity-100 transition-opacity delay-150 duration-300"></div>
+                    <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 bg-white/70 rounded-full opacity-0 group-hover:animate-bounce group-hover:opacity-100 transition-opacity delay-75 duration-300"></div>
+                  </Button>
+                </div>
+
+                {/* Features moved directly under CTA */}
+                <div className="flex items-center gap-6 text-base text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">🎯</span>
+                    <span>100% personalized setup</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">🚀</span>
+                    <span>2-minute onboarding</span>
+                  </div>
+                </div>
+
+                {/* Demo Link */}
+                <div className="pt-2">
+                  <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2">👀 Not ready? Watch a 60-second demo →</Link>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Side - Interactive ROI Calculator with enhanced 3D depth */}
+            <div className="lg:ml-8">
+              <div className="bg-gradient-to-br from-white/95 via-purple-50/30 to-blue-50/30 backdrop-blur-sm border border-primary/20 shadow-2xl shadow-primary/10 rounded-3xl p-8 hover:shadow-3xl transition-all duration-500 relative overflow-hidden hover:scale-[1.02]">
+                {/* Inner glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-primary/5 rounded-3xl"></div>
+                <div className="relative">
+                  <div className="space-y-6">
+                    <div className="text-center space-y-2">
+                      <h3 className="text-xl font-bold text-foreground">How many repetitive tasks do you handle each day?</h3>
+                    </div>
+
+                    <div className="space-y-8">
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
+                          <span>1 task</span>
+                          <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{tasksPerDay[0]} tasks</span>
+                          <span>50 tasks</span>
+                        </div>
+                        <Slider value={tasksPerDay} onValueChange={handleTasksChange} min={1} max={50} step={1} className="w-full slider-purple hover:scale-105 transition-transform duration-200" />
+                      </div>
+
+                      <div className="space-y-4">
+                        <h3 className="text-xl font-bold text-foreground text-center">What's your hourly rate?</h3>
+                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
+                          <span>$10</span>
+                          <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">${hourlyRate[0]}</span>
+                          <span>$200</span>
+                        </div>
+                        <Slider value={hourlyRate} onValueChange={handleRateChange} min={10} max={200} step={10} className="w-full slider-purple hover:scale-105 transition-transform duration-200" />
+                      </div>
+
+                       {/* Results Display with enhanced 3D depth */}
+                      <div className="bg-gradient-to-br from-purple-100/60 via-blue-100/60 to-purple-100/60 rounded-2xl p-6 border border-primary/30 shadow-2xl shadow-primary/20 relative overflow-hidden">
+                        {/* Inner shadow effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-transparent rounded-2xl"></div>
+                        <div className="relative text-center space-y-4">
+                          <div>
+                            <p className="text-lg font-bold text-foreground mb-1">You're losing <span className="text-3xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">${displayedValue.toLocaleString()}/month</span></p>
+                            
+                            {/* Animated Progress Bar */}
+                            <div className="w-full bg-muted/30 rounded-full h-2 shadow-inner my-3">
+                              <div className="bg-gradient-to-r from-primary via-accent to-success h-2 rounded-full transition-all duration-700 shadow-sm" style={{
+                              width: `${getProgressPercentage()}%`
+                            }}></div>
+                            </div>
+                            
+                            {getTravelComparison(displayedValue) && <p className="text-sm italic text-muted-foreground/80 transition-opacity duration-500 mb-2">
+                                {getTravelComparison(displayedValue)}
+                              </p>}
+                            <p className="text-sm text-muted-foreground font-medium">
+                              Brain Bytes helps you win it back, for the price of lunch.
+                            </p>
+                          </div>
+                        </div>
                        </div>
-                       <div className="text-sm opacity-90 mt-1">Brain Bytes Exclusive • Offer Ends Soon</div>
                      </div>
-                     
-                     {/* Shimmer effect on hover */}
-                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                     </div>
-                     
-                     {/* Sparkle effects */}
-                     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white/80 rounded-full opacity-0 group-hover:animate-ping group-hover:opacity-100 transition-opacity duration-300"></div>
-                     <div className="absolute top-1/4 right-1/4 w-1 h-1 bg-white/60 rounded-full opacity-0 group-hover:animate-pulse group-hover:opacity-100 transition-opacity delay-150 duration-300"></div>
-                      <div className="absolute bottom-1/4 left-1/4 w-1.5 h-1.5 bg-white/70 rounded-full opacity-0 group-hover:animate-bounce group-hover:opacity-100 transition-opacity delay-75 duration-300"></div>
-                   </Button>
-                 </div>
-
-                 {/* Features moved directly under CTA */}
-                 <div className="flex items-center gap-6 text-base text-muted-foreground">
-                   <div className="flex items-center gap-2">
-                     <span className="text-xl">🎯</span>
-                     <span>100% personalized setup</span>
-                   </div>
-                   <div className="flex items-center gap-2">
-                     <span className="text-xl">🚀</span>
-                     <span>2-minute onboarding</span>
                    </div>
                  </div>
+               </div>
+               
+               {/* Disclaimer text below the calculator */}
+               <p className="text-xs text-muted-foreground/60 text-center mt-3">
+                 Based on saving 10 minutes per task. Actual savings may vary.
+               </p>
+             </div>
+           </div>
+         </div>
+       </div>
 
-                 {/* Demo Link */}
-                 <div className="pt-2">
-                   <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2">👀 Not ready? Watch a 60-second demo →</Link>
+       {/* 5. Gradient divider under hero section */}
+       <div className="w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+
+       {/* How It Works Section - Desktop Only */}
+       <div className="hidden lg:block bg-white/50 py-20">
+         <div className="max-w-7xl mx-auto px-6">
+           <div className="text-center mb-16">
+             <h2 className="text-4xl font-bold text-foreground mb-4">How Brain Bytes works in 2 minutes</h2>
+           </div>
+
+           <div className="grid lg:grid-cols-3 md:grid-cols-1 gap-8">
+             <div className="group p-8 text-center bg-white/80 backdrop-blur-sm border border-primary/20 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:bg-gradient-to-br hover:from-white/90 hover:via-purple-50/30 hover:to-blue-50/30">
+               <div className="w-20 h-20 bg-gradient-to-br from-primary to-accent text-white rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                 <span className="text-3xl">1️⃣</span>
+               </div>
+               <h3 className="text-2xl font-bold text-foreground mb-4">Answer 5 quick questions</h3>
+               <p className="text-muted-foreground leading-relaxed text-lg">
+                 Get instantly matched with your ideal AI setup—zero fluff, just fast results.
+               </p>
+             </div>
+
+             <div className="group p-8 text-center bg-white/80 backdrop-blur-sm border border-accent/20 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:bg-gradient-to-br hover:from-white/90 hover:via-purple-50/30 hover:to-blue-50/30">
+               <div className="w-20 h-20 bg-gradient-to-br from-accent to-success text-white rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                 <span className="text-3xl">2️⃣</span>
+               </div>
+               <h3 className="text-2xl font-bold text-foreground mb-4">Activate your assistant</h3>
+               <p className="text-muted-foreground leading-relaxed text-lg">
+                 Connect your tools, sync your calendar, and unlock laser focus in minutes.
+               </p>
+             </div>
+
+             <div className="group p-8 text-center bg-white/80 backdrop-blur-sm border border-success/20 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:bg-gradient-to-br hover:from-white/90 hover:via-purple-50/30 hover:to-blue-50/30">
+               <div className="w-20 h-20 bg-gradient-to-br from-success to-primary text-white rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                 <span className="text-3xl">3️⃣</span>
+               </div>
+               <h3 className="text-2xl font-bold text-foreground mb-4">Automate your day</h3>
+               <p className="text-muted-foreground leading-relaxed text-lg">
+                 From daily briefings to smart summaries—your time-saving copilot is ready.
+               </p>
+             </div>
+           </div>
+         </div>
+       </div>
+
+       {/* Social Proof - Desktop Only */}
+       <div className="hidden lg:block py-12">
+         <div className="max-w-6xl mx-auto px-6">
+           <div className="text-center mb-12">
+             <h2 className="text-3xl font-bold text-foreground mb-4">Trusted by productive professionals</h2>
+           </div>
+
+           <div className="grid md:grid-cols-2 gap-8">
+             <div className="bg-white/80 backdrop-blur-sm border border-primary/10 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
+               <div className="space-y-4">
+                 <div className="flex items-center space-x-1">
+                   {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-500 text-lg">★</span>)}
                  </div>
-
-                 {/* 3. "Built with AI" badge */}
-                 <div className="flex justify-center">
-                   
+                 <p className="text-foreground leading-relaxed">
+                   "Brain Bytes transformed my daily routine. I'm saving 2+ hours every day and finally feel in control of my schedule."
+                 </p>
+                 <div className="flex items-center gap-3">
+                   <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                     <span className="text-primary font-semibold">SM</span>
+                   </div>
+                   <div>
+                     <div className="font-medium text-foreground">Sarah M.</div>
+                     <div className="text-sm text-muted-foreground">Marketing Director</div>
+                   </div>
                  </div>
                </div>
              </div>
+             
+             <div className="bg-white/80 backdrop-blur-sm border border-accent/10 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
+               <div className="space-y-4">
+                 <div className="flex items-center space-x-1">
+                   {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-500 text-lg">★</span>)}
+                 </div>
+                 <p className="text-foreground leading-relaxed">
+                   "The personalized AI insights are incredible. It's like having a productivity coach that actually understands my workflow."
+                 </p>
+                 <div className="flex items-center gap-3">
+                   <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
+                     <span className="text-accent font-semibold">DL</span>
+                   </div>
+                   <div>
+                     <div className="font-medium text-foreground">David L.</div>
+                     <div className="text-sm text-muted-foreground">Software Engineer</div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
 
-             {/* Right Side - Interactive ROI Calculator with enhanced 3D depth */}
-             <div className="lg:ml-8">
-               <div className="bg-gradient-to-br from-white/95 via-purple-50/30 to-blue-50/30 backdrop-blur-sm border border-primary/20 shadow-2xl shadow-primary/10 rounded-3xl p-8 hover:shadow-3xl transition-all duration-500 relative overflow-hidden hover:scale-[1.02]">
-                 {/* Inner glow effect */}
-                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-primary/5 rounded-3xl"></div>
-                 <div className="relative">
-                   <div className="space-y-6">
-                     <div className="text-center space-y-2">
-                       <h3 className="text-xl font-bold text-foreground">How many repetitive tasks do you handle each day?</h3>
-                     </div>
-
-                     <div className="space-y-8">
-                       <div className="space-y-4">
-                         <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-                           <span>1 task</span>
-                           <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">{tasksPerDay[0]} tasks</span>
-                           <span>50 tasks</span>
-                         </div>
-                         <Slider value={tasksPerDay} onValueChange={handleTasksChange} min={1} max={50} step={1} className="w-full slider-purple hover:scale-105 transition-transform duration-200" />
-                       </div>
-
-                       <div className="space-y-4">
-                         <h3 className="text-xl font-bold text-foreground text-center">What's your hourly rate?</h3>
-                         <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-                           <span>$10</span>
-                           <span className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">${hourlyRate[0]}</span>
-                           <span>$200</span>
-                         </div>
-                         <Slider value={hourlyRate} onValueChange={handleRateChange} min={10} max={200} step={10} className="w-full slider-purple hover:scale-105 transition-transform duration-200" />
-                       </div>
-
-                        {/* Results Display with enhanced 3D depth */}
-                       <div className="bg-gradient-to-br from-purple-100/60 via-blue-100/60 to-purple-100/60 rounded-2xl p-6 border border-primary/30 shadow-2xl shadow-primary/20 relative overflow-hidden">
-                         {/* Inner shadow effect */}
-                         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-transparent rounded-2xl"></div>
-                         <div className="relative text-center space-y-4">
-                           <div>
-                             <p className="text-lg font-bold text-foreground mb-1">You're losing <span className="text-3xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">${displayedValue.toLocaleString()}/month</span></p>
-                             
-                             {/* Animated Progress Bar */}
-                             <div className="w-full bg-muted/30 rounded-full h-2 shadow-inner my-3">
-                               <div className="bg-gradient-to-r from-primary via-accent to-success h-2 rounded-full transition-all duration-700 shadow-sm" style={{
-                               width: `${getProgressPercentage()}%`
-                             }}></div>
-                             </div>
-                             
-                             {getTravelComparison(displayedValue) && <p className="text-sm italic text-muted-foreground/80 transition-opacity duration-500 mb-2">
-                                 {getTravelComparison(displayedValue)}
-                               </p>}
-                             <p className="text-sm text-muted-foreground font-medium">
-                               Brain Bytes helps you win it back, for the price of lunch.
-                             </p>
-                           </div>
-                         </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Disclaimer text below the calculator */}
-                <p className="text-xs text-muted-foreground/60 text-center mt-3">
-                  Based on saving 10 minutes per task. Actual savings may vary.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 5. Gradient divider under hero section */}
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
-
-        {/* How It Works Section - Desktop Only */}
-        <div className="hidden lg:block bg-white/50 py-20">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-foreground mb-4">How Brain Bytes works in 2 minutes</h2>
-            </div>
-
-            <div className="grid lg:grid-cols-3 md:grid-cols-1 gap-8">
-              <div className="group p-8 text-center bg-white/80 backdrop-blur-sm border border-primary/20 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:bg-gradient-to-br hover:from-white/90 hover:via-purple-50/30 hover:to-blue-50/30">
-                <div className="w-20 h-20 bg-gradient-to-br from-primary to-accent text-white rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <span className="text-3xl">1️⃣</span>
-                </div>
-                <h3 className="text-2xl font-bold text-foreground mb-4">Answer 5 quick questions</h3>
-                <p className="text-muted-foreground leading-relaxed text-lg">
-                  Get instantly matched with your ideal AI setup—zero fluff, just fast results.
-                </p>
-              </div>
-
-              <div className="group p-8 text-center bg-white/80 backdrop-blur-sm border border-accent/20 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:bg-gradient-to-br hover:from-white/90 hover:via-purple-50/30 hover:to-blue-50/30">
-                <div className="w-20 h-20 bg-gradient-to-br from-accent to-success text-white rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <span className="text-3xl">2️⃣</span>
-                </div>
-                <h3 className="text-2xl font-bold text-foreground mb-4">Activate your assistant</h3>
-                <p className="text-muted-foreground leading-relaxed text-lg">
-                  Connect your tools, sync your calendar, and unlock laser focus in minutes.
-                </p>
-              </div>
-
-              <div className="group p-8 text-center bg-white/80 backdrop-blur-sm border border-success/20 rounded-3xl hover:shadow-xl transition-all duration-300 hover:-translate-y-2 hover:bg-gradient-to-br hover:from-white/90 hover:via-purple-50/30 hover:to-blue-50/30">
-                <div className="w-20 h-20 bg-gradient-to-br from-success to-primary text-white rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                  <span className="text-3xl">3️⃣</span>
-                </div>
-                <h3 className="text-2xl font-bold text-foreground mb-4">Automate your day</h3>
-                <p className="text-muted-foreground leading-relaxed text-lg">
-                  From daily briefings to smart summaries—your time-saving copilot is ready.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Social Proof - Desktop Only */}
-        <div className="hidden lg:block py-12">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-foreground mb-4">Trusted by productive professionals</h2>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-white/80 backdrop-blur-sm border border-primary/10 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-1">
-                    {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-500 text-lg">★</span>)}
-                  </div>
-                  <p className="text-foreground leading-relaxed">
-                    "Brain Bytes transformed my daily routine. I'm saving 2+ hours every day and finally feel in control of my schedule."
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                      <span className="text-primary font-semibold">SM</span>
-                    </div>
-                    <div>
-                      <div className="font-medium text-foreground">Sarah M.</div>
-                      <div className="text-sm text-muted-foreground">Marketing Director</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white/80 backdrop-blur-sm border border-accent/10 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-1">
-                    {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-500 text-lg">★</span>)}
-                  </div>
-                  <p className="text-foreground leading-relaxed">
-                    "The personalized AI insights are incredible. It's like having a productivity coach that actually understands my workflow."
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
-                      <span className="text-accent font-semibold">DL</span>
-                    </div>
-                    <div>
-                      <div className="font-medium text-foreground">David L.</div>
-                      <div className="text-sm text-muted-foreground">Software Engineer</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="bg-white/30 py-12">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center text-muted-foreground">
-              © 2025 Brain Bytes | 
-              <Link to="/privacy-policy" className="hover:text-primary transition-colors duration-200 mx-1">
-                Privacy Policy
-              </Link> | 
-              <Link to="/terms-of-service" className="hover:text-primary transition-colors duration-200 mx-1">
-                Terms of Service
-              </Link> | 
-              <Link to="/refund-policy" className="hover:text-primary transition-colors duration-200 mx-1">
-                Refund Policy
-              </Link> | 
-              <Link to="/cookie-policy" className="hover:text-primary transition-colors duration-200 mx-1">
-                Cookie Policy
-              </Link> | 
-              <Link to="/contact" className="hover:text-primary transition-colors duration-200 mx-1">
-                Contact
-              </Link>
-            </div>
-          </div>
-        </div>
+       {/* Footer */}
+       <div className="bg-white/30 py-12">
+         <div className="max-w-7xl mx-auto px-6">
+           <div className="text-center text-muted-foreground">
+             © 2025 Brain Bytes | 
+             <Link to="/privacy-policy" className="hover:text-primary transition-colors duration-200 mx-1">
+               Privacy Policy
+             </Link> | 
+             <Link to="/terms-of-service" className="hover:text-primary transition-colors duration-200 mx-1">
+               Terms of Service
+             </Link> | 
+             <Link to="/refund-policy" className="hover:text-primary transition-colors duration-200 mx-1">
+               Refund Policy
+             </Link> | 
+             <Link to="/cookie-policy" className="hover:text-primary transition-colors duration-200 mx-1">
+               Cookie Policy
+             </Link> | 
+             <Link to="/contact" className="hover:text-primary transition-colors duration-200 mx-1">
+               Contact
+             </Link>
+           </div>
+         </div>
+       </div>
 
       </div>
+
     </div>
   );
 };
