@@ -529,10 +529,9 @@ export const IntroScreen = ({
                Contact
              </Link>
            </div>
-         </div>
-        </div>
+          </div>
 
-      </div>
+       </div>
 
     </div>
   );
