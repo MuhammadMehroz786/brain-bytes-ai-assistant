@@ -4,12 +4,10 @@ import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-
 interface IntroScreenProps {
   onStart: () => void;
   onAuth: () => void;
 }
-
 export const IntroScreen = ({
   onStart,
   onAuth
@@ -25,7 +23,6 @@ export const IntroScreen = ({
 
   // For now, use the first variation (can be randomized or controlled later)
   const currentCTA = ctaVariations[0];
-
   const handlePaymentClick = async () => {
     try {
       const {
@@ -41,7 +38,6 @@ export const IntroScreen = ({
       console.error('Payment error:', error);
     }
   };
-
   useEffect(() => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -55,7 +51,6 @@ export const IntroScreen = ({
   const hoursSavedPerDay = tasksPerDay[0] * 10 / 60;
   const monthlyHoursSaved = hoursSavedPerDay * 20;
   const monthlyValueGained = monthlyHoursSaved * hourlyRate[0];
-
   const getProgressPercentage = () => {
     const maxValue = 50 * 10 / 60 * 20 * 500; // 50 tasks * 10 min / 60 * 20 days * $500/hour
     return Math.min(monthlyValueGained / maxValue * 100, 100);
@@ -82,7 +77,6 @@ export const IntroScreen = ({
     const start = displayedValue;
     const duration = 800; // 800ms animation
     const startTime = Date.now();
-
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
@@ -91,7 +85,6 @@ export const IntroScreen = ({
       const easeOut = 1 - Math.pow(1 - progress, 3);
       const current = Math.round(start + (target - start) * easeOut);
       setDisplayedValue(current);
-
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
@@ -106,14 +99,11 @@ export const IntroScreen = ({
     setTasksPerDay(value);
     setIsAnimating(false);
   };
-
   const handleRateChange = (value: number[]) => {
     setHourlyRate(value);
     setIsAnimating(false);
   };
-
-  return (
-    <div className="min-h-screen bg-[#f4faff]">
+  return <div className="min-h-screen bg-[#f4faff]">
       {/* Desktop Header */}
       <div className="hidden lg:flex sticky top-0 z-50 bg-[#f4faff] px-6 py-3 justify-between items-center">
         <div className="flex items-center">
@@ -302,9 +292,9 @@ export const IntroScreen = ({
                 {/* Enhanced CTA with A/B testing support */}
                 <div className="relative inline-block">
                   <Button onClick={handlePaymentClick} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
-                    boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
-                    animation: 'glow 4s ease-in-out infinite alternate'
-                  }}>
+                  boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
+                  animation: 'glow 4s ease-in-out infinite alternate'
+                }}>
                     <div className="text-center">
                       <div className="flex items-center justify-center gap-3">
                         <span className="line-through text-lg opacity-75">$45</span>
@@ -533,6 +523,5 @@ export const IntroScreen = ({
 
        </div>
 
-    </div>
-  );
+    </div>;
 };
