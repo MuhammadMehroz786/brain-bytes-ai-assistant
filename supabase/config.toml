@@ -6,7 +6,7 @@ verify_jwt = false
 [functions.gmail-oauth]
 verify_jwt = false
 
-[functions.fetch-gmail-emails]
+[functions.fetch-imap-emails]
 verify_jwt = true
 
 [functions.send-contact-email]
