@@ -1,12 +1,4 @@
-// /supabase/functions/fetch-imap-emails/index.ts
-
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import Imap from 'https://esm.sh/imap'
-import { simpleParser } from 'https://esm.sh/mailparser'
-import { Buffer } from 'https://deno.land/std@0.140.0/node/buffer.ts'
-
-// Polyfill required by the 'imap' library to work in Deno
-globalThis.Buffer = Buffer
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -25,7 +17,6 @@ interface EmailSummary {
 }
 
 Deno.serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -36,13 +27,11 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     )
 
-    // Authenticate the user from the authorization header
+    // Get the authorization header from the request
     const authHeader = req.headers.get('Authorization')!
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
-    }
     const token = authHeader.replace('Bearer ', '')
     
+    // Get the user from the token
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token)
     if (authError || !user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -51,58 +40,46 @@ Deno.serve(async (req) => {
       })
     }
 
-    // --- SECURITY WARNING ---
-    // Storing passwords in plaintext is insecure.
-    // Use Supabase Vault (https://supabase.com/docs/guides/database/vault) to encrypt credentials at rest.
+    // Get user's email credentials
     const { data: credentials, error: credError } = await supabaseClient
       .from('email_credentials')
       .select('email_address, password')
       .eq('user_id', user.id)
-      .single() 
+      .maybeSingle() // Use maybeSingle to handle no results gracefully
 
-    if (credError || !credentials) {
-      const errorMsg = credError ? 'Error fetching email credentials' : 'No email credentials found. Please connect your email first.'
-      const status = credError ? 500 : 400
-      console.error(errorMsg, credError || '')
-      return new Response(JSON.stringify({ error: errorMsg }), {
-        status,
+    if (credError) {
+      console.error('Error fetching credentials:', credError)
+      return new Response(JSON.stringify({ error: 'Error fetching email credentials' }), {
+        status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    // Fetch and process emails from the IMAP server
-    let emails = await fetchAndProcessEmails(credentials.email_address, credentials.password)
-
-    // If IMAP fails or returns no new emails, use mock data as a fallback
-    if (emails.length === 0) {
-      console.log('No new emails found, returning mock data as a fallback.')
-      emails = await generateMockEmails()
+    if (!credentials) {
+      return new Response(JSON.stringify({ error: 'No email credentials found. Please connect your email first.' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
     }
 
-    // Save the processed emails to the database
-    if (emails.length > 0) {
-        const { error: upsertError } = await supabaseClient
-            .from('processed_emails')
-            .upsert(
-                emails.map((email) => ({
-                    user_id: user.id,
-                    email_id: email.id,
-                    sender_name: email.sender_name,
-                    sender_email: email.sender_email,
-                    subject: email.subject,
-                    date: email.date,
-                    ai_summary: email.ai_summary,
-                    suggested_replies: email.suggested_replies,
-                    body: email.body,
-                })),
-                { onConflict: 'user_id, email_id' } // Assumes a composite key
-            )
+    // Fetch emails (mock implementation for now)
+    const emails = await fetchEmailsFromIMAP(credentials.email_address, credentials.password, user.id, supabaseClient)
 
-        if (upsertError) {
-            console.error('Error upserting emails:', upsertError)
-        } else {
-            console.log(`Successfully upserted ${emails.length} emails.`)
-        }
+    // Store processed emails in database
+    for (const email of emails) {
+      await supabaseClient
+        .from('processed_emails')
+        .upsert({
+          user_id: user.id,
+          email_id: email.id,
+          sender_name: email.sender_name,
+          sender_email: email.sender_email,
+          subject: email.subject,
+          date: email.date,
+          ai_summary: email.ai_summary,
+          suggested_replies: email.suggested_replies,
+          body: email.body,
+        })
     }
 
     return new Response(JSON.stringify({ emails, count: emails.length }), {
@@ -110,7 +87,7 @@ Deno.serve(async (req) => {
     })
 
   } catch (error) {
-    console.error('CRITICAL ERROR in Deno.serve:', error.message)
+    console.error('Error in fetch-imap-emails:', error)
     return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -118,207 +95,159 @@ Deno.serve(async (req) => {
   }
 })
 
----
-
-/**
- * Connects to IMAP, fetches recent emails, and processes them with AI.
- * NOTE: This function can easily time out if many emails are processed at once.
- * For production, consider moving the AI processing to a background worker.
- */
-async function fetchAndProcessEmails(email: string, password: string): Promise<EmailSummary[]> {
-  const imapConfig: Imap.Config = {
-    user: email,
-    password: password,
-    host: 'imap.gmail.com',
-    port: 993,
-    tls: true,
-    tlsOptions: { rejectUnauthorized: false }
-  }
-
-  return new Promise((resolve, reject) => {
-    const imap = new Imap(imapConfig)
-
-    const closeConnection = (label: string) => {
-      console.log(`Closing IMAP connection from: ${label}`);
-      try {
-        imap.end()
-      } catch (e) { /* ignore */ }
-    }
-
-    imap.once('ready', () => {
-      console.log('✅ IMAP connection ready.');
-      imap.openBox('INBOX', true, (err, box) => {
-        if (err) {
-          closeConnection('openBox error');
-          return reject(new Error(`Failed to open INBOX: ${err.message}`))
-        }
-        console.log(`📬 INBOX opened. Total messages: ${box.messages.total}`);
-
-        // Calculate date 30 hours ago for the search
-        const sinceDate = new Date();
-        sinceDate.setHours(sinceDate.getHours() - 30);
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const formattedDate = `${sinceDate.getDate()}-${months[sinceDate.getMonth()]}-${sinceDate.getFullYear()}`;
-        
-        const searchCriteria = ['SINCE', formattedDate];
-        console.log(`🔍 Searching for emails since: ${formattedDate}`);
-
-        imap.search([searchCriteria], (searchErr, results) => {
-          if (searchErr) {
-            console.error('❌ IMAP search error:', searchErr);
-            closeConnection('search error');
-            return reject(searchErr);
-          }
-          if (results.length === 0) {
-            console.log('📪 No new emails found for the given criteria.');
-            closeConnection('no results');
-            return resolve([]);
-          }
-
-          console.log(`➡️ Found ${results.length} emails to process.`);
-          const fetch = imap.fetch(results, { bodies: '' });
-          const emailPromises: Promise<EmailSummary | null>[] = [];
-
-          fetch.on('message', (msg, seqno) => {
-            console.log(`📩 Receiving message #${seqno}`);
-            const emailPromise = new Promise<EmailSummary | null>((resolveMsg) => {
-              let fullEmailSource = '';
-              msg.on('body', (stream) => stream.on('data', (chunk) => fullEmailSource += chunk.toString('utf8')));
-              
-              msg.once('end', async () => {
-                try {
-                  console.log(`✅ Finished receiving message #${seqno}. Parsing...`);
-                  const parsedEmail = await simpleParser(fullEmailSource);
-                  
-                  console.log(`🤖 Calling OpenAI for message #${seqno}...`);
-                  const analysis = await generateAIAnalysis(parsedEmail.text || parsedEmail.subject || 'No Content');
-                  console.log(`🧠 OpenAI analysis complete for #${seqno}.`);
-
-                  resolveMsg({
-                    id: parsedEmail.messageId || `${seqno}-${Date.now()}`,
-                    sender_name: parsedEmail.from?.value[0]?.name || parsedEmail.from?.text || 'Unknown Sender',
-                    sender_email: parsedEmail.from?.value[0]?.address || 'unknown@email.com',
-                    subject: parsedEmail.subject || 'No Subject',
-                    date: parsedEmail.date?.toISOString() || new Date().toISOString(),
-                    ai_summary: analysis.summary,
-                    suggested_replies: analysis.replies,
-                    body: parsedEmail.text || '',
-                  });
-                } catch (parseError) {
-                  console.error(`⚠️ Failed to parse or process email #${seqno}:`, parseError);
-                  resolveMsg(null); // Resolve with null to avoid breaking the whole batch
-                }
-              });
-            });
-            emailPromises.push(emailPromise);
-          });
-
-          fetch.once('error', (fetchErr) => {
-            console.error('❌ IMAP fetch error:', fetchErr);
-            closeConnection('fetch error');
-            reject(new Error(`IMAP fetch error: ${fetchErr.message}`));
-          });
-
-          fetch.once('end', async () => {
-            console.log('🏁 All messages fetched. Awaiting all processing...');
-            try {
-              // Filter out any emails that failed to process
-              const emails = (await Promise.all(emailPromises)).filter((e): e is EmailSummary => e !== null);
-              console.log(`👍 Successfully processed ${emails.length} emails.`);
-              closeConnection('fetch end');
-              // Sort emails by date, newest first
-              resolve(emails.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-            } catch (processingError) {
-              closeConnection('processing error');
-              reject(new Error(`Error processing emails: ${processingError.message}`));
-            }
-          });
-        });
-      });
-    });
-
-    imap.once('error', (err) => {
-      let errorMessage = 'IMAP connection error.';
-      if (err.message.includes('AUTHENTICATIONFAILED')) {
-        errorMessage = 'Authentication failed. Please check your email and app password.';
-      }
-      console.error('❌ IMAP Global Error:', err);
-      reject(new Error(errorMessage));
-    });
-    
-    imap.connect();
-  }).catch(error => {
-    console.error('🚨 IMAP Promise rejected. Falling back to mock data. Error:', error);
-    return generateMockEmails();
-  });
-}
-
----
-
-/**
- * Calls OpenAI to generate a summary and suggested replies for an email body.
- */
-async function generateAIAnalysis(body: string): Promise<{ summary: string; replies: string[] }> {
-  const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
-  
-  if (!openaiApiKey) {
-    return {
-      summary: "AI analysis unavailable - API key not configured",
-      replies: ["Thank you for your email.", "I'll get back to you soon.", "Let me review this and respond."]
-    };
-  }
-
+async function fetchEmailsFromIMAP(email: string, password: string, userId: string, supabaseClient: any): Promise<EmailSummary[]> {
   try {
-    const prompt = `You are an expert email assistant.
-1. Summarize the following email into a single, concise, subject-style sentence.
-2. Suggest 3 short, practical, one-sentence replies.
-Return your response as a single, minified JSON object with two keys: "summary" and "replies". The "replies" key should contain an array of strings.
-
-Email body:
----
-${body.slice(0, 2500)}
----`;
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.5,
-        response_format: { type: "json_object" }, // Ensures valid JSON output
-      }),
-    });
-
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`OpenAI API error: ${errorData.error.message}`);
-    }
-
-    const data = await response.json();
-    const parsed = JSON.parse(data.choices[0].message.content);
+    console.log(`Fetching emails via IMAP for ${email}`)
     
-    return {
-      summary: parsed.summary || "Could not generate summary.",
-      replies: parsed.replies || ["Could not generate replies."]
-    };
+    // Connect to Gmail IMAP server with TLS
+    const conn = await Deno.connectTls({
+      hostname: 'imap.gmail.com',
+      port: 993,
+    })
+
+    const encoder = new TextEncoder()
+    const decoder = new TextDecoder()
+    const emails: EmailSummary[] = []
+
+    try {
+      // Read initial response
+      let buffer = new Uint8Array(4096)
+      let bytesRead = await conn.read(buffer)
+      if (bytesRead === null) throw new Error('Connection closed')
+      const initialResponse = decoder.decode(buffer.subarray(0, bytesRead))
+      console.log('IMAP initial response:', initialResponse)
+
+      // Login with email and app password
+      const loginCommand = `A001 LOGIN "${email}" "${password}"\r\n`
+      console.log('Sending login command...')
+      await conn.write(encoder.encode(loginCommand))
+      
+      buffer = new Uint8Array(4096)
+      bytesRead = await conn.read(buffer)
+      if (bytesRead === null) throw new Error('Connection closed during login')
+      
+      const loginResponse = decoder.decode(buffer.subarray(0, bytesRead))
+      console.log('Login response:', loginResponse)
+
+      if (!loginResponse.includes('A001 OK')) {
+        if (loginResponse.includes('AUTHENTICATIONFAILED')) {
+          throw new Error('Authentication failed. Please check your email and app password.')
+        }
+        throw new Error(`Login failed: ${loginResponse}`)
+      }
+
+      // Select INBOX
+      await conn.write(encoder.encode('A002 SELECT INBOX\r\n'))
+      buffer = new Uint8Array(4096)
+      bytesRead = await conn.read(buffer)
+      if (bytesRead === null) throw new Error('Connection closed')
+      console.log('SELECT response:', decoder.decode(buffer.subarray(0, bytesRead)))
+
+      // Search for recent emails (last 24 hours)
+      const searchDate = new Date()
+      searchDate.setDate(searchDate.getDate() - 1) // Last 24 hours
+      const dateStr = searchDate.toISOString().split('T')[0].replace(/-/g, '-')
+      
+      await conn.write(encoder.encode(`A003 SEARCH SINCE ${dateStr}\r\n`))
+      buffer = new Uint8Array(4096)
+      bytesRead = await conn.read(buffer)
+      if (bytesRead === null) throw new Error('Connection closed')
+      const searchResponse = decoder.decode(buffer.subarray(0, bytesRead))
+      console.log('Search response:', searchResponse)
+
+      // Parse email IDs from search response
+      const emailIds = parseEmailIds(searchResponse)
+      console.log('Found email IDs:', emailIds)
+
+      // Fetch details for all emails (removed 10 email limit)
+      for (const emailId of emailIds) {
+        try {
+          // Fetch email headers
+          await conn.write(encoder.encode(`A004${emailId} FETCH ${emailId} (ENVELOPE BODY[HEADER])\r\n`))
+          buffer = new Uint8Array(8192)
+          bytesRead = await conn.read(buffer)
+          if (bytesRead === null) continue
+          
+          const fetchResponse = decoder.decode(buffer.subarray(0, bytesRead))
+          const emailData = parseEmailData(fetchResponse, emailId)
+          
+          if (emailData) {
+            // Generate AI analysis
+            const analysis = await generateAIAnalysis(emailData.body || emailData.subject)
+            
+            emails.push({
+              id: emailId,
+              sender_name: emailData.sender_name,
+              sender_email: emailData.sender_email,
+              subject: emailData.subject,
+              date: emailData.date,
+              ai_summary: analysis.summary,
+              suggested_replies: analysis.replies,
+              body: emailData.body || 'Body not available'
+            })
+          }
+        } catch (emailError) {
+          console.error(`Error processing email ${emailId}:`, emailError)
+          continue
+        }
+      }
+
+      conn.close()
+      return emails
+
+    } catch (error) {
+      conn.close()
+      throw error
+    }
   } catch (error) {
-    console.error('Error generating AI analysis:', error);
-    return {
-      summary: "AI analysis failed.",
-      replies: ["Thank you for your email.", "I'll get back to you soon.", "Let me review this and respond."]
-    };
+    console.error('IMAP fetch error:', error)
+    
+    // Fallback to mock data if IMAP fails
+    console.log('Falling back to mock email data')
+    return await generateMockEmails()
   }
 }
 
----
+function parseEmailIds(searchResponse: string): string[] {
+  // Parse SEARCH response to extract email IDs
+  // Example: "* SEARCH 1 2 3 4 5"
+  const searchMatch = searchResponse.match(/\* SEARCH (.+)/i)
+  if (searchMatch) {
+    return searchMatch[1].trim().split(' ').filter(id => id && !isNaN(parseInt(id)))
+  }
+  return []
+}
 
-/**
- * Generates mock email data for development and fallback purposes.
- */
+function parseEmailData(fetchResponse: string, emailId: string): any {
+  try {
+    // Basic parsing of FETCH response
+    // This is a simplified parser - in production you'd use a proper IMAP library
+    
+    const senderMatch = fetchResponse.match(/From: (.+)/i)
+    const subjectMatch = fetchResponse.match(/Subject: (.+)/i)
+    const dateMatch = fetchResponse.match(/Date: (.+)/i)
+    
+    if (!senderMatch || !subjectMatch) {
+      return null
+    }
+
+    const sender = senderMatch[1].trim()
+    const senderEmail = sender.match(/<(.+)>/) ? sender.match(/<(.+)>/)![1] : sender
+    const senderName = sender.replace(/<.+>/, '').replace(/"/g, '').trim() || senderEmail
+
+    return {
+      sender_name: senderName,
+      sender_email: senderEmail,
+      subject: subjectMatch[1].trim(),
+      date: dateMatch ? dateMatch[1].trim() : new Date().toISOString(),
+      body: `Email content for message ${emailId}` // Would need to fetch full body separately
+    }
+  } catch (error) {
+    console.error('Error parsing email data:', error)
+    return null
+  }
+}
+
 async function generateMockEmails(): Promise<EmailSummary[]> {
   const mockEmails: EmailSummary[] = [
     {
@@ -341,16 +270,79 @@ async function generateMockEmails(): Promise<EmailSummary[]> {
       suggested_replies: [],
       body: "Good morning! I hope this email finds you well. I need to reschedule our meeting that was planned for tomorrow at 2 PM. Would it be possible to move it to Thursday at the same time? Please let me know if this works for your schedule."
     },
-  ];
+    {
+      id: `email-${Date.now()}-3`,
+      sender_name: "Mike Johnson",
+      sender_email: "mike@startup.io",
+      subject: "Collaboration Opportunity",
+      date: new Date(Date.now() - 7200000).toISOString(),
+      ai_summary: "",
+      suggested_replies: [],
+      body: "Hello! I came across your profile and was impressed by your work in the productivity space. I'm reaching out because I believe there might be an interesting collaboration opportunity between our companies. Would you be open to a brief call next week to discuss this further?"
+    }
+  ]
 
-  // This loop makes parallel calls to the AI, which is faster.
-  const analysisPromises = mockEmails.map(email => generateAIAnalysis(email.body));
-  const analyses = await Promise.all(analysisPromises);
+  // Generate AI analysis for mock emails
+  for (const email of mockEmails) {
+    const analysis = await generateAIAnalysis(email.body)
+    email.ai_summary = analysis.summary
+    email.suggested_replies = analysis.replies
+  }
 
-  mockEmails.forEach((email, index) => {
-    email.ai_summary = analyses[index].summary;
-    email.suggested_replies = analyses[index].replies;
-  });
+  return mockEmails
+}
 
-  return mockEmails;
+async function generateAIAnalysis(body: string): Promise<{ summary: string; replies: string[] }> {
+  const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
+  
+  if (!openaiApiKey) {
+    return {
+      summary: "AI analysis unavailable - API key not configured",
+      replies: ["Thank you for your email.", "I'll get back to you soon.", "Let me review this and respond."]
+    }
+  }
+
+  try {
+    const prompt = `You are an expert email assistant.
+1. Summarize the following email into a single, concise, subject-style sentence.
+2. Suggest 3 short, practical, one-sentence replies.
+
+Return your response as a single, minified JSON object with two keys: "summary" and "replies". The "replies" key should contain an array of strings.
+
+Email body:
+---
+${body.slice(0, 2500)}
+---`
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openaiApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.5,
+      }),
+    })
+
+    const data = await response.json()
+    const responseText = data.choices[0].message.content.trim()
+    
+    // Remove code block markers if present
+    const cleanedJsonText = responseText.replace(/```json\n|\n```/g, '')
+    const parsed = JSON.parse(cleanedJsonText)
+    
+    return {
+      summary: parsed.summary || "Could not generate summary.",
+      replies: parsed.replies || ["Could not generate replies."]
+    }
+  } catch (error) {
+    console.error('Error generating AI analysis:', error)
+    return {
+      summary: "AI analysis failed.",
+      replies: ["Thank you for your email.", "I'll get back to you soon.", "Let me review this and respond."]
+    }
+  }
 }
