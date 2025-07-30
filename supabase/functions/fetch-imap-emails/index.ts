@@ -139,7 +139,7 @@ async function fetchEmailsFromIMAP(email: string, password: string, userId: stri
 
       if (emailIds.length === 0) {
         conn.close()
-        return await generateMockEmails()
+        return [] // Return empty array instead of mock emails
       }
 
       // Get details for emails (limit to 10 for performance)
@@ -147,7 +147,7 @@ async function fetchEmailsFromIMAP(email: string, password: string, userId: stri
       const emails = await getDetailsForIds(conn, encoder, decoder, idsToFetch)
 
       conn.close()
-      return emails.length > 0 ? emails : await generateMockEmails()
+      return emails
 
     } catch (error) {
       conn.close()
@@ -155,10 +155,7 @@ async function fetchEmailsFromIMAP(email: string, password: string, userId: stri
     }
   } catch (error) {
     console.error('IMAP fetch error:', error)
-    
-    // Fallback to mock data if IMAP fails
-    console.log('Falling back to mock email data')
-    return await generateMockEmails()
+    throw error // Don't fall back to mock emails, throw the error
   }
 }
 
@@ -171,9 +168,15 @@ async function readResponse(conn: Deno.TlsConn, decoder: TextDecoder): Promise<s
 
 async function getAllRecentEmailIds(conn: Deno.TlsConn, encoder: TextEncoder, decoder: TextDecoder): Promise<string[]> {
   try {
-    // Step 1: Get all email IDs
-    console.log("Searching for ALL email IDs in the inbox...")
-    await conn.write(encoder.encode("A003 SEARCH ALL\r\n"))
+    // Step 1: Get all email IDs using a simpler approach
+    console.log("Searching for recent email IDs in the inbox...")
+    
+    // Use SEARCH with recent date instead of ALL to be more specific
+    const searchDate = new Date()
+    searchDate.setDate(searchDate.getDate() - 30) // Last 30 days
+    const dateStr = searchDate.toISOString().split('T')[0].replace(/-/g, '-')
+    
+    await conn.write(encoder.encode(`A003 SEARCH SINCE ${dateStr}\r\n`))
     const searchResponse = await readResponse(conn, decoder)
     console.log("Search response:", searchResponse)
 
