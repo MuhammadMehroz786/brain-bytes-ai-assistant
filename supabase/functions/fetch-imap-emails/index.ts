@@ -135,9 +135,9 @@ async function fetchEmailsFromIMAP(email: string, password: string, userId: stri
       if (bytesRead === null) throw new Error('Connection closed')
       console.log('SELECT response:', decoder.decode(buffer.subarray(0, bytesRead)))
 
-      // Search for recent emails (last 5 days)
+      // Search for recent emails (last 24 hours)
       const searchDate = new Date()
-      searchDate.setDate(searchDate.getDate() - 5)
+      searchDate.setDate(searchDate.getDate() - 1) // Last 24 hours
       const dateStr = searchDate.toISOString().split('T')[0].replace(/-/g, '-')
       
       await conn.write(encoder.encode(`A003 SEARCH SINCE ${dateStr}\r\n`))
@@ -151,10 +151,8 @@ async function fetchEmailsFromIMAP(email: string, password: string, userId: stri
       const emailIds = parseEmailIds(searchResponse)
       console.log('Found email IDs:', emailIds)
 
-      // Fetch details for first 10 emails
-      const limitedIds = emailIds.slice(0, 10)
-      
-      for (const emailId of limitedIds) {
+      // Fetch details for all emails (removed 10 email limit)
+      for (const emailId of emailIds) {
         try {
           // Fetch email headers
           await conn.write(encoder.encode(`A004${emailId} FETCH ${emailId} (ENVELOPE BODY[HEADER])\r\n`))
