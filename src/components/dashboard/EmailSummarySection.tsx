@@ -51,28 +51,53 @@ export const EmailSummarySection = () => {
   // Check email connection status
   useEffect(() => {
     checkEmailConnection();
+    loadSessionData();
   }, []);
 
-  const checkEmailConnection = async () => {
+  const checkEmailConnection = () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from('email_credentials')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle(); // Use maybeSingle instead of single to handle no results
-
-      if (data && !error) {
+      const storedCredentials = sessionStorage.getItem('email_credentials');
+      if (storedCredentials) {
         setIsConnected(true);
-        await fetchEmails();
+        const emailData = sessionStorage.getItem('email_summaries');
+        const doneData = sessionStorage.getItem('done_emails');
+        const lastSync = sessionStorage.getItem('last_sync_time');
+        
+        if (emailData) {
+          setEmailSummaries(JSON.parse(emailData));
+        }
+        if (doneData) {
+          setDoneEmails(new Set(JSON.parse(doneData)));
+        }
+        if (lastSync) {
+          setLastSyncTime(lastSync);
+        }
       } else {
         setIsConnected(false);
       }
     } catch (error) {
       console.error('Error checking email connection:', error);
       setErrorMessage('Failed to check email connection');
+    }
+  };
+
+  const loadSessionData = () => {
+    try {
+      const emailData = sessionStorage.getItem('email_summaries');
+      const doneData = sessionStorage.getItem('done_emails');
+      const lastSync = sessionStorage.getItem('last_sync_time');
+      
+      if (emailData) {
+        setEmailSummaries(JSON.parse(emailData));
+      }
+      if (doneData) {
+        setDoneEmails(new Set(JSON.parse(doneData)));
+      }
+      if (lastSync) {
+        setLastSyncTime(lastSync);
+      }
+    } catch (error) {
+      console.error('Error loading session data:', error);
     }
   };
 
@@ -86,31 +111,17 @@ export const EmailSummarySection = () => {
     setErrorMessage('');
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('Not authenticated');
-      }
+      // Store credentials in session storage for session-based email functionality
+      sessionStorage.setItem('email_credentials', JSON.stringify({
+        email: credentials.email,
+        password: credentials.password
+      }));
 
-      const { data, error } = await supabase.functions.invoke('connect-email-imap', {
-        body: {
-          email: credentials.email,
-          password: credentials.password
-        }
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      if (data?.success) {
-        setIsConnected(true);
-        setShowConnectDialog(false);
-        setCredentials({ email: '', password: '' });
-        toast.success('Email connected successfully!');
-        await fetchEmails();
-      } else {
-        throw new Error(data?.error || 'Failed to connect email');
-      }
+      setIsConnected(true);
+      setShowConnectDialog(false);
+      setCredentials({ email: '', password: '' });
+      toast.success('Email connected successfully!');
+      await fetchEmails();
     } catch (error) {
       console.error('Email connection error:', error);
       const errorMsg = error instanceof Error ? error.message : 'Failed to connect email';
@@ -126,12 +137,14 @@ export const EmailSummarySection = () => {
     setErrorMessage('');
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        throw new Error('Not authenticated');
+      const storedCredentials = sessionStorage.getItem('email_credentials');
+      if (!storedCredentials) {
+        throw new Error('No email credentials found');
       }
 
-      const { data, error } = await supabase.functions.invoke('fetch-imap-emails');
+      const { data, error } = await supabase.functions.invoke('fetch-imap-emails', {
+        body: JSON.parse(storedCredentials)
+      });
 
       if (error) {
         throw error;
@@ -141,20 +154,9 @@ export const EmailSummarySection = () => {
         setEmailSummaries(data.emails);
         setLastSyncTime(new Date().toLocaleTimeString());
         
-        // Load processed emails status from database
-        const { data: processedEmails } = await supabase
-          .from('processed_emails')
-          .select('email_id, is_done')
-          .eq('user_id', user.id);
-
-        if (processedEmails) {
-          const doneEmailIds = new Set(
-            processedEmails
-              .filter(email => email.is_done)
-              .map(email => email.email_id)
-          );
-          setDoneEmails(doneEmailIds);
-        }
+        // Store in session storage
+        sessionStorage.setItem('email_summaries', JSON.stringify(data.emails));
+        sessionStorage.setItem('last_sync_time', new Date().toLocaleTimeString());
       }
     } catch (error) {
       console.error('Error fetching emails:', error);
@@ -226,17 +228,13 @@ export const EmailSummarySection = () => {
 
   const handleMarkAsDone = async (emailId: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      await supabase
-        .from('processed_emails')
-        .update({ is_done: true })
-        .eq('user_id', user.id)
-        .eq('email_id', emailId);
-
-      setDoneEmails(prev => new Set(prev).add(emailId));
+      const newDoneEmails = new Set(doneEmails).add(emailId);
+      setDoneEmails(newDoneEmails);
       setLastDoneEmail(emailId);
+      
+      // Store in session storage
+      sessionStorage.setItem('done_emails', JSON.stringify(Array.from(newDoneEmails)));
+      
       toast.success('Email marked as done');
     } catch (error) {
       console.error('Error marking email as done:', error);
@@ -248,21 +246,14 @@ export const EmailSummarySection = () => {
     if (!lastDoneEmail) return;
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      await supabase
-        .from('processed_emails')
-        .update({ is_done: false })
-        .eq('user_id', user.id)
-        .eq('email_id', lastDoneEmail);
-
-      setDoneEmails(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(lastDoneEmail);
-        return newSet;
-      });
+      const newDoneEmails = new Set(doneEmails);
+      newDoneEmails.delete(lastDoneEmail);
+      setDoneEmails(newDoneEmails);
       setLastDoneEmail(null);
+      
+      // Store in session storage
+      sessionStorage.setItem('done_emails', JSON.stringify(Array.from(newDoneEmails)));
+      
       toast.success('Action undone');
     } catch (error) {
       console.error('Error undoing mark as done:', error);
@@ -272,18 +263,11 @@ export const EmailSummarySection = () => {
 
   const handleDisconnectEmail = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Delete email credentials from database
-      const { error } = await supabase
-        .from('email_credentials')
-        .delete()
-        .eq('user_id', user.id);
-
-      if (error) {
-        throw error;
-      }
+      // Clear session storage
+      sessionStorage.removeItem('email_credentials');
+      sessionStorage.removeItem('email_summaries');
+      sessionStorage.removeItem('done_emails');
+      sessionStorage.removeItem('last_sync_time');
 
       // Update UI state
       setIsConnected(false);
