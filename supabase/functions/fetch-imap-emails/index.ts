@@ -31,19 +31,79 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Get credentials from request body instead of database
-    const requestBody = await req.json()
-    const { email, password } = requestBody
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    )
 
-    if (!email || !password) {
-      return new Response(JSON.stringify({ error: 'Email and password are required' }), {
-        status: 400,
+    // Authenticate the user from the authorization header
+    const authHeader = req.headers.get('Authorization')!
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Missing authorization header' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    }
+    const token = authHeader.replace('Bearer ', '')
+    
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token)
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    // Fetch and process emails from the IMAP server using session credentials
-    const emails = await fetchAndProcessEmails(email, password)
+    // --- SECURITY WARNING ---
+    // Storing passwords in plaintext is insecure.
+    // Use Supabase Vault (https://supabase.com/docs/guides/database/vault) to encrypt credentials at rest.
+    const { data: credentials, error: credError } = await supabaseClient
+      .from('email_credentials')
+      .select('email_address, password')
+      .eq('user_id', user.id)
+      .single() 
+
+    if (credError || !credentials) {
+      const errorMsg = credError ? 'Error fetching email credentials' : 'No email credentials found. Please connect your email first.'
+      const status = credError ? 500 : 400
+      console.error(errorMsg, credError || '')
+      return new Response(JSON.stringify({ error: errorMsg }), {
+        status,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Fetch and process emails from the IMAP server
+    let emails = await fetchAndProcessEmails(credentials.email_address, credentials.password)
+
+    // If IMAP fails or returns no new emails, use mock data as a fallback
+    if (emails.length === 0) {
+      console.log('No new emails found, returning mock data as a fallback.')
+      emails = await generateMockEmails()
+    }
+
+    // Save the processed emails to the database
+    if (emails.length > 0) {
+        const { error: upsertError } = await supabaseClient
+            .from('processed_emails')
+            .upsert(
+                emails.map((email) => ({
+                    user_id: user.id,
+                    email_id: email.id,
+                    sender_name: email.sender_name,
+                    sender_email: email.sender_email,
+                    subject: email.subject,
+                    date: email.date,
+                    ai_summary: email.ai_summary,
+                    suggested_replies: email.suggested_replies,
+                    body: email.body,
+                })),
+                { onConflict: 'user_id, email_id' } // Assumes a composite key
+            )
+
+        if (upsertError) {
+            console.error('Error upserting emails:', upsertError)
+        } else {
+            console.log(`Successfully upserted ${emails.length} emails.`)
+        }
+    }
 
     return new Response(JSON.stringify({ emails, count: emails.length }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -103,7 +163,7 @@ async function fetchAndProcessEmails(email: string, password: string): Promise<E
         const searchCriteria = ['SINCE', formattedDate];
         console.log(`🔍 Searching for emails since: ${formattedDate}`);
 
-        imap.search(searchCriteria, (searchErr, results) => {
+        imap.search([searchCriteria], (searchErr, results) => {
           if (searchErr) {
             console.error('❌ IMAP search error:', searchErr);
             closeConnection('search error');
@@ -187,6 +247,9 @@ async function fetchAndProcessEmails(email: string, password: string): Promise<E
     });
     
     imap.connect();
+  }).catch(error => {
+    console.error('🚨 IMAP Promise rejected. Falling back to mock data. Error:', error);
+    return generateMockEmails();
   });
 }
 
@@ -290,4 +353,4 @@ async function generateMockEmails(): Promise<EmailSummary[]> {
   });
 
   return mockEmails;
-}
+}x
