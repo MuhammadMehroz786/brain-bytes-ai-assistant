@@ -99,10 +99,10 @@ async function fetchEmailsFromIMAP(email: string, password: string, userId: stri
   try {
     console.log(`Fetching emails via IMAP for ${email}`)
     
-    // Connect to Gmail IMAP server
-    const conn = await Deno.connect({
+    // Connect to Gmail IMAP server with TLS
+    const conn = await Deno.connectTls({
       hostname: 'imap.gmail.com',
-      port: 993, // SSL port for IMAP
+      port: 993,
     })
 
     const encoder = new TextEncoder()
@@ -114,18 +114,26 @@ async function fetchEmailsFromIMAP(email: string, password: string, userId: stri
       let buffer = new Uint8Array(4096)
       let bytesRead = await conn.read(buffer)
       if (bytesRead === null) throw new Error('Connection closed')
-      console.log('IMAP initial response:', decoder.decode(buffer.subarray(0, bytesRead)))
+      const initialResponse = decoder.decode(buffer.subarray(0, bytesRead))
+      console.log('IMAP initial response:', initialResponse)
 
-      // Login
-      await conn.write(encoder.encode(`A001 LOGIN ${email} ${password}\r\n`))
+      // Login with email and app password
+      const loginCommand = `A001 LOGIN "${email}" "${password}"\r\n`
+      console.log('Sending login command...')
+      await conn.write(encoder.encode(loginCommand))
+      
       buffer = new Uint8Array(4096)
       bytesRead = await conn.read(buffer)
-      if (bytesRead === null) throw new Error('Connection closed')
+      if (bytesRead === null) throw new Error('Connection closed during login')
+      
       const loginResponse = decoder.decode(buffer.subarray(0, bytesRead))
       console.log('Login response:', loginResponse)
 
       if (!loginResponse.includes('A001 OK')) {
-        throw new Error('Login failed')
+        if (loginResponse.includes('AUTHENTICATIONFAILED')) {
+          throw new Error('Authentication failed. Please check your email and app password.')
+        }
+        throw new Error(`Login failed: ${loginResponse}`)
       }
 
       // Select INBOX
