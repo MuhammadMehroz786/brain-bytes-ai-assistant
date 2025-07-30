@@ -353,4 +353,4 @@ async function generateMockEmails(): Promise<EmailSummary[]> {
   });
 
   return mockEmails;
-}x
+}
