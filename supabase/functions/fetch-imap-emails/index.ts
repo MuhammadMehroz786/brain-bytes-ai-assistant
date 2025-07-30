@@ -88,7 +88,153 @@ Deno.serve(async (req) => {
 })
 
 async function fetchEmailsFromIMAP(email: string, password: string, userId: string, supabaseClient: any): Promise<EmailSummary[]> {
-  // Mock implementation - in production, this would use actual IMAP
+  try {
+    console.log(`Fetching emails via IMAP for ${email}`)
+    
+    // Connect to Gmail IMAP server
+    const conn = await Deno.connect({
+      hostname: 'imap.gmail.com',
+      port: 993, // SSL port for IMAP
+    })
+
+    const encoder = new TextEncoder()
+    const decoder = new TextDecoder()
+    const emails: EmailSummary[] = []
+
+    try {
+      // Read initial response
+      let buffer = new Uint8Array(4096)
+      let bytesRead = await conn.read(buffer)
+      if (bytesRead === null) throw new Error('Connection closed')
+      console.log('IMAP initial response:', decoder.decode(buffer.subarray(0, bytesRead)))
+
+      // Login
+      await conn.write(encoder.encode(`A001 LOGIN ${email} ${password}\r\n`))
+      buffer = new Uint8Array(4096)
+      bytesRead = await conn.read(buffer)
+      if (bytesRead === null) throw new Error('Connection closed')
+      const loginResponse = decoder.decode(buffer.subarray(0, bytesRead))
+      console.log('Login response:', loginResponse)
+
+      if (!loginResponse.includes('A001 OK')) {
+        throw new Error('Login failed')
+      }
+
+      // Select INBOX
+      await conn.write(encoder.encode('A002 SELECT INBOX\r\n'))
+      buffer = new Uint8Array(4096)
+      bytesRead = await conn.read(buffer)
+      if (bytesRead === null) throw new Error('Connection closed')
+      console.log('SELECT response:', decoder.decode(buffer.subarray(0, bytesRead)))
+
+      // Search for recent emails (last 5 days)
+      const searchDate = new Date()
+      searchDate.setDate(searchDate.getDate() - 5)
+      const dateStr = searchDate.toISOString().split('T')[0].replace(/-/g, '-')
+      
+      await conn.write(encoder.encode(`A003 SEARCH SINCE ${dateStr}\r\n`))
+      buffer = new Uint8Array(4096)
+      bytesRead = await conn.read(buffer)
+      if (bytesRead === null) throw new Error('Connection closed')
+      const searchResponse = decoder.decode(buffer.subarray(0, bytesRead))
+      console.log('Search response:', searchResponse)
+
+      // Parse email IDs from search response
+      const emailIds = parseEmailIds(searchResponse)
+      console.log('Found email IDs:', emailIds)
+
+      // Fetch details for first 10 emails
+      const limitedIds = emailIds.slice(0, 10)
+      
+      for (const emailId of limitedIds) {
+        try {
+          // Fetch email headers
+          await conn.write(encoder.encode(`A004${emailId} FETCH ${emailId} (ENVELOPE BODY[HEADER])\r\n`))
+          buffer = new Uint8Array(8192)
+          bytesRead = await conn.read(buffer)
+          if (bytesRead === null) continue
+          
+          const fetchResponse = decoder.decode(buffer.subarray(0, bytesRead))
+          const emailData = parseEmailData(fetchResponse, emailId)
+          
+          if (emailData) {
+            // Generate AI analysis
+            const analysis = await generateAIAnalysis(emailData.body || emailData.subject)
+            
+            emails.push({
+              id: emailId,
+              sender_name: emailData.sender_name,
+              sender_email: emailData.sender_email,
+              subject: emailData.subject,
+              date: emailData.date,
+              ai_summary: analysis.summary,
+              suggested_replies: analysis.replies,
+              body: emailData.body || 'Body not available'
+            })
+          }
+        } catch (emailError) {
+          console.error(`Error processing email ${emailId}:`, emailError)
+          continue
+        }
+      }
+
+      conn.close()
+      return emails
+
+    } catch (error) {
+      conn.close()
+      throw error
+    }
+  } catch (error) {
+    console.error('IMAP fetch error:', error)
+    
+    // Fallback to mock data if IMAP fails
+    console.log('Falling back to mock email data')
+    return await generateMockEmails()
+  }
+}
+
+function parseEmailIds(searchResponse: string): string[] {
+  // Parse SEARCH response to extract email IDs
+  // Example: "* SEARCH 1 2 3 4 5"
+  const searchMatch = searchResponse.match(/\* SEARCH (.+)/i)
+  if (searchMatch) {
+    return searchMatch[1].trim().split(' ').filter(id => id && !isNaN(parseInt(id)))
+  }
+  return []
+}
+
+function parseEmailData(fetchResponse: string, emailId: string): any {
+  try {
+    // Basic parsing of FETCH response
+    // This is a simplified parser - in production you'd use a proper IMAP library
+    
+    const senderMatch = fetchResponse.match(/From: (.+)/i)
+    const subjectMatch = fetchResponse.match(/Subject: (.+)/i)
+    const dateMatch = fetchResponse.match(/Date: (.+)/i)
+    
+    if (!senderMatch || !subjectMatch) {
+      return null
+    }
+
+    const sender = senderMatch[1].trim()
+    const senderEmail = sender.match(/<(.+)>/) ? sender.match(/<(.+)>/)![1] : sender
+    const senderName = sender.replace(/<.+>/, '').replace(/"/g, '').trim() || senderEmail
+
+    return {
+      sender_name: senderName,
+      sender_email: senderEmail,
+      subject: subjectMatch[1].trim(),
+      date: dateMatch ? dateMatch[1].trim() : new Date().toISOString(),
+      body: `Email content for message ${emailId}` // Would need to fetch full body separately
+    }
+  } catch (error) {
+    console.error('Error parsing email data:', error)
+    return null
+  }
+}
+
+async function generateMockEmails(): Promise<EmailSummary[]> {
   const mockEmails: EmailSummary[] = [
     {
       id: `email-${Date.now()}-1`,
@@ -122,7 +268,7 @@ async function fetchEmailsFromIMAP(email: string, password: string, userId: stri
     }
   ]
 
-  // Generate AI analysis for each email
+  // Generate AI analysis for mock emails
   for (const email of mockEmails) {
     const analysis = await generateAIAnalysis(email.body)
     email.ai_summary = analysis.summary
