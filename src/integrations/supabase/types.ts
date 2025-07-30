@@ -65,6 +65,33 @@ export type Database = {
         }
         Relationships: []
       }
+      email_credentials: {
+        Row: {
+          created_at: string
+          email_address: string
+          id: string
+          password: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email_address: string
+          id?: string
+          password: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email_address?: string
+          id?: string
+          password?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       focus_sessions: {
         Row: {
           completed_at: string | null
@@ -167,6 +194,75 @@ export type Database = {
         }
         Relationships: []
       }
+      prelaunch_roi_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          estimated_loss: number | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          estimated_loss?: number | null
+          id?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          estimated_loss?: number | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      processed_emails: {
+        Row: {
+          ai_summary: string | null
+          body: string | null
+          created_at: string
+          date: string | null
+          email_id: string
+          id: string
+          is_done: boolean | null
+          sender_email: string | null
+          sender_name: string | null
+          subject: string | null
+          suggested_replies: Json | null
+          user_id: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          body?: string | null
+          created_at?: string
+          date?: string | null
+          email_id: string
+          id?: string
+          is_done?: boolean | null
+          sender_email?: string | null
+          sender_name?: string | null
+          subject?: string | null
+          suggested_replies?: Json | null
+          user_id: string
+        }
+        Update: {
+          ai_summary?: string | null
+          body?: string | null
+          created_at?: string
+          date?: string | null
+          email_id?: string
+          id?: string
+          is_done?: boolean | null
+          sender_email?: string | null
+          sender_name?: string | null
+          subject?: string | null
+          suggested_replies?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       security_audit: {
         Row: {
           created_at: string
@@ -248,11 +344,68 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist_audit_log: {
+        Row: {
+          created_at: string
+          email: string
+          error_message: string | null
+          estimated_loss: number | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          request_fingerprint: string | null
+          security_flags: Json | null
+          success: boolean
+          user_agent: string | null
+          validation_errors: Json | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          error_message?: string | null
+          estimated_loss?: number | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          request_fingerprint?: string | null
+          security_flags?: Json | null
+          success?: boolean
+          user_agent?: string | null
+          validation_errors?: Json | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          error_message?: string | null
+          estimated_loss?: number | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          request_fingerprint?: string | null
+          security_flags?: Json | null
+          success?: boolean
+          user_agent?: string | null
+          validation_errors?: Json | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      check_rate_limit: {
+        Args: { email_param: string; ip_param: unknown }
+        Returns: boolean
+      }
+      enhanced_rate_limit_check: {
+        Args: {
+          email_param: string
+          ip_param: unknown
+          fingerprint_param?: string
+        }
+        Returns: Json
+      }
       safe_inet_cast: {
         Args: { ip_text: string }
         Returns: unknown

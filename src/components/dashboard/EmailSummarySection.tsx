@@ -1,325 +1,277 @@
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { RefreshCw, Mail, Clock, User, Send, CheckCircle, Undo2, ExternalLink, Plus, AlertCircle, Loader } from 'lucide-react';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { 
-  Mail, 
-  Inbox, 
-  Clock, 
-  User,
-  ExternalLink,
-  Loader,
-  Check,
-  Edit3,
-  RefreshCw,
-  AlertCircle
-} from "lucide-react";
-
+// Interface for email summary data
 interface EmailSummary {
   id: string;
-  sender: string;
+  sender_name: string;
+  sender_email: string;
   subject: string;
-  summary: string;
-  time: string;
-  isUnread: boolean;
-  tags: string[];
+  date: string;
+  ai_summary: string;
+  suggested_replies: string[];
+  body: string;
+  is_done?: boolean;
 }
 
-// Mock data for demo purposes
-const mockEmailSummaries: EmailSummary[] = [
-  {
-    id: "1",
-    sender: "Sarah Chen",
-    subject: "Q4 Project Review Meeting",
-    summary: "Sarah has scheduled a Q4 review meeting...",
-    time: "9:30 AM",
-    isUnread: true,
-    tags: ["17", "Meeting", "Internal"]
-  },
-  {
-    id: "2",
-    sender: "Marketing Team", 
-    subject: "Campaign Performance Update",
-    summary: "Latest campaign metrics show 23% increase in engagement. The team is requesting feedback on the new creative assets and approval for the next phase.",
-    time: "5 hrs ago",
-    isUnread: true,
-    tags: ["Urgent", "Follow-up"]
-  },
-  {
-    id: "3",
-    sender: "Alex Rodriguez",
-    subject: "Client Proposal Draft", 
-    summary: "Alex has completed the first draft of the Johnson & Co proposal. He's looking for your review and wants to schedule a call to discuss pricing strategy.",
-    time: "8 hrs ago",
-    isUnread: false,
-    tags: ["Client", "Review"]
-  },
-  {
-    id: "4",
-    sender: "Tech Support",
-    subject: "System Maintenance Notice",
-    summary: "Scheduled maintenance this weekend will affect the CRM system. All data will be backed up and the downtime is expected to be minimal.",
-    time: "Yesterday",
-    isUnread: false,
-    tags: ["System", "Info"]
-  }
-];
+// Interface for email credentials
+interface EmailCredentials {
+  email: string;
+  password: string;
+}
 
 export const EmailSummarySection = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [emailSummaries, setEmailSummaries] = useState<EmailSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const { toast } = useToast();
+  const [showConnectDialog, setShowConnectDialog] = useState(false);
+  const [credentials, setCredentials] = useState<EmailCredentials>({ email: '', password: '' });
+  const [expandedEmails, setExpandedEmails] = useState<Set<string>>(new Set());
+  const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
+  const [sendingReplies, setSendingReplies] = useState<Set<string>>(new Set());
+  const [doneEmails, setDoneEmails] = useState<Set<string>>(new Set());
+  const [lastDoneEmail, setLastDoneEmail] = useState<string | null>(null);
 
-  // Check Gmail connection status
+  const queryClient = useQueryClient();
+
+  // Check email connection status
   useEffect(() => {
-    checkGmailConnection();
+    checkEmailConnection();
   }, []);
 
-  const checkGmailConnection = async () => {
+  const checkEmailConnection = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      console.log('Checking Gmail connection for user:', user.id);
-
       const { data, error } = await supabase
-        .from('gmail_tokens')
+        .from('email_credentials')
         .select('*')
         .eq('user_id', user.id)
         .single();
 
       if (data && !error) {
-        console.log('Gmail connection found, fetching emails...');
         setIsConnected(true);
-        await fetchGmailEmails();
+        await fetchEmails();
       } else {
-        console.log('No Gmail connection found');
         setIsConnected(false);
       }
     } catch (error) {
-      console.error('Error checking Gmail connection:', error);
-      setErrorMessage('Failed to check Gmail connection');
+      console.error('Error checking email connection:', error);
+      setErrorMessage('Failed to check email connection');
     }
   };
 
-  const handleSyncGmail = async () => {
+  const handleConnectEmail = async () => {
+    if (!credentials.email || !credentials.password) {
+      toast.error('Please enter both email and password');
+      return;
+    }
+
+    setIsConnecting(true);
+    setErrorMessage('');
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('Not authenticated');
+      }
+
+      const { data, error } = await supabase.functions.invoke('connect-email-imap', {
+        body: {
+          email: credentials.email,
+          password: credentials.password
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.success) {
+        setIsConnected(true);
+        setShowConnectDialog(false);
+        setCredentials({ email: '', password: '' });
+        toast.success('Email connected successfully!');
+        await fetchEmails();
+      } else {
+        throw new Error(data?.error || 'Failed to connect email');
+      }
+    } catch (error) {
+      console.error('Email connection error:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Failed to connect email';
+      setErrorMessage(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const fetchEmails = async () => {
     setIsSyncing(true);
     setErrorMessage('');
-    
+
     try {
-      console.log('Starting Gmail OAuth process...');
-      
-      // Get authorization URL
-      const response = await fetch(`https://tvbetqvpiypncjtkchcc.supabase.co/functions/v1/gmail-oauth?action=authorize`);
-      const authData = await response.json();
-
-      if (!response.ok) {
-        console.error('OAuth authorization error:', authData);
-        throw new Error(authData.error);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('Not authenticated');
       }
 
-      console.log('Opening OAuth popup...');
+      const { data, error } = await supabase.functions.invoke('fetch-imap-emails');
 
-      // Set up message listener to handle OAuth success
-      const handleMessage = async (event: MessageEvent) => {
-        console.log('=== MESSAGE RECEIVED ===');
-        console.log('Event origin:', event.origin);
-        console.log('Event data:', JSON.stringify(event.data, null, 2));
-        console.log('Data type:', typeof event.data);
+      if (error) {
+        throw error;
+      }
+
+      if (data?.emails) {
+        setEmailSummaries(data.emails);
+        setLastSyncTime(new Date().toLocaleTimeString());
         
-        // Check if this is our OAuth success message - look for tokens directly
-        if (event.data && (event.data.tokens || event.data.access_token)) {
-          console.log('✅ OAuth SUCCESS detected - processing tokens...');
-          
-          // Remove listener to prevent duplicate processing
-          window.removeEventListener('message', handleMessage);
-          
-          try {
-            // Get current user session
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-              throw new Error('No authenticated user found');
-            }
+        // Load processed emails status from database
+        const { data: processedEmails } = await supabase
+          .from('processed_emails')
+          .select('email_id, is_done')
+          .eq('user_id', user.id);
 
-            console.log('Storing tokens for user:', user.id);
-            
-            // Extract tokens from either nested or direct structure
-            const tokens = event.data.tokens || event.data;
-            const userInfo = event.data.userInfo || {};
-            
-            console.log('Extracted tokens:', tokens);
-            console.log('Extracted userInfo:', userInfo);
-            
-            // Store tokens directly in database
-            const { error: insertError } = await supabase
-              .from('gmail_tokens')
-              .upsert({
-                user_id: user.id,
-                access_token: tokens.access_token,
-                refresh_token: tokens.refresh_token || null,
-                expires_at: tokens.expires_in 
-                  ? new Date(Date.now() + (tokens.expires_in * 1000)).toISOString()
-                  : null,
-                email: userInfo?.email || null,
-                updated_at: new Date().toISOString()
-              });
-
-            if (insertError) {
-              console.error('Database insert error:', insertError);
-              throw insertError;
-            }
-
-            console.log('✅ Tokens stored successfully');
-            
-            // Update UI state
-            setIsConnected(true);
-            setErrorMessage('');
-            
-            // Fetch emails
-            console.log('Fetching Gmail emails...');
-            await fetchGmailEmails();
-            
-            toast({
-              title: "Gmail Connected",
-              description: "Your Gmail account has been synced successfully!",
-            });
-            
-          } catch (error) {
-            console.error('❌ OAuth processing error:', error);
-            setErrorMessage(`Failed to connect Gmail: ${error.message}`);
-            toast({
-              title: "Connection Failed",
-              description: `Error: ${error.message}`,
-              variant: "destructive"
-            });
-          } finally {
-            setIsSyncing(false);
-          }
-        } else if (event.data && event.data.error) {
-          console.error('❌ OAuth error received:', event.data.error);
-          window.removeEventListener('message', handleMessage);
-          setErrorMessage(event.data.error);
-          setIsSyncing(false);
-          toast({
-            title: "Gmail Connection Failed", 
-            description: event.data.error,
-            variant: "destructive"
-          });
+        if (processedEmails) {
+          const doneEmailIds = new Set(
+            processedEmails
+              .filter(email => email.is_done)
+              .map(email => email.email_id)
+          );
+          setDoneEmails(doneEmailIds);
         }
-      };
-
-      // Add message listener before opening popup
-      window.addEventListener('message', handleMessage);
-
-      // Open OAuth popup
-      const popup = window.open(
-        authData.authUrl, 
-        'gmail-oauth', 
-        'width=500,height=600,scrollbars=yes,resizable=yes'
-      );
-
-      if (!popup) {
-        window.removeEventListener('message', handleMessage);
-        throw new Error('Popup blocked. Please allow popups for this site.');
       }
-
-      // Check if popup was closed manually
-      const checkClosed = setInterval(() => {
-        if (popup.closed) {
-          console.log('Popup closed manually');
-          clearInterval(checkClosed);
-          window.removeEventListener('message', handleMessage);
-          setIsSyncing(false);
-        }
-      }, 1000);
-
     } catch (error) {
-      console.error('Gmail sync error:', error);
-      setErrorMessage(error instanceof Error ? error.message : 'Failed to sync Gmail');
-      toast({
-        title: "Gmail sync failed",
-        description: error instanceof Error ? error.message : "Please try again.",
-        variant: "destructive"
-      });
+      console.error('Error fetching emails:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Failed to fetch emails';
+      setErrorMessage(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setIsSyncing(false);
     }
   };
 
-  const fetchGmailEmails = async () => {
+  const handleRefreshEmails = async () => {
+    if (!isConnected) return;
+    await fetchEmails();
+  };
+
+  const toggleEmailExpanded = (emailId: string) => {
+    setExpandedEmails(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(emailId)) {
+        newSet.delete(emailId);
+      } else {
+        newSet.add(emailId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleSendReply = async (email: EmailSummary, replyText: string) => {
+    setSendingReplies(prev => new Set(prev).add(email.id));
+
     try {
-      console.log('Fetching Gmail emails...');
-      
-      const { data, error } = await supabase.functions.invoke('fetch-gmail-emails');
-      
+      const { data, error } = await supabase.functions.invoke('send-email-reply', {
+        body: {
+          to_email: email.sender_email,
+          subject: email.subject,
+          reply_text: replyText,
+          message_id_header: email.id
+        }
+      });
+
       if (error) {
-        console.error('Email fetch error:', error);
         throw error;
       }
-      
-      console.log('Email fetch response:', data);
-      
-      if (data?.emails && Array.isArray(data.emails)) {
-        // Format emails to match our interface
-        const formattedEmails = data.emails.map((email: any) => ({
-          id: email.id,
-          sender: email.sender,
-          subject: email.subject,
-          summary: email.summary,
-          time: new Date(email.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isUnread: email.isUnread,
-          tags: email.tags || []
-        }));
-        
-        console.log('Formatted emails:', formattedEmails);
-        setEmailSummaries(formattedEmails);
-        setLastSyncTime(new Date().toLocaleTimeString());
-        
-        if (formattedEmails.length === 0) {
-          setErrorMessage('No emails found in the last 48 hours');
-        } else {
-          setErrorMessage('');
-        }
+
+      if (data?.status === 'success') {
+        toast.success('Reply sent successfully!');
+        setReplyTexts(prev => ({ ...prev, [email.id]: '' }));
+        setExpandedEmails(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(email.id);
+          return newSet;
+        });
       } else {
-        console.log('No emails in response, using mock data');
-        setEmailSummaries(mockEmailSummaries);
-        setErrorMessage('Using demo data - Gmail sync may need troubleshooting');
+        throw new Error(data?.message || 'Failed to send reply');
       }
     } catch (error) {
-      console.error('Error fetching Gmail emails:', error);
-      setErrorMessage('Failed to fetch emails - using demo data');
-      // Fallback to mock data if Gmail fetch fails
-      setEmailSummaries(mockEmailSummaries);
+      console.error('Send reply error:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Failed to send reply';
+      toast.error(errorMsg);
+    } finally {
+      setSendingReplies(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(email.id);
+        return newSet;
+      });
     }
   };
 
-  const handleRefreshEmails = async () => {
-    if (!isConnected) return;
-    
-    setIsSyncing(true);
-    setErrorMessage('');
-    await fetchGmailEmails();
-    setIsSyncing(false);
+  const handleMarkAsDone = async (emailId: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      await supabase
+        .from('processed_emails')
+        .update({ is_done: true })
+        .eq('user_id', user.id)
+        .eq('email_id', emailId);
+
+      setDoneEmails(prev => new Set(prev).add(emailId));
+      setLastDoneEmail(emailId);
+      toast.success('Email marked as done');
+    } catch (error) {
+      console.error('Error marking email as done:', error);
+      toast.error('Failed to mark email as done');
+    }
   };
 
-  const handleConnectEmail = () => {
-    setIsLoading(true);
-    // Simulate connection process for non-Gmail
-    setTimeout(() => {
-      setIsConnected(true);
-      setEmailSummaries(mockEmailSummaries);
-      localStorage.setItem('emailConnected', 'true');
-      setIsLoading(false);
-    }, 2000);
+  const handleUndoMarkAsDone = async () => {
+    if (!lastDoneEmail) return;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      await supabase
+        .from('processed_emails')
+        .update({ is_done: false })
+        .eq('user_id', user.id)
+        .eq('email_id', lastDoneEmail);
+
+      setDoneEmails(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(lastDoneEmail);
+        return newSet;
+      });
+      setLastDoneEmail(null);
+      toast.success('Action undone');
+    } catch (error) {
+      console.error('Error undoing mark as done:', error);
+      toast.error('Failed to undo action');
+    }
   };
+
+  const visibleEmails = emailSummaries.filter(email => !doneEmails.has(email.id));
+  const unreadCount = visibleEmails.length;
 
   if (!isConnected) {
     return (
@@ -334,14 +286,14 @@ export const EmailSummarySection = () => {
         <Card className="p-8 bg-white/50 backdrop-blur-sm border border-primary/10 text-center">
           <div className="max-w-md mx-auto">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Inbox className="w-8 h-8 text-primary" />
+              <Mail className="w-8 h-8 text-primary" />
             </div>
             <h3 className="text-lg font-semibold text-foreground mb-2">
-              Connect Your Gmail
+              Connect Your Email
             </h3>
             <p className="text-sm text-muted-foreground mb-6">
               Get AI-powered summaries of your daily emails right in your dashboard. 
-              Stay on top of what matters without inbox overload.
+              Connect your Gmail account with app-specific password for secure access.
             </p>
             
             {errorMessage && (
@@ -351,23 +303,61 @@ export const EmailSummarySection = () => {
               </div>
             )}
             
-            <Button 
-              onClick={handleSyncGmail}
-              disabled={isSyncing}
-              className="bg-primary hover:bg-primary/90 text-white px-6 py-2"
-            >
-              {isSyncing ? (
-                <>
-                  <Loader className="w-4 h-4 mr-2 animate-spin" />
-                  Connecting...
-                </>
-              ) : (
-                <>
-                  <Mail className="w-4 h-4 mr-2" />
-                  Connect Gmail
-                </>
-              )}
-            </Button>
+            <Dialog open={showConnectDialog} onOpenChange={setShowConnectDialog}>
+              <DialogTrigger asChild>
+                <Button className="bg-primary hover:bg-primary/90 text-white px-6 py-2">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Connect Email
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Connect Your Email</DialogTitle>
+                  <DialogDescription>
+                    Enter your Gmail credentials. For security, use an app-specific password instead of your regular password.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="email">Email Address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="your-email@gmail.com"
+                      value={credentials.email}
+                      onChange={(e) => setCredentials(prev => ({ ...prev, email: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="password">App Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="App-specific password"
+                      value={credentials.password}
+                      onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Generate an app password in your Google Account settings for secure access.
+                    </p>
+                  </div>
+                  <Button 
+                    onClick={handleConnectEmail}
+                    disabled={isConnecting}
+                    className="w-full"
+                  >
+                    {isConnecting ? (
+                      <>
+                        <Loader className="w-4 h-4 mr-2 animate-spin" />
+                        Connecting...
+                      </>
+                    ) : (
+                      'Connect Email'
+                    )}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </Card>
       </div>
@@ -404,8 +394,19 @@ export const EmailSummarySection = () => {
             )}
           </Button>
           <Badge variant="secondary" className="text-xs">
-            {emailSummaries.filter(email => email.isUnread).length} Unread
+            {unreadCount} Emails
           </Badge>
+          {lastDoneEmail && (
+            <Button
+              onClick={handleUndoMarkAsDone}
+              variant="outline"
+              size="sm"
+              className="text-xs"
+            >
+              <Undo2 className="w-3 h-3 mr-1" />
+              Undo
+            </Button>
+          )}
         </div>
       </div>
 
@@ -416,107 +417,160 @@ export const EmailSummarySection = () => {
         </div>
       )}
 
+      {lastSyncTime && (
+        <p className="text-xs text-muted-foreground mb-4">
+          Last synced: {lastSyncTime}
+        </p>
+      )}
+
       <div className="grid gap-4 sm:gap-6">
-        {emailSummaries.map((email) => (
-          <Card 
-            key={email.id} 
-            className="p-4 sm:p-6 bg-white border border-gray-200 transition-all duration-200 hover:shadow-lg"
-          >
-            {/* Header with sender, time, and unread indicator */}
-            <div className="flex items-start justify-between mb-3 gap-3">
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <h4 className="font-medium text-foreground text-sm sm:text-base truncate">
-                  {email.sender}
-                </h4>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <span className="text-xs sm:text-sm text-muted-foreground">
-                  {email.time}
-                </span>
-                {email.isUnread && (
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-xs sm:text-sm font-medium text-purple-500 hidden sm:inline">Unread</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <h5 className="font-medium text-foreground text-sm sm:text-base mb-2 leading-tight">
-              {email.subject}
-            </h5>
-
-            <p className="text-sm text-muted-foreground mb-3 sm:mb-4 leading-relaxed">
-              {email.summary}
+        {visibleEmails.length === 0 ? (
+          <Card className="p-8 text-center">
+            <Mail className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-medium text-foreground mb-2">All Caught Up!</h3>
+            <p className="text-sm text-muted-foreground">
+              No new emails to process. Check back later or refresh to sync new messages.
             </p>
+          </Card>
+        ) : (
+          visibleEmails.map((email) => {
+            const isExpanded = expandedEmails.has(email.id);
+            const replyText = replyTexts[email.id] || '';
+            const isSending = sendingReplies.has(email.id);
 
-            <div className="flex flex-wrap items-center gap-2 mb-3 sm:mb-4">
-              <span className="text-xs sm:text-sm text-muted-foreground">Tags:</span>
-              {email.tags.map((tag, index) => (
-                <div key={index} className="flex items-center gap-1">
-                  {tag === "17" && (
-                    <div className="w-4 h-4 bg-orange-100 text-orange-600 rounded flex items-center justify-center text-xs font-medium">
-                      17
+            return (
+              <Card 
+                key={email.id} 
+                className="p-4 sm:p-6 bg-white border border-gray-200 transition-all duration-200 hover:shadow-lg"
+              >
+                {/* Header */}
+                <div className="flex items-start justify-between mb-3 gap-3">
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <User className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-medium text-foreground text-sm sm:text-base truncate">
+                        {email.sender_name}
+                      </h4>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {email.sender_email}
+                      </p>
                     </div>
-                  )}
-                  {tag === "Meeting" && (
-                    <>
-                      <div className="w-4 h-4 bg-orange-100 rounded flex items-center justify-center">
-                        <div className="w-2 h-2 bg-orange-500 rounded"></div>
-                      </div>
-                      <span className="text-xs sm:text-sm text-muted-foreground">{tag}</span>
-                    </>
-                  )}
-                  {tag === "Internal" && (
-                    <>
-                      <div className="w-4 h-4 bg-gray-100 rounded flex items-center justify-center">
-                        <div className="w-2 h-2 bg-gray-500 rounded"></div>
-                      </div>
-                      <span className="text-xs sm:text-sm text-muted-foreground">{tag}</span>
-                    </>
-                  )}
-                  {!["17", "Meeting", "Internal"].includes(tag) && (
-                    <>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
+                      {new Date(email.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Subject */}
+                <h5 className="font-medium text-foreground text-sm sm:text-base mb-2 leading-tight">
+                  {email.subject}
+                </h5>
+
+                {/* AI Summary */}
+                {email.ai_summary && (
+                  <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-center gap-2 mb-2">
                       <div className="w-4 h-4 bg-blue-100 rounded flex items-center justify-center">
                         <div className="w-2 h-2 bg-blue-500 rounded"></div>
                       </div>
-                      <span className="text-xs sm:text-sm text-muted-foreground">{tag}</span>
-                    </>
-                  )}
+                      <span className="text-xs font-medium text-blue-700">AI Summary</span>
+                    </div>
+                    <p className="text-sm text-blue-800">
+                      {email.ai_summary}
+                    </p>
+                  </div>
+                )}
+
+                {/* Suggested Replies */}
+                {email.suggested_replies && email.suggested_replies.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-xs font-medium text-muted-foreground mb-2">Suggested Replies:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {email.suggested_replies.map((reply, index) => (
+                        <Button
+                          key={index}
+                          variant="outline"
+                          size="sm"
+                          className="text-xs h-7 px-2"
+                          onClick={() => setReplyTexts(prev => ({ ...prev, [email.id]: reply }))}
+                        >
+                          {reply}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Email Body (Expandable) */}
+                {isExpanded && (
+                  <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-foreground whitespace-pre-wrap">
+                      {email.body}
+                    </p>
+                  </div>
+                )}
+
+                {/* Reply Section */}
+                {isExpanded && (
+                  <div className="mb-4 space-y-3">
+                    <Label htmlFor={`reply-${email.id}`} className="text-sm font-medium">
+                      Your Reply
+                    </Label>
+                    <Textarea
+                      id={`reply-${email.id}`}
+                      placeholder="Type your reply here..."
+                      value={replyText}
+                      onChange={(e) => setReplyTexts(prev => ({ ...prev, [email.id]: e.target.value }))}
+                      className="min-h-[100px]"
+                    />
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleSendReply(email, replyText)}
+                        disabled={!replyText.trim() || isSending}
+                        size="sm"
+                      >
+                        {isSending ? (
+                          <>
+                            <Loader className="w-4 h-4 mr-2 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4 mr-2" />
+                            Send Reply
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex flex-wrap gap-2 sm:gap-3 pt-2 border-t border-gray-100">
+                  <Button
+                    onClick={() => toggleEmailExpanded(email.id)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs"
+                  >
+                    {isExpanded ? 'Hide Details' : 'Show Details'}
+                  </Button>
+                  <Button
+                    onClick={() => handleMarkAsDone(email.id)}
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-green-600 hover:text-green-700"
+                  >
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Mark as Done
+                  </Button>
                 </div>
-              ))}
-            </div>
-
-            <div className="flex flex-wrap gap-2 sm:gap-3 pt-2 border-t border-gray-100">
-              <Button variant="ghost" size="sm" className="text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4">
-                <Check className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                <span className="hidden sm:inline">Mark Done</span>
-                <span className="sm:hidden">Done</span>
-              </Button>
-              <Button variant="ghost" size="sm" className="text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4">
-                <Edit3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                <span className="hidden sm:inline">Suggested Reply</span>
-                <span className="sm:hidden">Reply</span>
-              </Button>
-              <Button variant="ghost" size="sm" className="text-xs sm:text-sm h-8 sm:h-9 px-3 sm:px-4">
-                <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                <span className="hidden sm:inline">Open in Gmail</span>
-                <span className="sm:hidden">Gmail</span>
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
-
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-4 border-t border-primary/10 gap-3">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Clock className="w-3 h-3" />
-          <span>Last updated: {lastSyncTime || '2 minutes ago'}</span>
-        </div>
-        <Button variant="ghost" size="sm" className="text-xs self-start sm:self-auto">
-          <ExternalLink className="w-3 h-3 mr-1" />
-          Open Gmail
-        </Button>
+              </Card>
+            );
+          })
+        )}
       </div>
     </div>
   );

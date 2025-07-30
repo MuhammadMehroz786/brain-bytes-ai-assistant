@@ -1,5 +1,6 @@
 <lov-actions>
   <lov-secret-form name="RESEND_API_KEY"></lov-secret-form>
+  <lov-secret-form name="OPENAI_API_KEY"></lov-secret-form>
   <lov-link url="https://resend.com/api-keys">Get your Resend API key</lov-link>
   <lov-link url="https://supabase.com/dashboard/project/tvbetqvpiypncjtkchcc/functions/send-contact-email/logs">Contact Email Function Logs</lov-link>
 </lov-actions>
