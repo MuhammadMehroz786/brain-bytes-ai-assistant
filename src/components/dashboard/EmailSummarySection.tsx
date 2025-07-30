@@ -62,7 +62,7 @@ export const EmailSummarySection = () => {
         .from('email_credentials')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle(); // Use maybeSingle instead of single to handle no results
 
       if (data && !error) {
         setIsConnected(true);

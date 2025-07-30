@@ -43,10 +43,18 @@ Deno.serve(async (req) => {
       .from('email_credentials')
       .select('email_address, password')
       .eq('user_id', user.id)
-      .single()
+      .maybeSingle() // Use maybeSingle to handle no results gracefully
 
-    if (credError || !credentials) {
-      return new Response(JSON.stringify({ error: 'No email credentials found' }), {
+    if (credError) {
+      console.error('Error fetching credentials:', credError)
+      return new Response(JSON.stringify({ error: 'Error fetching email credentials' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    if (!credentials) {
+      return new Response(JSON.stringify({ error: 'No email credentials found. Please connect your email first.' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
