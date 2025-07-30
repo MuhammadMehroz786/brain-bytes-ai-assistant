@@ -71,13 +71,7 @@ Deno.serve(async (req) => {
     }
 
     // Fetch and process emails from the IMAP server
-    let emails = await fetchAndProcessEmails(credentials.email_address, credentials.password)
-
-    // If IMAP fails or returns no new emails, use mock data as a fallback
-    if (emails.length === 0) {
-      console.log('No new emails found, returning mock data as a fallback.')
-      emails = await generateMockEmails()
-    }
+    const emails = await fetchAndProcessEmails(credentials.email_address, credentials.password)
 
     // Save the processed emails to the database
     if (emails.length > 0) {
@@ -163,7 +157,7 @@ async function fetchAndProcessEmails(email: string, password: string): Promise<E
         const searchCriteria = ['SINCE', formattedDate];
         console.log(`🔍 Searching for emails since: ${formattedDate}`);
 
-        imap.search([searchCriteria], (searchErr, results) => {
+        imap.search(searchCriteria, (searchErr, results) => {
           if (searchErr) {
             console.error('❌ IMAP search error:', searchErr);
             closeConnection('search error');
@@ -247,9 +241,6 @@ async function fetchAndProcessEmails(email: string, password: string): Promise<E
     });
     
     imap.connect();
-  }).catch(error => {
-    console.error('🚨 IMAP Promise rejected. Falling back to mock data. Error:', error);
-    return generateMockEmails();
   });
 }
 
