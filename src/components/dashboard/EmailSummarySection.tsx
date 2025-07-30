@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { RefreshCw, Mail, Clock, User, Send, CheckCircle, Undo2, ExternalLink, Plus, AlertCircle, Loader } from 'lucide-react';
+import { RefreshCw, Mail, Clock, User, Send, CheckCircle, Undo2, ExternalLink, Plus, AlertCircle, Loader, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -270,6 +270,36 @@ export const EmailSummarySection = () => {
     }
   };
 
+  const handleDisconnectEmail = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Delete email credentials from database
+      const { error } = await supabase
+        .from('email_credentials')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (error) {
+        throw error;
+      }
+
+      // Update UI state
+      setIsConnected(false);
+      setEmailSummaries([]);
+      setDoneEmails(new Set());
+      setLastSyncTime('');
+      setErrorMessage('');
+      
+      toast.success('Email disconnected successfully');
+    } catch (error) {
+      console.error('Error disconnecting email:', error);
+      const errorMsg = error instanceof Error ? error.message : 'Failed to disconnect email';
+      toast.error(errorMsg);
+    }
+  };
+
   const visibleEmails = emailSummaries.filter(email => !doneEmails.has(email.id));
   const unreadCount = visibleEmails.length;
 
@@ -392,6 +422,15 @@ export const EmailSummarySection = () => {
                 Refresh
               </>
             )}
+          </Button>
+          <Button 
+            onClick={handleDisconnectEmail}
+            variant="outline"
+            size="sm"
+            className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+          >
+            <LogOut className="w-3 h-3 mr-1" />
+            Disconnect
           </Button>
           <Badge variant="secondary" className="text-xs">
             {unreadCount} Emails
