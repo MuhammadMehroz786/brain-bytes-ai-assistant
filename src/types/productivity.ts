@@ -1,9 +1,31 @@
+// Legacy UserResponses - keeping for compatibility
 export interface UserResponses {
   productivityStruggle: string;
   goals: string;
   currentTools: string;
   aiFamiliarity: string;
   productiveTime: string;
+}
+
+// New onboarding responses
+export interface OnboardingResponses {
+  aiGoal: string;
+  workflowType: string;
+  biggestChallenge: string;
+  learningPreference: string;
+  focusTime: string;
+  workDescription?: string;
+}
+
+// Workflow definition
+export interface Workflow {
+  id: string;
+  title: string;
+  description: string;
+  demoVideoUrl?: string;
+  targetAiGoals: string[];
+  targetChallenges: string[];
+  targetWorkflows: string[];
 }
 
 export interface UserPreferences {

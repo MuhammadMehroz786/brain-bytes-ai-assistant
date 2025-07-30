@@ -31,18 +31,22 @@ import { UpgradeAssistantSection } from "./dashboard/UpgradeAssistantSection";
 import { SystemSettingsSection } from "./dashboard/SystemSettingsSection";
 import { EmailSummarySection } from "./dashboard/EmailSummarySection";
 import { DailyFocusPopup } from "./dashboard/DailyFocusPopup";
-import type { ProductivityPlan, UserResponses } from "@/types/productivity";
+import type { ProductivityPlan, UserResponses, OnboardingResponses } from "@/types/productivity";
+import { WorkflowToolkit } from "./WorkflowToolkit";
 
 interface DashboardProps {
   plan: ProductivityPlan;
   responses: UserResponses;
   onRestart: () => void;
+  onboardingResponses?: OnboardingResponses | null;
 }
 
-type SectionId = 'daily-navigator' | 'email-recap' | 'ai-plan' | 'smart-stack' | 'focus-playlist' | 'system-settings' | 'upgrade-assistant';
+type SectionId = 'daily-navigator' | 'email-recap' | 'ai-plan' | 'smart-stack' | 'focus-playlist' | 'system-settings' | 'upgrade-assistant' | 'workflows';
 
-export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
-  const [activeSection, setActiveSection] = useState<SectionId>('daily-navigator');
+export const Dashboard = ({ plan, responses, onRestart, onboardingResponses }: DashboardProps) => {
+  const [activeSection, setActiveSection] = useState<SectionId>(
+    onboardingResponses ? 'workflows' : 'daily-navigator'
+  );
   const [showDailyPopup, setShowDailyPopup] = useState(false);
   const [todaysPriority, setTodaysPriority] = useState<string>("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -121,6 +125,14 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
       bgColor: 'bg-orange-100'
     },
     {
+      id: 'workflows' as SectionId,
+      title: 'Workflow Toolkit',
+      icon: Target,
+      description: 'Personalized workflows',
+      iconColor: 'text-emerald-500',
+      bgColor: 'bg-emerald-100'
+    },
+    {
       id: 'smart-stack' as SectionId,
       title: 'Smart Tool Stack',
       icon: Zap,
@@ -163,6 +175,14 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
         return <EmailSummarySection />;
       case 'ai-plan':
         return <DailyFlowSection plan={plan} responses={responses} />;
+      case 'workflows':
+        return onboardingResponses ? (
+          <WorkflowToolkit responses={onboardingResponses} />
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">Complete the onboarding to see your personalized workflows</p>
+          </div>
+        );
       case 'smart-stack':
         return <AIStackSection plan={plan} responses={responses} />;
       case 'focus-playlist':
