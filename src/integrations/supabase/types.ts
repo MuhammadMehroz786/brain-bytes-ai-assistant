@@ -314,69 +314,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_feedback: {
-        Row: {
-          created_at: string
-          feedback_text: string | null
-          id: string
-          rating: number
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          feedback_text?: string | null
-          id?: string
-          rating: number
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          feedback_text?: string | null
-          id?: string
-          rating?: number
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      user_onboarding_responses: {
-        Row: {
-          ai_goal: string
-          biggest_challenge: string
-          created_at: string
-          focus_time: string
-          id: string
-          learning_preference: string
-          updated_at: string
-          user_id: string
-          work_description: string | null
-          workflow_type: string
-        }
-        Insert: {
-          ai_goal: string
-          biggest_challenge: string
-          created_at?: string
-          focus_time: string
-          id?: string
-          learning_preference: string
-          updated_at?: string
-          user_id: string
-          work_description?: string | null
-          workflow_type: string
-        }
-        Update: {
-          ai_goal?: string
-          biggest_challenge?: string
-          created_at?: string
-          focus_time?: string
-          id?: string
-          learning_preference?: string
-          updated_at?: string
-          user_id?: string
-          work_description?: string | null
-          workflow_type?: string
-        }
-        Relationships: []
-      }
       user_streaks: {
         Row: {
           created_at: string
