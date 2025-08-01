@@ -1,10 +1,10 @@
-import { openai } from "@/integrations/openai/client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { X, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DistractionRescueProps {
   isOpen: boolean;
@@ -23,16 +23,14 @@ export const DistractionRescue = ({ isOpen, onClose }: DistractionRescueProps) =
     setIsLoadingResponse(true);
 
     try {
-      const completion = await openai.chat.completions.create({
-        messages: [
-          { role: "system", content: "You are an empathetic but directive productivity coach. When a user tells you what's distracting them, analyze the distraction and generate a short, actionable response. For example, if the user says 'My phone is stealing my focus', you could say 'Sounds like your phone is stealing your focus. Try switching it to airplane mode for the next 25 minutes and set one small task to complete.'" },
-          ...newConversationHistory,
-        ],
-        model: "gpt-4o",
+      const { data, error } = await supabase.functions.invoke('distraction-coaching', {
+        body: { conversationHistory: newConversationHistory },
       });
 
-      const response = completion.choices[0].message.content;
-      setConversationHistory([...newConversationHistory, { role: "assistant", content: response }]);
+      if (error) throw error;
+
+      const assistantMessage = { role: "assistant", content: data.response };
+      setConversationHistory([...newConversationHistory, assistantMessage]);
     } catch (error) {
       console.error("Error generating coaching response:", error);
       toast({
