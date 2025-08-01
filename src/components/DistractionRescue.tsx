@@ -1,14 +1,10 @@
 import { openai } from "@/integrations/openai/client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Zap, Brain, ArrowRight, X, Timer, MessageCircle, List, CheckCircle2, Sparkles, Send } from "lucide-react";
+import { X, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 interface DistractionRescueProps {
   isOpen: boolean;
@@ -17,7 +13,6 @@ interface DistractionRescueProps {
 
 export const DistractionRescue = ({ isOpen, onClose }: DistractionRescueProps) => {
   const [userInput, setUserInput] = useState("");
-  const [coachingResponse, setCoachingResponse] = useState("");
   const [isLoadingResponse, setIsLoadingResponse] = useState(false);
   const { toast } = useToast();
   const [conversationHistory, setConversationHistory] = useState<any[]>([]);
@@ -25,18 +20,31 @@ export const DistractionRescue = ({ isOpen, onClose }: DistractionRescueProps) =
   const generateCoachingResponse = async (input: string) => {
     const newConversationHistory = [...conversationHistory, { role: "user", content: input }];
     setConversationHistory(newConversationHistory);
+    setIsLoadingResponse(true);
 
-    const completion = await openai.chat.completions.create({
-      messages: [
-        { role: "system", content: "You are an empathetic but directive productivity coach. When a user tells you what's distracting them, analyze the distraction and generate a short, actionable response. For example, if the user says 'My phone is stealing my focus', you could say 'Sounds like your phone is stealing your focus. Try switching it to airplane mode for the next 25 minutes and set one small task to complete.'" },
-        ...newConversationHistory,
-      ],
-      model: "gpt-4o",
-    });
+    try {
+      const completion = await openai.chat.completions.create({
+        messages: [
+          { role: "system", content: "You are an empathetic but directive productivity coach. When a user tells you what's distracting them, analyze the distraction and generate a short, actionable response. For example, if the user says 'My phone is stealing my focus', you could say 'Sounds like your phone is stealing your focus. Try switching it to airplane mode for the next 25 minutes and set one small task to complete.'" },
+          ...newConversationHistory,
+        ],
+        model: "gpt-4o",
+      });
 
-    const response = completion.choices[0].message.content;
-    setConversationHistory([...newConversationHistory, { role: "assistant", content: response }]);
-    return response;
+      const response = completion.choices[0].message.content;
+      setConversationHistory([...newConversationHistory, { role: "assistant", content: response }]);
+    } catch (error) {
+      console.error("Error generating coaching response:", error);
+      toast({
+        title: "Error",
+        description: "There was an error generating a response. Please try again.",
+        variant: "destructive",
+      });
+      // Remove the user's message from history if the API call fails
+      setConversationHistory(conversationHistory);
+    } finally {
+      setIsLoadingResponse(false);
+    }
   };
 
   const handleSubmitDistraction = async () => {
@@ -49,19 +57,13 @@ export const DistractionRescue = ({ isOpen, onClose }: DistractionRescueProps) =
       return;
     }
 
-    setIsLoadingResponse(true);
-
-    const response = await generateCoachingResponse(userInput);
-    setCoachingResponse(response || "");
+    await generateCoachingResponse(userInput);
     setUserInput("");
-
-    setIsLoadingResponse(false);
   };
 
   const handleClose = () => {
     setConversationHistory([]);
     setUserInput("");
-    setCoachingResponse("");
     setIsLoadingResponse(false);
     onClose();
   };
