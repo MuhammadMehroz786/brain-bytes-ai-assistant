@@ -282,9 +282,7 @@ export const IntroScreen = ({
                 </h1>
                 
                 <p className="text-2xl lg:text-3xl text-muted-foreground leading-relaxed max-w-2xl">
-                  #1 AI productivity assistant for{" "}
-                  <span className="text-primary font-semibold">professionals</span> and{" "}
-                  <span className="text-accent font-semibold">creators</span>.
+                  Your personalized AI starter kit — no overwhelm, no bloat, just tools that work.
                 </p>
               </div>
 
