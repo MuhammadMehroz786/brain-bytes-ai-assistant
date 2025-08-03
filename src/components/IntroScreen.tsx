@@ -19,7 +19,7 @@ interface QuizAnswers {
 
 export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   const [isMobile, setIsMobile] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [showResult, setShowResult] = useState(false);
   const [answers, setAnswers] = useState<QuizAnswers>({
     helpWith: "",
     experience: "",
@@ -49,45 +49,64 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
   const getPersonalizedMessage = () => {
     const helpWithText = answers.helpWith || "optimize your workflow";
-    return `We'll build your AI Assistant to help you ${helpWithText.toLowerCase()}. You don't need to figure it all out — we'll guide you step by step.`;
+    return `Based on your goals, we'll build your AI Assistant to help you ${helpWithText.toLowerCase()}. You don't have to figure it all out — we'll guide you.`;
   };
 
-  const isStepComplete = () => {
-    switch (currentStep) {
-      case 1: return answers.helpWith !== "";
-      case 2: return answers.experience !== "";
-      case 3: return answers.frustration !== "";
-      default: return false;
+  const isQuizComplete = () => {
+    return answers.helpWith !== "" && answers.experience !== "" && answers.frustration !== "";
+  };
+
+  const handleSubmit = () => {
+    if (isQuizComplete()) {
+      setShowResult(true);
     }
   };
 
-  const handleNext = () => {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      setCurrentStep(4); // Show result
+  const questions = [
+    {
+      title: "What do you want AI to help you with?",
+      options: [
+        "Create content faster",
+        "Stay organized", 
+        "Automate tasks",
+        "Learn new tools",
+        "Not sure yet"
+      ],
+      key: "helpWith" as keyof QuizAnswers
+    },
+    {
+      title: "What's your current experience with AI?",
+      options: [
+        "Beginner",
+        "I've tried a few tools",
+        "I use it regularly"
+      ],
+      key: "experience" as keyof QuizAnswers
+    },
+    {
+      title: "What's your biggest frustration so far?",
+      options: [
+        "Too many options",
+        "Confusing tools",
+        "No time to learn",
+        "Haven't started yet"
+      ],
+      key: "frustration" as keyof QuizAnswers
     }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
+  ];
 
   const renderQuizStep = () => {
-    if (currentStep === 4) {
+    if (showResult) {
       return (
-        <div className="text-center space-y-6">
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-foreground">Perfect! Here's what's next:</h3>
-            <p className="text-muted-foreground leading-relaxed">
+        <div className="space-y-6">
+          <div className="text-center space-y-4">
+            <p className="text-[#1c1c1c] text-lg leading-relaxed font-medium">
               {getPersonalizedMessage()}
             </p>
           </div>
           <Button 
             onClick={handlePaymentClick}
-            className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold px-6 py-3 rounded-xl"
+            className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-bold text-lg px-6 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
           >
             Join the Waitlist – Get Early Access
           </Button>
@@ -95,86 +114,41 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       );
     }
 
-    const questions = [
-      {
-        title: "What do you want AI to help you with?",
-        options: [
-          "Create content faster",
-          "Stay organized", 
-          "Automate tasks",
-          "Learn new tools",
-          "Not sure yet"
-        ],
-        key: "helpWith" as keyof QuizAnswers
-      },
-      {
-        title: "What's your current experience with AI?",
-        options: [
-          "Beginner",
-          "I've tried a few tools",
-          "I use it regularly"
-        ],
-        key: "experience" as keyof QuizAnswers
-      },
-      {
-        title: "What's your biggest frustration so far?",
-        options: [
-          "Too many options",
-          "Confusing tools",
-          "No time to learn",
-          "Haven't started yet"
-        ],
-        key: "frustration" as keyof QuizAnswers
-      }
-    ];
-
-    const currentQuestion = questions[currentStep - 1];
-
     return (
-      <div className="space-y-6">
-        <div className="text-center space-y-2">
-          <div className="flex justify-center space-x-2 mb-4">
-            {[1, 2, 3].map((step) => (
-              <div
-                key={step}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  step <= currentStep ? 'bg-primary' : 'bg-gray-300'
-                }`}
-              />
-            ))}
+      <div className="space-y-8">
+        {questions.map((question, index) => (
+          <div key={question.key} className="space-y-4">
+            <h3 className="text-lg font-bold text-[#1c1c1c]">{question.title}</h3>
+            <RadioGroup
+              value={answers[question.key]}
+              onValueChange={(value) => setAnswers({ ...answers, [question.key]: value })}
+              className="space-y-3"
+            >
+              {question.options.map((option) => (
+                <div 
+                  key={option} 
+                  className="group cursor-pointer"
+                  onClick={() => setAnswers({ ...answers, [question.key]: option })}
+                >
+                  <div className="flex items-center space-x-3 p-4 border-2 border-muted-foreground/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 group-hover:shadow-md">
+                    <RadioGroupItem value={option} id={`${question.key}-${option}`} className="border-2" />
+                    <Label htmlFor={`${question.key}-${option}`} className="flex-1 cursor-pointer font-medium text-[#1c1c1c]">
+                      {option}
+                    </Label>
+                  </div>
+                </div>
+              ))}
+            </RadioGroup>
           </div>
-          <h3 className="text-lg font-bold text-foreground">{currentQuestion.title}</h3>
-        </div>
+        ))}
 
-        <RadioGroup
-          value={answers[currentQuestion.key]}
-          onValueChange={(value) => setAnswers({ ...answers, [currentQuestion.key]: value })}
-          className="space-y-3"
+        <Button 
+          onClick={handleSubmit}
+          disabled={!isQuizComplete()}
+          className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:from-muted disabled:to-muted text-white font-bold text-lg px-6 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {currentQuestion.options.map((option) => (
-            <div key={option} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-              <RadioGroupItem value={option} id={option} />
-              <Label htmlFor={option} className="flex-1 cursor-pointer">
-                {option}
-              </Label>
-            </div>
-          ))}
-        </RadioGroup>
-
-        <div className="flex gap-3">
-          {currentStep > 1 && (
-            <Button variant="outline" onClick={handleBack} className="flex-1">
-              Back
-            </Button>
-          )}
-          <Button 
-            onClick={handleNext}
-            disabled={!isStepComplete()}
-            className="flex-1 bg-primary hover:bg-primary/90"
-          >
-            {currentStep === 3 ? "Show My Starter Plan" : "Next"}
-          </Button>
-        </div>
+          Show My Plan
+        </Button>
       </div>
     );
   };
@@ -216,10 +190,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <div className="flex flex-col space-y-4">
           {/* Headline */}
           <div className="text-center space-y-4">
-            <h1 className="text-2xl font-bold text-foreground leading-tight">
-              Are you overwhelmed by{" "}
-              <span className="bg-gradient-to-r from-primary via-accent to-success bg-clip-text text-transparent">
-                AI?
+            <h1 className="text-2xl font-bold text-[#1c1c1c] leading-tight">
+              <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                Overwhelmed by AI?
               </span>
             </h1>
             
@@ -246,7 +219,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
 
           {/* Quiz Module */}
-          <Card className="p-4 bg-white/80 backdrop-blur-sm border border-primary/20 shadow-xl rounded-2xl">
+          <Card className="p-6 bg-white/90 backdrop-blur-sm border border-primary/20 shadow-xl rounded-2xl">
             {renderQuizStep()}
           </Card>
         </div>
@@ -282,10 +255,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             {/* Left Side - Hero Content */}
             <div className="space-y-12">
               <div className="space-y-8">
-                <h1 className="text-6xl lg:text-7xl xl:text-8xl font-black text-foreground leading-[1.05] tracking-tight">
-                  Are you overwhelmed by{" "}
+                <h1 className="text-6xl lg:text-7xl xl:text-8xl font-black text-[#1c1c1c] leading-[1.05] tracking-tight">
                   <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                    AI?
+                    Overwhelmed by AI?
                   </span>
                 </h1>
                 
@@ -322,7 +294,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
             {/* Right Side - Quiz Module */}
             <div className="lg:ml-8">
-              <div className="bg-gradient-to-br from-white/95 via-purple-50/30 to-blue-50/30 backdrop-blur-sm border border-primary/20 shadow-2xl shadow-primary/10 rounded-3xl p-8 hover:shadow-3xl transition-all duration-500 relative overflow-hidden hover:scale-[1.02]">
+              <div className="bg-gradient-to-br from-white/95 via-slate-50/30 to-gray-50/30 backdrop-blur-sm border border-primary/20 shadow-2xl shadow-primary/10 rounded-3xl p-8 hover:shadow-3xl transition-all duration-500 relative overflow-hidden hover:scale-[1.02]">
                 {/* Inner glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-primary/5 rounded-3xl"></div>
                 <div className="relative">
