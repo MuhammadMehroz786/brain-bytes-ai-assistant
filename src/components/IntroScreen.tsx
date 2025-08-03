@@ -53,7 +53,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   };
 
   const isQuizComplete = () => {
-    return answers.helpWith !== "" && answers.experience !== "" && answers.frustration !== "";
+    return answers.helpWith !== "" && answers.experience !== "";
   };
 
   const handleSubmit = () => {
@@ -82,16 +82,6 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         "I use it regularly"
       ],
       key: "experience" as keyof QuizAnswers
-    },
-    {
-      title: "What's your biggest frustration so far?",
-      options: [
-        "Too many options",
-        "Confusing tools",
-        "No time to learn",
-        "Haven't started yet"
-      ],
-      key: "frustration" as keyof QuizAnswers
     }
   ];
 
@@ -119,26 +109,21 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         {questions.map((question, index) => (
           <div key={question.key} className="space-y-4">
             <h3 className="text-lg font-bold text-[#1c1c1c]">{question.title}</h3>
-            <RadioGroup
-              value={answers[question.key]}
-              onValueChange={(value) => setAnswers({ ...answers, [question.key]: value })}
-              className="space-y-3"
-            >
+            <div className="grid grid-cols-2 gap-3">
               {question.options.map((option) => (
-                <div 
-                  key={option} 
-                  className="group cursor-pointer"
+                <button
+                  key={option}
                   onClick={() => setAnswers({ ...answers, [question.key]: option })}
+                  className={`px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 hover:scale-105 hover:shadow-md ${
+                    answers[question.key] === option
+                      ? 'bg-gradient-to-r from-primary to-accent text-white shadow-lg'
+                      : 'bg-white/80 border border-muted-foreground/20 text-[#1c1c1c] hover:border-primary/40 hover:bg-primary/5'
+                  }`}
                 >
-                  <div className="flex items-center space-x-3 p-4 border-2 border-muted-foreground/20 rounded-xl hover:border-primary/40 hover:bg-primary/5 transition-all duration-200 group-hover:shadow-md">
-                    <RadioGroupItem value={option} id={`${question.key}-${option}`} className="border-2" />
-                    <Label htmlFor={`${question.key}-${option}`} className="flex-1 cursor-pointer font-medium text-[#1c1c1c]">
-                      {option}
-                    </Label>
-                  </div>
-                </div>
+                  {option}
+                </button>
               ))}
-            </RadioGroup>
+            </div>
           </div>
         ))}
 
@@ -197,7 +182,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </h1>
             
             <p className="text-base text-muted-foreground">
-              Your personalized AI starter kit — no overwhelm, no confusion, just tools that match your goals.
+              You're not alone. With new tools dropping daily, it's hard to know where to start. That's why we built Brain Bytes — your AI starter kit that cuts through the noise and gives you exactly what you need, based on your goals.
+            </p>
+            <p className="text-sm text-muted-foreground font-medium">
+              No fluff. No bloat. Just tools that work.
             </p>
             
             {/* CTA Button */}
@@ -253,8 +241,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <div className="relative max-w-7xl mx-auto px-6 py-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
             {/* Left Side - Hero Content */}
-            <div className="space-y-12">
-              <div className="space-y-8">
+            <div className="space-y-8">
+              <div className="space-y-6">
                 <h1 className="text-6xl lg:text-7xl xl:text-8xl font-black text-[#1c1c1c] leading-[1.05] tracking-tight">
                   <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                     Overwhelmed by AI?
@@ -262,11 +250,14 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 </h1>
                 
                 <p className="text-2xl lg:text-3xl text-muted-foreground leading-relaxed max-w-2xl">
-                  Your personalized AI starter kit — no overwhelm, no confusion, just tools that match your goals.
+                  You're not alone. With new tools dropping daily, it's hard to know where to start. That's why we built Brain Bytes — your AI starter kit that cuts through the noise and gives you exactly what you need, based on your goals.
+                </p>
+                <p className="text-xl lg:text-2xl text-muted-foreground font-medium max-w-2xl">
+                  No fluff. No bloat. Just tools that work.
                 </p>
               </div>
 
-              <div className="space-y-8">
+              <div className="space-y-6">
                 {/* Enhanced CTA */}
                 <div className="space-y-4">
                   <Button onClick={handlePaymentClick} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
