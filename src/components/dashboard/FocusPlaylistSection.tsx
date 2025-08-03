@@ -31,7 +31,7 @@ const playlists: Playlist[] = [
     name: "Deep Focus",
     mood: "Focused",
     description: "Instrumental beats for maximum concentration",
-    embedUrl: "https://open.spotify.com/embed/playlist/37i9dQZF1DWZeKCadgRdKQ",
+    embedUrl: "https://open.spotify.com/embed/playlist/4jAKsS5b2SOTsm8RUMhMAL",
     icon: Brain,
     color: "bg-blue-100 text-blue-700 hover:bg-blue-200"
   },
@@ -40,7 +40,7 @@ const playlists: Playlist[] = [
     name: "Energy Boost",
     mood: "Energized", 
     description: "Upbeat tracks to power through tasks",
-    embedUrl: "https://open.spotify.com/embed/playlist/37i9dQZF1DX0XUsuxWHRQd",
+    embedUrl: "https://open.spotify.com/embed/playlist/6UeSakyzhiEt4NB3UAd6NQ",
     icon: Zap,
     color: "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
   },
@@ -49,7 +49,7 @@ const playlists: Playlist[] = [
     name: "Gentle Wake-Up",
     mood: "Tired",
     description: "Soft melodies to gently energize",
-    embedUrl: "https://open.spotify.com/embed/playlist/37i9dQZF1DX1s9knjP51Oa",
+    embedUrl: "https://open.spotify.com/embed/playlist/7sZbq8QGyMnhKPcLJvCUFD",
     icon: Coffee,
     color: "bg-orange-100 text-orange-700 hover:bg-orange-200"
   },
@@ -58,7 +58,7 @@ const playlists: Playlist[] = [
     name: "Zen Zone",
     mood: "Calm",
     description: "Peaceful sounds for relaxed productivity",
-    embedUrl: "https://open.spotify.com/embed/playlist/37i9dQZF1DWU0ScTcjJBdj",
+    embedUrl: "https://open.spotify.com/embed/playlist/0vvXsWCC9xrXsKd4FyS8kM",
     icon: Heart,
     color: "bg-green-100 text-green-700 hover:bg-green-200"
   },
@@ -67,7 +67,7 @@ const playlists: Playlist[] = [
     name: "Focus Flow",
     mood: "Distracted",
     description: "Minimal music to regain concentration",
-    embedUrl: "https://open.spotify.com/embed/playlist/37i9dQZF1DX3rxVfibe1L0",
+    embedUrl: "https://open.spotify.com/embed/playlist/2YRe7HRKNRvXdJBp9nXFza",
     icon: Focus,
     color: "bg-purple-100 text-purple-700 hover:bg-purple-200"
   },
@@ -76,7 +76,7 @@ const playlists: Playlist[] = [
     name: "Creative Spark",
     mood: "Creative",
     description: "Inspiring soundscapes for innovation",
-    embedUrl: "https://open.spotify.com/embed/playlist/37i9dQZF1DWSiZ3zgHTWqm",
+    embedUrl: "https://open.spotify.com/embed/playlist/1h0CEZCm6IbFTbxThn6Xcs",
     icon: Sparkles,
     color: "bg-pink-100 text-pink-700 hover:bg-pink-200"
   },
@@ -85,7 +85,7 @@ const playlists: Playlist[] = [
     name: "Evening Wind Down", 
     mood: "Evening",
     description: "Smooth tunes for late work sessions",
-    embedUrl: "https://open.spotify.com/embed/playlist/37i9dQZF1DX13ZzXoot6Jc",
+    embedUrl: "https://open.spotify.com/embed/playlist/37i9dQZF1DX6VDO8a6cQME",
     icon: Moon,
     color: "bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
   },
@@ -94,7 +94,7 @@ const playlists: Playlist[] = [
     name: "Nature Sounds",
     mood: "Natural",
     description: "Ambient nature sounds for focus",
-    embedUrl: "https://open.spotify.com/embed/playlist/37i9dQZF1DWOaEBTMWvDjl",
+    embedUrl: "https://open.spotify.com/embed/playlist/37i9dQZF1DXaKoVxiCQu79",
     icon: TreePine,
     color: "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
   }
