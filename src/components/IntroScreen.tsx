@@ -157,9 +157,17 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <span className="text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
         </div>
-        <Button variant="outline" onClick={onAuth} className="px-4 py-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:shadow-lg">
-          Log In
-        </Button>
+        <div className="flex items-center space-x-6">
+          <Link to="/demo" className="text-muted-foreground hover:text-foreground transition-colors duration-200">
+            Demo
+          </Link>
+          <button onClick={onAuth} className="text-muted-foreground hover:text-foreground transition-colors duration-200">
+            Log In
+          </button>
+          <Button onClick={handlePaymentClick} className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:shadow-lg">
+            Join the Waitlist
+          </Button>
+        </div>
       </div>
 
       {/* Mobile & Tablet Header */}
@@ -188,19 +196,20 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               </span>
             </h1>
             
-            <p className="text-base text-muted-foreground">
-              New AI tools drop daily — it's hard to know where to start.
-              Brain Bytes cuts through the noise, shows you how to use the right tools, and gives you exactly what you need to hit your goals.
+            <p className="text-sm text-muted-foreground">
+              New tools drop every day. Most people don't know where to start.
+              That's why we built Brain Bytes — your AI starter kit that cuts through the noise and gives you exactly what you need based on your goals.
             </p>
             
             {/* CTA Button */}
             <div className="space-y-2">
               <Button onClick={handlePaymentClick} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                Join the Waitlist – Be first to access Brain Bytes AI
+                → Join the Waitlist — Be First to Access Brain Bytes AI
               </Button>
               <div className="text-center space-y-1">
+                <p className="text-xs text-muted-foreground">🔐 One-time $29 – No subscriptions</p>
                 <p className="text-xs text-muted-foreground">🚀 100% Personalized</p>
-                <p className="text-xs text-muted-foreground">⚡ Built for creators & productivity pros</p>
+                <p className="text-xs text-muted-foreground">🧠 Built by productivity nerds for productivity nerds</p>
               </div>
             </div>
 
@@ -255,9 +264,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                   </span>
                 </h1>
                 
-                <p className="text-2xl lg:text-3xl text-muted-foreground leading-relaxed max-w-2xl">
-                  New AI tools drop daily — it's hard to know where to start.
-                  Brain Bytes cuts through the noise, shows you how to use the right tools, and gives you exactly what you need to hit your goals.
+                <p className="text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-2xl">
+                  New tools drop every day. Most people don't know where to start.
+                  That's why we built Brain Bytes — your AI starter kit that cuts through the noise and gives you exactly what you need based on your goals.
                 </p>
               </div>
 
@@ -268,7 +277,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                      boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
                      animation: 'glow 4s ease-in-out infinite alternate'
                    }}>
-                     Join the Waitlist – Be first to access Brain Bytes AI
+                     → Join the Waitlist — Be First to Access Brain Bytes AI
                      
                      {/* Shimmer effect on hover */}
                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -276,8 +285,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                      </div>
                    </Button>
                    <div className="text-center space-y-1">
+                     <p className="text-sm text-muted-foreground">🔐 One-time $29 – No subscriptions</p>
                      <p className="text-sm text-muted-foreground">🚀 100% Personalized</p>
-                     <p className="text-sm text-muted-foreground">⚡ Built for creators & productivity pros</p>
+                     <p className="text-sm text-muted-foreground">🧠 Built by productivity nerds for productivity nerds</p>
                    </div>
                  </div>
 
