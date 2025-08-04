@@ -21,7 +21,7 @@ const queryClient = new QueryClient();
 const GOOGLE_CLIENT_ID = "your-google-client-id.apps.googleusercontent.com";
 
 const App = () => (
-  <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+  <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID || ""}>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
