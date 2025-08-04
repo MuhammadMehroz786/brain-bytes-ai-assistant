@@ -5,6 +5,11 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// OAuth credentials from environment variables
+const GOOGLE_CLIENT_ID = Deno.env.get("GOOGLE_CLIENT_ID") || "your-google-client-id-here"
+const GOOGLE_CLIENT_SECRET = Deno.env.get("GOOGLE_CLIENT_SECRET") || "your-google-client-secret-here"
+const REDIRECT_URI = "http://localhost:8081/callback"
+
 Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -16,13 +21,7 @@ Deno.serve(async (req) => {
     const action = url.searchParams.get('action')
 
     if (action === 'authorize') {
-      // Generate OAuth URL
-      const clientId = Deno.env.get('GOOGLE_CLIENT_ID')
-      if (!clientId) {
-        throw new Error('Google Client ID not configured')
-      }
-
-      const redirectUri = `https://tvbetqvpiypncjtkchcc.supabase.co/functions/v1/gmail-oauth?action=callback`
+      // Generate OAuth URL using provided credentials
       const scope = 'https://www.googleapis.com/auth/gmail.readonly email profile'
       const state = crypto.randomUUID()
       
@@ -30,8 +29,8 @@ Deno.serve(async (req) => {
       // For now, we'll validate on callback using basic checks
 
       const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth')
-      authUrl.searchParams.set('client_id', clientId)
-      authUrl.searchParams.set('redirect_uri', redirectUri)
+      authUrl.searchParams.set('client_id', GOOGLE_CLIENT_ID)
+      authUrl.searchParams.set('redirect_uri', REDIRECT_URI)
       authUrl.searchParams.set('response_type', 'code')
       authUrl.searchParams.set('scope', scope)
       authUrl.searchParams.set('access_type', 'offline')
@@ -78,22 +77,18 @@ Deno.serve(async (req) => {
         throw new Error('No authorization code received')
       }
 
-      // Exchange code for token
-      const clientId = Deno.env.get('GOOGLE_CLIENT_ID')
-      const clientSecret = Deno.env.get('GOOGLE_CLIENT_SECRET')
-      const redirectUri = `https://tvbetqvpiypncjtkchcc.supabase.co/functions/v1/gmail-oauth?action=callback`
-
+      // Exchange code for token using provided credentials
       const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-          client_id: clientId!,
-          client_secret: clientSecret!,
+          client_id: GOOGLE_CLIENT_ID,
+          client_secret: GOOGLE_CLIENT_SECRET,
           code,
           grant_type: 'authorization_code',
-          redirect_uri: redirectUri,
+          redirect_uri: REDIRECT_URI,
         }),
       })
 

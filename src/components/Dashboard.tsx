@@ -30,6 +30,7 @@ import { FocusPlaylistSection } from "./dashboard/FocusPlaylistSection";
 import { UpgradeAssistantSection } from "./dashboard/UpgradeAssistantSection";
 import { SystemSettingsSection } from "./dashboard/SystemSettingsSection";
 import { EmailSummarySection } from "./dashboard/EmailSummarySection";
+import { GoogleCalendarSection } from "./dashboard/GoogleCalendarSection";
 import { DailyFocusPopup } from "./dashboard/DailyFocusPopup";
 import type { ProductivityPlan, UserResponses } from "@/types/productivity";
 
@@ -162,7 +163,7 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
       case 'email-recap':
         return <EmailSummarySection />;
       case 'ai-plan':
-        return <DailyFlowSection plan={plan} responses={responses} />;
+        return <GoogleCalendarSection />;
       case 'smart-stack':
         return <AIStackSection plan={plan} responses={responses} />;
       case 'focus-playlist':

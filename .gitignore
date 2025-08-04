@@ -23,3 +23,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files with sensitive data
+.env.oauth
+.env.local
+.env.production
+.env.development
+
+# Temporary OAuth files (not the main server)
+oauth-server.js
+combined-server.mjs
+start-gmail-oauth.sh
+start-oauth-server.sh
+oauth-package.json
+
+# Log files with potential secrets
+*.log
+oauth*.log

@@ -1,0 +1,19 @@
+{
+  "name": "gmail-oauth-server",
+  "version": "1.0.0",
+  "description": "Local OAuth server for Gmail integration",
+  "main": "oauth-server.js",
+  "scripts": {
+    "start": "node oauth-server.js",
+    "dev": "nodemon oauth-server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "@supabase/supabase-js": "^2.39.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

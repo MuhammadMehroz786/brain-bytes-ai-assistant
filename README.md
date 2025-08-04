@@ -1,73 +1,156 @@
-# Welcome to your Lovable project
+# Brain Bytes AI Assistant
 
-## Project info
+A modern React application with Gmail OAuth integration and AI-powered features.
 
-**URL**: https://lovable.dev/projects/3b265984-f5ce-4bed-b94d-42e8cebb19cf
+## Features
 
-## How can I edit this code?
+- 📧 Gmail OAuth integration for email management
+- 🗓️ Google Calendar integration
+- 🤖 OpenAI-powered AI features
+- 🎯 Focus timer and productivity tools
+- 📊 Dashboard with analytics
+- 🔐 Secure authentication and data handling
 
-There are several ways of editing your application.
+## Development
 
-**Use Lovable**
+### Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3b265984-f5ce-4bed-b94d-42e8cebb19cf) and start prompting.
+- Node.js 18+ 
+- npm or yarn
+- Google OAuth credentials
+- OpenAI API key (optional)
 
-Changes made via Lovable will be committed automatically to this repo.
+### Setup
 
-**Use your preferred IDE**
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+3. Copy environment variables:
+   ```bash
+   cp .env.example .env.oauth
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+4. Edit `.env.oauth` with your credentials:
+   - `GOOGLE_CLIENT_ID`: Your Google OAuth client ID
+   - `GOOGLE_CLIENT_SECRET`: Your Google OAuth client secret
+   - `OPENAI_API_KEY`: Your OpenAI API key (optional)
 
-Follow these steps:
+5. Start development servers:
+   ```bash
+   npm run dev
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+This will start:
+- Frontend development server on `http://localhost:8081`
+- OAuth server on `http://localhost:8082`
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Production Deployment
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Environment Setup
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+1. Create production environment file:
+   ```bash
+   cp .env.example .env.production
+   ```
 
-**Edit a file directly in GitHub**
+2. Update `.env.production` with production values:
+   - Set `NODE_ENV=production`
+   - Update `REDIRECT_URI` to your production domain
+   - Set `ALLOWED_ORIGINS` to your production domains
+   - Add all required API keys
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Manual Deployment
 
-**Use GitHub Codespaces**
+1. Run the deployment script:
+   ```bash
+   ./deploy.sh
+   ```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Docker Deployment
 
-## What technologies are used for this project?
+1. Build and run with Docker Compose:
+   ```bash
+   docker-compose up --build -d
+   ```
 
-This project is built with:
+2. Or build manually:
+   ```bash
+   docker build -t brain-bytes-ai .
+   docker run -p 8081:8081 -p 8082:8082 --env-file .env.production brain-bytes-ai
+   ```
+
+## Architecture
+
+### Frontend (Port 8081)
+- React + TypeScript + Vite
+- Tailwind CSS + shadcn/ui components
+- React Router for navigation
+- TanStack Query for state management
+
+### OAuth Server (Port 8082)
+- Express.js server
+- Google OAuth 2.0 flow
+- Gmail and Calendar API integration
+- OpenAI integration for AI features
+
+## Security Features
+
+- Environment-based configuration
+- CORS protection
+- Security headers (HSTS, XSS protection, etc.)
+- Input validation and sanitization
+- Secure token storage
+
+## Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID | Yes |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | Yes |
+| `REDIRECT_URI` | OAuth callback URL | Yes |
+| `OPENAI_API_KEY` | OpenAI API key | No |
+| `NODE_ENV` | Environment (development/production) | Yes |
+| `PORT` | OAuth server port | No (default: 8082) |
+| `ALLOWED_ORIGINS` | CORS allowed origins (comma-separated) | Production only |
+
+## Scripts
+
+- `npm run dev` - Start development servers
+- `npm run build` - Build for production
+- `npm start` - Start production servers
+- `npm run lint` - Run ESLint
+- `npm run typecheck` - Run TypeScript checks
+
+## Troubleshooting
+
+### OAuth Issues
+- Ensure Google OAuth credentials are correct
+- Check that redirect URI matches in Google Console
+- Verify CORS settings for production
+
+### Build Issues
+- Run `npm run lint:fix` to fix linting issues
+- Check TypeScript errors with `npm run typecheck`
+- Ensure all environment variables are set
+
+## Lovable Integration
+
+This project was created with [Lovable](https://lovable.dev/projects/3b265984-f5ce-4bed-b94d-42e8cebb19cf).
+
+### Technologies Used
 
 - Vite
 - TypeScript
 - React
 - shadcn-ui
 - Tailwind CSS
+- Express.js
+- Google APIs
+- OpenAI API
 
-## How can I deploy this project?
+## License
 
-Simply open [Lovable](https://lovable.dev/projects/3b265984-f5ce-4bed-b94d-42e8cebb19cf) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Private project - All rights reserved.

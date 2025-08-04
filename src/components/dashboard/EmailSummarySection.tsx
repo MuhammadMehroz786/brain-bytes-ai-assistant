@@ -1,68 +1,224 @@
-// src/components/EmailSummarySection.tsx
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw, Mail, User, AlertCircle, Loader, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
-// NEW: Import the Google OAuth components and hooks
-import { GoogleLogin, googleLogout } from '@react-oauth/google';
-import { CredentialResponse } from '@react-oauth/google';
+import { supabase } from '@/integrations/supabase/client';
 
-// CHANGED: This interface now matches the data structure from your Express backend.
 interface EmailSummary {
+  id: string;
+  senderName: string;
+  senderEmail: string;
   subject: string;
-  from: string; // Contains sender name and email
   date: string;
   snippet: string;
   aiSummary: string;
+  suggestedReplies: string[];
+  body: string;
 }
 
-// The URL of your running Express backend
-const BACKEND_URL = "http://localhost:5000";
-
 export const EmailSummarySection = () => {
-  // NEW: State to hold the Google OAuth access token
-  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [emailSummaries, setEmailSummaries] = useState<EmailSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSyncTime, setLastSyncTime] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isConnected, setIsConnected] = useState(false);
   
-  // A 'connected' status is now simply whether we have a token or not
-  const isConnected = !!accessToken;
-
-  // NEW: Function to handle a successful login from Google
-  const handleLoginSuccess = (credentialResponse: CredentialResponse) => {
-    if (credentialResponse.credential) {
-      // For ID token based authentication, we'd need to decode the JWT
-      // For now, we'll simulate having an access token for demo purposes
-      toast.success('Successfully connected to Google!');
-      setAccessToken('demo_token'); // This would be replaced with proper OAuth flow
-    } else {
-      toast.error("No credential received from Google.");
+  // Debug logging
+  console.log('🔍 EmailSummarySection rendered - isConnected:', isConnected, 'isLoading:', isLoading);
+  
+  // Check if user has Gmail connected on component mount
+  useEffect(() => {
+    checkGmailConnection();
+  }, []);
+  
+  const checkGmailConnection = async () => {
+    try {
+      // First check if we have a stored connection state in localStorage
+      const storedConnection = localStorage.getItem('gmail_connected');
+      const storedEmail = localStorage.getItem('gmail_email');
+      
+      if (storedConnection === 'true' && storedEmail) {
+        console.log('📧 Found stored Gmail connection for:', storedEmail);
+        setIsConnected(true);
+        // Set a mock email to show connection is active
+        // Fetch real emails now that we have a connection
+        fetchEmails();
+        return;
+      }
+      
+      // If no stored connection, default to disconnected state
+      setIsConnected(false);
+      setEmailSummaries([]);
+      
+    } catch (error) {
+      console.error('Error checking Gmail connection:', error);
+      setIsConnected(false);
     }
   };
 
-  const handleLoginError = () => {
-    toast.error('Google login failed. Please try again.');
-    setErrorMessage('Failed to connect to Google. Check console for details.');
+  const handleConnectGmail = async () => {
+    try {
+      setIsLoading(true);
+      setErrorMessage('');
+      
+      console.log('🔄 Starting Gmail connection...');
+
+      // First, test if the OAuth server is running
+      try {
+        const testResponse = await fetch('http://localhost:8082/');
+        if (!testResponse.ok) {
+          throw new Error('OAuth server not responding');
+        }
+        const serverStatus = await testResponse.json();
+        console.log('✅ OAuth server status:', serverStatus);
+      } catch (error) {
+        console.error('❌ OAuth server not running:', error);
+        throw new Error('OAuth server is not running. Please start it first: node gmail-oauth-server.mjs');
+      }
+      
+      const response = await fetch('http://localhost:8082/auth/google');
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to get authorization URL');
+      }
+      
+      const { authUrl } = await response.json();
+      console.log('🔗 OAuth URL generated:', authUrl);
+      
+      // Open popup window for OAuth
+      const popup = window.open(
+        authUrl,
+        'gmail-oauth',
+        'width=600,height=700,scrollbars=yes,resizable=yes,left=200,top=200'
+      );
+      
+      if (!popup) {
+        throw new Error('Popup blocked! Please allow popups for this site.');
+      }
+      
+      console.log('🪟 OAuth popup opened');
+      
+      // Listen for OAuth completion
+      const handleMessage = async (event: MessageEvent) => {
+        console.log('📨 Received message:', event.data);
+        
+        if (event.data.success) {
+          try {
+            console.log('✅ OAuth successful, storing tokens...');
+            console.log('🎫 Received tokens:', {
+              hasAccessToken: !!event.data.tokens.access_token,
+              hasRefreshToken: !!event.data.tokens.refresh_token,
+              expiresIn: event.data.tokens.expires_in,
+              userEmail: event.data.userInfo.email
+            });
+            
+            const storeResponse = await fetch('http://localhost:8082/store-tokens', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                tokens: event.data.tokens,
+                userInfo: event.data.userInfo,
+              }),
+            });
+
+            if (!storeResponse.ok) {
+              const errorData = await storeResponse.json().catch(() => ({ error: 'Unknown error' }));
+              console.error('💥 Store response error:', errorData);
+              throw new Error(`Failed to store tokens: ${errorData.error || storeResponse.status}`);
+            }
+
+            const storeResult = await storeResponse.json();
+            console.log('✅ Tokens stored successfully:', storeResult);
+            
+            toast.success(`Gmail connected successfully! (${event.data.userInfo.email})`);
+            
+            // Store connection state in localStorage for persistence
+            localStorage.setItem('gmail_connected', 'true');
+            localStorage.setItem('gmail_email', event.data.userInfo.email);
+            localStorage.setItem('gmail_access_token', event.data.tokens.access_token);
+            
+            setIsConnected(true);
+            
+            // Show success email
+            setEmailSummaries([
+              {
+                id: '1',
+                senderName: 'Gmail OAuth',
+                senderEmail: event.data.userInfo.email,
+                subject: 'Connection Successful!',
+                date: new Date().toISOString(),
+                snippet: 'Your Gmail account has been successfully connected. Email fetching will be implemented next.',
+                aiSummary: 'Gmail OAuth flow completed successfully. Ready to fetch and summarize emails.',
+                suggestedReplies: [],
+                body: 'Gmail connection established successfully.'
+              }
+            ]);
+          } catch (error) {
+            console.error('❌ Error storing tokens:', error);
+            toast.error(error instanceof Error ? error.message : 'Failed to store tokens');
+            setErrorMessage(error instanceof Error ? error.message : 'Failed to store tokens');
+          }
+          
+          popup?.close();
+        } else if (event.data.error) {
+          console.error('❌ OAuth error:', event.data.error);
+          toast.error(`OAuth failed: ${event.data.error}`);
+          setErrorMessage(`OAuth failed: ${event.data.error}`);
+        }
+        
+        window.removeEventListener('message', handleMessage);
+        setIsLoading(false);
+      };
+      
+      window.addEventListener('message', handleMessage);
+      
+      // Check if popup was closed manually
+      const checkClosed = setInterval(() => {
+        if (popup?.closed) {
+          console.log('🪟 Popup was closed manually');
+          clearInterval(checkClosed);
+          window.removeEventListener('message', handleMessage);
+          setIsLoading(false);
+          toast.info('OAuth popup was closed');
+        }
+      }, 1000);
+      
+    } catch (error) {
+      console.error('❌ Gmail connection error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to connect Gmail';
+      toast.error(errorMessage);
+      setErrorMessage(errorMessage);
+      setIsLoading(false);
+    }
   };
 
-  // CHANGED: This function now fetches data from your Express backend.
-  const fetchEmails = async (token: string) => {
+  const [nextPageToken, setNextPageToken] = useState<string | null>(null);
+
+  const fetchEmails = async (pageToken: string | null = null) => {
     setIsSyncing(true);
     setErrorMessage('');
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/getEmails`, {
+      const userEmail = localStorage.getItem('gmail_email');
+      if (!userEmail) {
+        throw new Error('Not authenticated');
+      }
+      
+      const response = await fetch('http://localhost:8082/fetch-emails', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ token: token }), // Send the token in the request body
+        body: JSON.stringify({
+          userEmail: userEmail,
+          pageToken: pageToken,
+        }),
       });
 
       if (!response.ok) {
@@ -71,39 +227,46 @@ export const EmailSummarySection = () => {
       }
 
       const data = await response.json();
-      setEmailSummaries(data.emails);
+      if (Array.isArray(data.emails)) {
+        setEmailSummaries(prevEmails => pageToken ? [...prevEmails, ...data.emails] : data.emails);
+        setNextPageToken(data.nextPageToken || null);
+      }
       setLastSyncTime(new Date().toLocaleTimeString());
 
     } catch (error) {
       console.error('Error fetching emails:', error);
       const errorMsg = error instanceof Error ? error.message : 'Failed to fetch emails';
       setErrorMessage(errorMsg);
+      
+      if (errorMsg.includes('Gmail not connected')) {
+        setIsConnected(false);
+      }
+      
       toast.error(errorMsg);
     } finally {
       setIsSyncing(false);
     }
   };
 
-  // NEW: This effect runs whenever the accessToken changes.
-  useEffect(() => {
-    if (accessToken) {
-      fetchEmails(accessToken);
-    }
-  }, [accessToken]);
-
-
   const handleRefreshEmails = () => {
-    if (!accessToken) return;
-    fetchEmails(accessToken);
+    if (!isConnected) return;
+    fetchEmails();
   };
 
-  // CHANGED: Disconnecting is now client-side. We log out from Google and clear the token.
-  const handleDisconnectEmail = () => {
-    googleLogout(); // Clears the Google session
-    setAccessToken(null);
-    setEmailSummaries([]);
-    setLastSyncTime('');
-    toast.success('Disconnected successfully.');
+  const handleDisconnectEmail = async () => {
+    try {
+      // Remove stored connection state
+      localStorage.removeItem('gmail_connected');
+      localStorage.removeItem('gmail_email');
+      
+      setIsConnected(false);
+      setEmailSummaries([]);
+      setLastSyncTime('');
+      toast.success('Gmail disconnected successfully.');
+    } catch (error) {
+      console.error('Error disconnecting Gmail:', error);
+      toast.error('Failed to disconnect Gmail');
+    }
   };
 
   // Disconnected View
@@ -115,6 +278,7 @@ export const EmailSummarySection = () => {
             <Mail className="w-4 h-4 text-primary" />
           </div>
           <h2 className="text-2xl font-bold text-foreground">Today's Email Recap</h2>
+          <div className="text-xs bg-green-100 px-2 py-1 rounded">OAuth Component ✅</div>
         </div>
 
         <Card className="p-8 bg-white/50 backdrop-blur-sm border border-primary/10 text-center">
@@ -137,13 +301,17 @@ export const EmailSummarySection = () => {
               </div>
             )}
             
-            {/* NEW: Using the GoogleLogin component for a simple login flow */}
-            <div className='flex justify-center'>
-                <GoogleLogin
-                    onSuccess={handleLoginSuccess}
-                    onError={handleLoginError}
-                />
-            </div>
+            <Button 
+              onClick={handleConnectGmail}
+              disabled={isLoading}
+              className="bg-primary hover:bg-primary/90"
+            >
+              {isLoading ? (
+                <><Loader className="w-4 h-4 mr-2 animate-spin" />Connecting...</>
+              ) : (
+                <><Mail className="w-4 h-4 mr-2" />Connect Gmail</>
+              )}
+            </Button>
           </div>
         </Card>
       </div>
@@ -214,8 +382,11 @@ export const EmailSummarySection = () => {
                   <User className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                   <div className="min-w-0 flex-1">
                     <h4 className="font-medium text-foreground text-sm sm:text-base truncate">
-                      {email.from}
+                      {email.senderName}
                     </h4>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {email.senderEmail}
+                    </p>
                   </div>
                 </div>
                 <span className="text-xs sm:text-sm text-muted-foreground">
@@ -241,6 +412,13 @@ export const EmailSummarySection = () => {
           ))
         )}
       </div>
+      {nextPageToken && (
+        <div className="flex justify-center">
+          <Button onClick={() => fetchEmails(nextPageToken)} disabled={isSyncing}>
+            {isSyncing ? 'Loading...' : 'Load More'}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,0 +1,30 @@
+{
+  "name": "Brain Bytes AI Assistant",
+  "description": "A modern React application with Gmail OAuth integration and AI-powered features",
+  "version": "1.0.0",
+  "author": "Brain Bytes AI",
+  "homepage": "https://brain-bytes-ai.lovable.app",
+  "deployment": {
+    "type": "static",
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "environmentVariables": {
+      "required": [
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET"
+      ],
+      "optional": [
+        "OPENAI_API_KEY",
+        "VITE_SUPABASE_URL",
+        "VITE_SUPABASE_ANON_KEY"
+      ]
+    }
+  },
+  "features": [
+    "gmail-integration",
+    "google-calendar",
+    "ai-powered",
+    "oauth-authentication",
+    "productivity-tools"
+  ]
+}
