@@ -6,6 +6,7 @@ import { AuthFlow } from "@/components/AuthFlow";
 import { PaymentSuccess } from "@/components/PaymentSuccess";
 import { CreateAccount } from "@/components/CreateAccount";
 import { generateProductivityPlan } from "@/utils/productivityGenerator";
+import { ProductivityPlanResults } from "@/components/ProductivityPlanResults";
 import { supabase } from "@/integrations/supabase/client";
 import type { UserResponses, ProductivityPlan } from "@/types/productivity";
 import type { User } from "@supabase/supabase-js";
@@ -67,9 +68,9 @@ export const ProductivityAssistant = () => {
     setCurrentState("results");
   };
 
-  const handleOnboardingComplete = (responses: UserResponses) => {
+  const handleOnboardingComplete = async (responses: UserResponses) => {
     setUserResponses(responses);
-    const plan = generateProductivityPlan(responses);
+    const plan = await generateProductivityPlan(responses);
     setProductivityPlan(plan);
     setCurrentState("results");
   };
@@ -122,32 +123,13 @@ export const ProductivityAssistant = () => {
       );
     
     case "results":
-      // For returning users, generate a sample plan if none exists
-      if (!productivityPlan || !userResponses) {
-        const sampleResponses: UserResponses = {
-          productivityStruggle: "focus",
-          goals: "efficiency", 
-          currentTools: "digital",
-          aiFamiliarity: "some",
-          productiveTime: "morning"
-        };
-        const samplePlan = generateProductivityPlan(sampleResponses);
-        setUserResponses(sampleResponses);
-        setProductivityPlan(samplePlan);
-        return (
-          <Dashboard 
-            plan={samplePlan}
-            responses={sampleResponses}
-            onRestart={handleRestart}
-          />
-        );
-      }
-      
       return (
-        <Dashboard 
-          plan={productivityPlan}
-          responses={userResponses}
+        <ProductivityPlanResults
+          userResponses={userResponses}
+          productivityPlan={productivityPlan}
           onRestart={handleRestart}
+          setUserResponses={setUserResponses}
+          setProductivityPlan={setProductivityPlan}
         />
       );
     

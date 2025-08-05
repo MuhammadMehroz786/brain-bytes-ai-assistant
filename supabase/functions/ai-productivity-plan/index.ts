@@ -1,10 +1,43 @@
-import type { UserResponses, ProductivityPlan, TimeBlock, AITool } from "@/types/productivity";
-import { supabase } from "@/integrations/supabase/client";
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const generateTimeBlocks = (responses: UserResponses): TimeBlock[] => {
-  const { productiveTime, productivityStruggle } = responses;
-  
-  const baseSchedule: Record<string, TimeBlock[]> = {
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+interface UserResponses {
+  productiveTime: string;
+  productivityStruggle: string;
+  currentTools: string;
+  aiFamiliarity: string;
+  goals: string;
+}
+
+interface TimeBlock {
+  time: string;
+  activity: string;
+  description: string;
+  duration: string;
+}
+
+interface AITool {
+  name: string;
+  description: string;
+  category: string;
+}
+
+interface ProductivityPlan {
+  timeBlocks: TimeBlock[];
+  aiTools: AITool[];
+  gptPrompts: string[];
+  summary: string;
+}
+
+const generateProductivityPlan = (responses: UserResponses): ProductivityPlan => {
+  // Time blocks based on productive time
+  const timeBlocksMap: Record<string, TimeBlock[]> = {
     "early-morning": [
       { time: "6:00 AM", activity: "Morning Routine", description: "Mindfulness, exercise, or planning", duration: "30 min" },
       { time: "6:30 AM", activity: "Deep Work Block", description: "Most important task of the day", duration: "2-3 hours" },
@@ -46,19 +79,13 @@ const generateTimeBlocks = (responses: UserResponses): TimeBlock[] => {
     ]
   };
 
-  return baseSchedule[productiveTime] || baseSchedule["morning"];
-};
-
-const generateAITools = (responses: UserResponses): AITool[] => {
-  const { currentTools, productivityStruggle, aiFamiliarity } = responses;
-  
+  // AI tools based on current tools and experience
   const baseTools = [
     { name: "ChatGPT", description: "AI assistant for writing, brainstorming, and problem-solving", category: "AI Assistant" },
     { name: "Notion AI", description: "Smart note-taking and content generation", category: "Productivity" },
     { name: "Grammarly", description: "AI-powered writing assistant", category: "Writing" }
   ];
-  
-  // Add tools based on current tools experience
+
   const toolsByExperience: Record<string, AITool[]> = {
     none: [
       { name: "Todoist", description: "Simple AI-powered task management", category: "Task Management" },
@@ -79,7 +106,6 @@ const generateAITools = (responses: UserResponses): AITool[] => {
     ]
   };
 
-  // Add struggle-specific tools
   const struggleTools: Record<string, AITool> = {
     focus: { name: "Brain.fm", description: "AI-generated focus music", category: "Focus" },
     overwhelm: { name: "Motion", description: "AI task prioritization and scheduling", category: "Task Management" },
@@ -88,68 +114,84 @@ const generateAITools = (responses: UserResponses): AITool[] => {
     motivation: { name: "Habitica", description: "Gamified productivity with AI coaching", category: "Motivation" }
   };
 
-  const experienceTools = toolsByExperience[currentTools] || [];
-  const struggleTool = struggleTools[productivityStruggle];
+  const timeBlocks = timeBlocksMap[responses.productiveTime] || timeBlocksMap["morning"];
+  const experienceTools = toolsByExperience[responses.currentTools] || [];
+  const struggleTool = struggleTools[responses.productivityStruggle];
+  const aiTools = [...baseTools, ...experienceTools, struggleTool].filter(Boolean);
 
-  return [...baseTools, ...experienceTools, struggleTool].filter(Boolean);
-};
-
-const generateGPTPrompts = (responses: UserResponses): string[] => {
-  const { productivityStruggle, goals } = responses;
-  
-  const prompts = [
-    `Help me break down my most important task today into 3 actionable steps, considering that my main challenge is ${productivityStruggle}. Make each step specific and time-bound.`,
-    
-    `I want to ${goals}. Give me 5 specific strategies I can implement this week to make measurable progress toward this goal.`,
-    
-    `Create a personalized focus ritual that helps me overcome ${productivityStruggle}. Include specific actions I can take before starting deep work.`,
-    
-    `Help me design a weekly review process that addresses my struggle with ${productivityStruggle}. Include questions that help me identify what's working and what needs adjustment.`,
-    
-    `Generate a template for daily reflection that supports my goal to ${goals} while helping me manage ${productivityStruggle}. Keep it under 5 minutes to complete.`
+  const gptPrompts = [
+    `Help me break down my most important task today into 3 actionable steps, considering that my main challenge is ${responses.productivityStruggle}. Make each step specific and time-bound.`,
+    `I want to ${responses.goals}. Give me 5 specific strategies I can implement this week to make measurable progress toward this goal.`,
+    `Create a personalized focus ritual that helps me overcome ${responses.productivityStruggle}. Include specific actions I can take before starting deep work.`,
+    `Help me design a weekly review process that addresses my struggle with ${responses.productivityStruggle}. Include questions that help me identify what's working and what needs adjustment.`,
+    `Generate a template for daily reflection that supports my goal to ${responses.goals} while helping me manage ${responses.productivityStruggle}. Keep it under 5 minutes to complete.`
   ];
 
-  return prompts;
+  const summary = `Your personalized productivity plan addresses your main challenge of ${responses.productivityStruggle} and helps you achieve ${responses.goals}. The schedule is optimized for your ${responses.productiveTime} peak productivity hours and integrates well with your current ${responses.currentTools} workflow approach. Based on your ${responses.aiFamiliarity} level with AI tools, we've selected the right mix of technologies to enhance your productivity without overwhelming you.`;
+
+  return {
+    timeBlocks,
+    aiTools,
+    gptPrompts,
+    summary
+  };
 };
 
-const generateSummary = (responses: UserResponses): string => {
-  const { productivityStruggle, goals, currentTools, aiFamiliarity, productiveTime } = responses;
-  
-  const struggleText = productivityStruggle || "productivity challenges";
-  const goalsText = goals || "improve efficiency";
-  const toolsText = currentTools || "basic tools";
-  const aiText = aiFamiliarity || "some AI experience";
-  const timeText = productiveTime || "morning";
-  
-  return `Your personalized productivity plan addresses your main challenge of ${struggleText} and helps you achieve ${goalsText}. The schedule is optimized for your ${timeText} peak productivity hours and integrates well with your current ${toolsText} workflow approach. Based on your ${aiText} level with AI tools, we've selected the right mix of technologies to enhance your productivity without overwhelming you.`;
-};
+serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
 
-export const generateProductivityPlan = async (responses: UserResponses): Promise<ProductivityPlan> => {
   try {
-    const { data, error } = await supabase.functions.invoke('ai-productivity-plan', {
-      body: { responses }
-    });
+    // Authenticate user
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+    );
 
-    if (error) {
-      console.error('Error generating productivity plan:', error);
-      // Fallback to local generation
-      return {
-        timeBlocks: generateTimeBlocks(responses),
-        aiTools: generateAITools(responses),
-        gptPrompts: generateGPTPrompts(responses),
-        summary: generateSummary(responses)
-      };
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    return data.plan;
+    // Parse request body
+    const { responses }: { responses: UserResponses } = await req.json();
+
+    if (!responses) {
+      return new Response(JSON.stringify({ error: 'Missing responses data' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Generate productivity plan
+    const plan = generateProductivityPlan(responses);
+
+    // Log security event
+    await supabaseClient.from('enhanced_security_audit').insert({
+      user_id: user.id,
+      event_type: 'productivity_plan_generated',
+      event_details: {
+        productive_time: responses.productiveTime,
+        struggle: responses.productivityStruggle,
+        tools: responses.currentTools
+      },
+      risk_score: 0
+    });
+
+    return new Response(JSON.stringify({ plan }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   } catch (error) {
-    console.error('Error calling productivity plan function:', error);
-    // Fallback to local generation
-    return {
-      timeBlocks: generateTimeBlocks(responses),
-      aiTools: generateAITools(responses),
-      gptPrompts: generateGPTPrompts(responses),
-      summary: generateSummary(responses)
-    };
+    console.error('Error in ai-productivity-plan function:', error);
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
-};
+});
