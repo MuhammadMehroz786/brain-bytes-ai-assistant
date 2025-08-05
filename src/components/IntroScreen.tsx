@@ -97,13 +97,28 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       return (
         <div className="space-y-6">
           <div className="text-center space-y-4">
-            <p className="text-[#1c1c1c] text-lg leading-relaxed font-medium">
+            <p className="text-slate-700 text-base leading-relaxed font-medium">
               {getPersonalizedMessage()}
             </p>
           </div>
+          
+          {/* Plan Preview */}
+          <div className="bg-slate-50/80 border border-slate-200/60 rounded-lg p-4 mb-4">
+            <div className="text-center space-y-2">
+              <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Your Plan Includes</p>
+              <div className="flex justify-center items-center space-x-4 text-sm text-slate-600">
+                <span>🎯 Tool Picks</span>
+                <span className="text-slate-300">·</span>
+                <span>📘 How-To Guides</span>
+                <span className="text-slate-300">·</span>
+                <span>🧠 Daily Workflow</span>
+              </div>
+            </div>
+          </div>
+          
           <Button 
             onClick={handlePaymentClick}
-            className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-bold text-lg px-6 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+            className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-base px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
           >
             Join the Waitlist – Get Early Access
           </Button>
@@ -112,19 +127,20 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
     }
 
     return (
-      <div className="space-y-8">
+      <div className="space-y-6">
         {questions.map((question, index) => (
-          <div key={question.key} className="space-y-4">
-            <h3 className="text-lg font-bold text-[#1c1c1c]">{question.title}</h3>
+          <div key={question.key} className="space-y-3">
+            {index > 0 && <div className="w-full h-px bg-slate-200/60 my-4"></div>}
+            <h3 className="text-base font-semibold text-slate-800">{question.title}</h3>
             <div className="grid grid-cols-3 gap-2">
               {question.options.map((option) => (
                 <button
                   key={option}
                   onClick={() => setAnswers({ ...answers, [question.key]: option })}
-                  className={`px-4 py-3 rounded-xl font-medium text-sm transition-all duration-200 hover:scale-105 hover:shadow-md ${
+                  className={`px-3 py-2 rounded-lg font-medium text-xs transition-all duration-200 hover:scale-[1.02] hover:shadow-sm ${
                     answers[question.key] === option
-                      ? 'bg-gradient-to-r from-primary to-accent text-white shadow-lg'
-                      : 'bg-white/80 border border-muted-foreground/20 text-[#1c1c1c] hover:border-primary/40 hover:bg-primary/5'
+                      ? 'bg-gradient-to-r from-primary to-accent text-white shadow-md'
+                      : 'bg-white border border-slate-200 text-slate-700 hover:border-primary/30 hover:bg-slate-50'
                   }`}
                 >
                   {option}
@@ -134,10 +150,27 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
         ))}
 
+        {/* Live Preview Placeholder */}
+        {Object.values(answers).some(answer => answer !== "") && (
+          <div className="bg-slate-50/60 border border-slate-200/50 rounded-lg p-3 mt-4">
+            <div className="text-center space-y-1">
+              <p className="text-xs font-medium text-slate-600">Plan Preview</p>
+              <div className="flex justify-center items-center space-x-3 text-xs text-slate-500">
+                <span>🎯 Tool Picks</span>
+                <span className="text-slate-300">·</span>
+                <span>📘 How-To Guides</span>
+                <span className="text-slate-300">·</span>
+                <span>🧠 Daily Workflow</span>
+              </div>
+              <p className="text-xs text-slate-400">(Preview updates as you answer)</p>
+            </div>
+          </div>
+        )}
+
         <Button 
           onClick={handleSubmit}
           disabled={!isQuizComplete()}
-          className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:from-muted disabled:to-muted text-white font-bold text-lg px-6 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:from-slate-300 disabled:to-slate-400 text-white font-semibold text-base px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           Show My Plan
         </Button>
@@ -196,10 +229,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               </span>
             </h1>
             
-            <p className="text-sm text-muted-foreground">
-              New tools drop every day. Most people don't know where to start.
-              That's why we built Brain Bytes — your AI starter kit that cuts through the noise and gives you exactly what you need based on your goals.
-            </p>
+             <p className="text-sm text-slate-600">
+               New tools drop every day. Most people don't know where to start.
+               That's why we built Brain Bytes — your AI starter kit that cuts through the noise and gives you exactly what you need based on your goals.
+             </p>
             
             {/* CTA Button */}
             <div className="space-y-2">
@@ -222,7 +255,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
 
           {/* Quiz Module */}
-          <Card className="p-6 bg-white/90 backdrop-blur-sm border border-primary/20 shadow-xl rounded-2xl">
+          <Card className="p-5 bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-lg rounded-xl">
             {renderQuizStep()}
           </Card>
         </div>
@@ -264,7 +297,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                   </span>
                 </h1>
                 
-                <p className="text-xl lg:text-2xl text-muted-foreground leading-relaxed max-w-2xl">
+                <p className="text-lg lg:text-xl text-slate-600 leading-relaxed max-w-2xl">
                   New tools drop every day. Most people don't know where to start.
                   That's why we built Brain Bytes — your AI starter kit that cuts through the noise and gives you exactly what you need based on your goals.
                 </p>
@@ -300,9 +333,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
             {/* Right Side - Quiz Module */}
             <div className="lg:ml-8">
-              <div className="bg-gradient-to-br from-white/95 via-slate-50/30 to-gray-50/30 backdrop-blur-sm border border-primary/20 shadow-2xl shadow-primary/10 rounded-3xl p-8 hover:shadow-3xl transition-all duration-500 relative overflow-hidden hover:scale-[1.02]">
-                {/* Inner glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-primary/5 rounded-3xl"></div>
+              <div className="bg-white/95 backdrop-blur-sm border border-slate-200/60 shadow-lg rounded-2xl p-6 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                {/* Subtle inner shadow */}
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-50/40 via-transparent to-slate-100/20 rounded-2xl"></div>
                 <div className="relative">
                   {renderQuizStep()}
                 </div>
