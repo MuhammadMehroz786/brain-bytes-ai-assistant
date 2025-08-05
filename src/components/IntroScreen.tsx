@@ -5,7 +5,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { WaitlistPopup } from "./WaitlistPopup";
 
 interface IntroScreenProps {
   onStart: () => void;
@@ -21,15 +20,22 @@ interface QuizAnswers {
 export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  const [showWaitlistPopup, setShowWaitlistPopup] = useState(false);
   const [answers, setAnswers] = useState<QuizAnswers>({
     helpWith: "",
     experience: "",
     frustration: ""
   });
 
-  const handleWaitlistClick = () => {
-    setShowWaitlistPopup(true);
+  const handlePaymentClick = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('create-payment');
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+    }
   };
 
   useEffect(() => {
@@ -111,14 +117,11 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
           
           <Button 
-            onClick={handleWaitlistClick}
-            className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 py-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+            onClick={handlePaymentClick}
+            className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-base px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
           >
-            → Join the Waitlist — Be First to Access Brain Bytes AI
+            Join the Waitlist – Get Early Access
           </Button>
-          <p className="text-xs text-center text-muted-foreground mt-2">
-            We'll notify you when it launches. No spam, just early access.
-          </p>
         </div>
       );
     }
@@ -137,7 +140,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                   className={`px-3 py-2 rounded-lg font-medium text-xs transition-all duration-200 hover:scale-[1.02] hover:shadow-sm ${
                     answers[question.key] === option
                       ? 'bg-gradient-to-r from-primary to-accent text-white shadow-md'
-                      : 'bg-gray-50 border border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-100'
+                      : 'bg-white border border-slate-200 text-slate-700 hover:border-primary/30 hover:bg-slate-50'
                   }`}
                 >
                   {option}
@@ -167,7 +170,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <Button 
           onClick={handleSubmit}
           disabled={!isQuizComplete()}
-          className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:from-gray-300 disabled:to-gray-400 text-white font-semibold text-base px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:from-slate-300 disabled:to-slate-400 text-white font-semibold text-base px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           Show My Plan
         </Button>
@@ -194,7 +197,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           <button onClick={onAuth} className="text-muted-foreground hover:text-foreground transition-colors duration-200">
             Log In
           </button>
-          <Button onClick={handleWaitlistClick} className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:shadow-lg">
+          <Button onClick={handlePaymentClick} className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:shadow-lg">
             Join the Waitlist
           </Button>
         </div>
@@ -216,7 +219,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile & Tablet Layout */}
-      <div className="lg:hidden px-4 py-4 min-h-screen flex flex-col justify-center overflow-hidden">
+      <div className="lg:hidden px-4 py-4 h-[calc(100vh-80px)] flex flex-col justify-between overflow-hidden">
         <div className="flex flex-col space-y-4">
           {/* Headline */}
           <div className="text-center space-y-4">
@@ -232,14 +235,11 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
              </p>
             
             {/* CTA Button */}
-            <div className="space-y-3">
-              <Button onClick={handleWaitlistClick} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+            <div className="space-y-2">
+              <Button onClick={handlePaymentClick} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
                 → Join the Waitlist — Be First to Access Brain Bytes AI
               </Button>
-              <p className="text-xs text-center text-muted-foreground">
-                We'll notify you when it launches. No spam, just early access.
-              </p>
-              <div className="text-center space-y-1 pt-2">
+              <div className="text-center space-y-1">
                 <p className="text-xs text-muted-foreground">🔐 One-time $29 – No subscriptions</p>
                 <p className="text-xs text-muted-foreground">🚀 100% Personalized</p>
                 <p className="text-xs text-muted-foreground">🧠 Built by productivity nerds for productivity nerds</p>
@@ -284,10 +284,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#f4faff] via-blue-50/50 to-purple-50/30 min-h-screen flex flex-col justify-center">
+      <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#f4faff] via-blue-50/50 to-purple-50/30">
         {/* Hero Section */}
-        <div className="relative max-w-7xl mx-auto px-6 py-12 flex-1 flex items-center">
-          <div className="grid lg:grid-cols-2 gap-16 items-center w-full">
+        <div className="relative max-w-7xl mx-auto px-6 py-12">
+          <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
             {/* Left Side - Hero Content */}
             <div className="space-y-8">
               <div className="space-y-6">
@@ -306,7 +306,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               <div className="space-y-6">
                 {/* Enhanced CTA */}
                   <div className="space-y-4">
-                   <Button onClick={handleWaitlistClick} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-bold text-2xl px-12 py-7 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
+                   <Button onClick={handlePaymentClick} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
                      boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
                      animation: 'glow 4s ease-in-out infinite alternate'
                    }}>
@@ -317,10 +317,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                      </div>
                    </Button>
-                   <p className="text-center text-muted-foreground">
-                     We'll notify you when it launches. No spam, just early access.
-                   </p>
-                   <div className="text-center space-y-1 pt-2">
+                   <div className="text-center space-y-1">
                      <p className="text-sm text-muted-foreground">🔐 One-time $29 – No subscriptions</p>
                      <p className="text-sm text-muted-foreground">🚀 100% Personalized</p>
                      <p className="text-sm text-muted-foreground">🧠 Built by productivity nerds for productivity nerds</p>
@@ -466,10 +463,6 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
         </div>
       </div>
-      <WaitlistPopup 
-        isOpen={showWaitlistPopup} 
-        onClose={() => setShowWaitlistPopup(false)} 
-      />
     </div>
   );
 };
