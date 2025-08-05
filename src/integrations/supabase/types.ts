@@ -69,6 +69,8 @@ export type Database = {
         Row: {
           created_at: string
           email_address: string
+          encrypted_password: string | null
+          encryption_key_id: string | null
           id: string
           password: string
           updated_at: string
@@ -77,6 +79,8 @@ export type Database = {
         Insert: {
           created_at?: string
           email_address: string
+          encrypted_password?: string | null
+          encryption_key_id?: string | null
           id?: string
           password: string
           updated_at?: string
@@ -85,10 +89,45 @@ export type Database = {
         Update: {
           created_at?: string
           email_address?: string
+          encrypted_password?: string | null
+          encryption_key_id?: string | null
           id?: string
           password?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      enhanced_security_audit: {
+        Row: {
+          created_at: string | null
+          event_details: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          risk_score: number | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_details?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          risk_score?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_details?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          risk_score?: number | null
+          user_agent?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -314,6 +353,69 @@ export type Database = {
         }
         Relationships: []
       }
+      user_feedback: {
+        Row: {
+          created_at: string
+          feedback_text: string | null
+          id: string
+          rating: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          feedback_text?: string | null
+          id?: string
+          rating: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          feedback_text?: string | null
+          id?: string
+          rating?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_onboarding_responses: {
+        Row: {
+          ai_goal: string
+          biggest_challenge: string
+          created_at: string
+          focus_time: string
+          id: string
+          learning_preference: string
+          updated_at: string
+          user_id: string
+          work_description: string | null
+          workflow_type: string
+        }
+        Insert: {
+          ai_goal: string
+          biggest_challenge: string
+          created_at?: string
+          focus_time: string
+          id?: string
+          learning_preference: string
+          updated_at?: string
+          user_id: string
+          work_description?: string | null
+          workflow_type: string
+        }
+        Update: {
+          ai_goal?: string
+          biggest_challenge?: string
+          created_at?: string
+          focus_time?: string
+          id?: string
+          learning_preference?: string
+          updated_at?: string
+          user_id?: string
+          work_description?: string | null
+          workflow_type?: string
+        }
+        Relationships: []
+      }
       user_streaks: {
         Row: {
           created_at: string
@@ -398,11 +500,29 @@ export type Database = {
         Args: { email_param: string; ip_param: unknown }
         Returns: boolean
       }
+      decrypt_sensitive_data: {
+        Args: { encrypted_data: string; key_id?: string }
+        Returns: string
+      }
+      encrypt_sensitive_data: {
+        Args: { data: string }
+        Returns: string
+      }
       enhanced_rate_limit_check: {
         Args: {
           email_param: string
           ip_param: unknown
           fingerprint_param?: string
+        }
+        Returns: Json
+      }
+      enhanced_security_check: {
+        Args: {
+          event_type_param: string
+          user_id_param?: string
+          ip_param?: unknown
+          max_attempts?: number
+          window_minutes?: number
         }
         Returns: Json
       }
