@@ -170,7 +170,7 @@ Deno.serve(async (req) => {
 
     // Fetch emails from Gmail API
     const gmailResponse = await fetch(
-            `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10&q=in:inbox newer_than:1d`,,
+      `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10&q=in:inbox newer_than:1d`,
       {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
