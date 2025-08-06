@@ -6,19 +6,92 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Simple encryption for demonstration - in production use proper encryption
-const encryptPassword = (password: string): string => {
-  // This is a placeholder - in production you'd use proper encryption
-  // For now, we'll use a simple base64 encoding as demonstration
-  return btoa(password + '_encrypted_' + Date.now());
+// Secure AES-GCM encryption for email passwords
+const generateKey = async (): Promise<CryptoKey> => {
+  return await crypto.subtle.generateKey(
+    { name: "AES-GCM", length: 256 },
+    true,
+    ["encrypt", "decrypt"]
+  );
 };
 
-const decryptPassword = (encryptedPassword: string): string => {
+const getOrCreateMasterKey = async (): Promise<CryptoKey> => {
+  // In production, this should be managed by a proper key management service
+  // For now, we'll use a deterministic key derived from environment
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')?.substring(0, 32) || 'fallback-key-32-chars-long-123'),
+    { name: "PBKDF2" },
+    false,
+    ["deriveKey"]
+  );
+  
+  return await crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt: new TextEncoder().encode("email-credential-salt"),
+      iterations: 100000,
+      hash: "SHA-256",
+    },
+    keyMaterial,
+    { name: "AES-GCM", length: 256 },
+    false,
+    ["encrypt", "decrypt"]
+  );
+};
+
+const encryptPassword = async (password: string): Promise<string> => {
   try {
-    const decoded = atob(encryptedPassword);
-    return decoded.split('_encrypted_')[0];
-  } catch {
-    return encryptedPassword; // Fallback for unencrypted passwords
+    const key = await getOrCreateMasterKey();
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encodedPassword = new TextEncoder().encode(password);
+    
+    const encrypted = await crypto.subtle.encrypt(
+      { name: "AES-GCM", iv },
+      key,
+      encodedPassword
+    );
+    
+    // Combine IV and encrypted data
+    const combined = new Uint8Array(iv.length + encrypted.byteLength);
+    combined.set(iv);
+    combined.set(new Uint8Array(encrypted), iv.length);
+    
+    // Return base64 encoded result
+    return btoa(String.fromCharCode(...combined));
+  } catch (error) {
+    console.error('Encryption error:', error);
+    throw new Error('Failed to encrypt password');
+  }
+};
+
+const decryptPassword = async (encryptedPassword: string): Promise<string> => {
+  try {
+    const key = await getOrCreateMasterKey();
+    const combined = new Uint8Array(
+      atob(encryptedPassword).split('').map(char => char.charCodeAt(0))
+    );
+    
+    const iv = combined.slice(0, 12);
+    const encrypted = combined.slice(12);
+    
+    const decrypted = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv },
+      key,
+      encrypted
+    );
+    
+    return new TextDecoder().decode(decrypted);
+  } catch (error) {
+    console.error('Decryption error:', error);
+    // Fallback for legacy base64 encoded passwords
+    try {
+      const decoded = atob(encryptedPassword);
+      if (decoded.includes('_encrypted_')) {
+        return decoded.split('_encrypted_')[0];
+      }
+    } catch {}
+    throw new Error('Failed to decrypt password');
   }
 };
 
@@ -89,7 +162,7 @@ serve(async (req) => {
       }
 
       // Encrypt password before storage
-      const encryptedPassword = encryptPassword(password);
+      const encryptedPassword = await encryptPassword(password);
 
       // Store credentials with encryption
       const { error: storeError } = await supabaseClient
@@ -137,9 +210,17 @@ serve(async (req) => {
       }
 
       // Decrypt password (fallback to plain password if encryption not available)
-      const decryptedPassword = credentials.encrypted_password 
-        ? decryptPassword(credentials.encrypted_password)
-        : credentials.password;
+      let decryptedPassword: string;
+      if (credentials.encrypted_password) {
+        try {
+          decryptedPassword = await decryptPassword(credentials.encrypted_password);
+        } catch (error) {
+          console.error('Failed to decrypt password, falling back to plain text:', error);
+          decryptedPassword = credentials.password || '';
+        }
+      } else {
+        decryptedPassword = credentials.password || '';
+      }
 
       // Log access
       await supabaseClient.from('enhanced_security_audit').insert({
