@@ -170,87 +170,112 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   return (
     <div className="min-h-screen bg-[#f4faff]">
       {/* Desktop Header */}
-      <div className="hidden lg:flex sticky top-0 z-50 bg-[#f4faff] px-6 py-3 justify-between items-center">
-        <div className="flex items-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-light rounded-2xl">
-            <img alt="Brain Bytes Logo" className="w-8 h-8 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
+      <div className="hidden lg:flex sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 px-6 py-2 justify-between items-center">
+        <div className="flex items-center space-x-3">
+          <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-light rounded-xl">
+            <img alt="Brain Bytes Logo" className="w-6 h-6 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
           </div>
-        </div>
-        <div className="absolute left-1/2 transform -translate-x-1/2">
-          <span className="text-5xl lg:text-6xl font-black bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
+          <span className="text-2xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
         </div>
         <div className="flex items-center space-x-6">
-          <Link to="/demo" className="text-muted-foreground hover:text-foreground transition-colors duration-200">
+          <Link to="/demo" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
             Demo
           </Link>
-          <button onClick={onAuth} className="text-muted-foreground hover:text-foreground transition-colors duration-200">
-            Log In
+          <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
+            Contact
+          </Link>
+          <button onClick={onAuth} className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
+            Sign In
           </button>
-          <Button onClick={() => setIsWaitlistOpen(true)} className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:shadow-lg">
-            Join the Waitlist
+          <Button onClick={() => setIsWaitlistOpen(true)} className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-300 hover:shadow-lg text-sm">
+            Join Waitlist
           </Button>
         </div>
       </div>
 
       {/* Mobile & Tablet Header */}
-      <div className="lg:hidden bg-[#f4faff] px-4 py-4">
+      <div className="lg:hidden bg-white/95 backdrop-blur-sm border-b border-slate-200/60 px-4 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center justify-center flex-1">
-            <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-light rounded-2xl mr-3">
-              <img alt="Brain Bytes Logo" className="w-6 h-6 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
+          <div className="flex items-center space-x-2">
+            <div className="inline-flex items-center justify-center w-8 h-8 bg-primary-light rounded-xl">
+              <img alt="Brain Bytes Logo" className="w-5 h-5 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
             </div>
-            <span className="text-4xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
+            <span className="text-xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
           </div>
-          <Button variant="outline" onClick={onAuth} className="px-3 py-1 text-sm border-primary/30 hover:bg-primary/10 transition-all duration-300">
-            Log In
-          </Button>
+          <div className="flex items-center space-x-3">
+            <Link to="/demo" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
+              Demo
+            </Link>
+            <Button variant="outline" onClick={onAuth} className="px-3 py-1 text-sm border-primary/30 hover:bg-primary/10 transition-all duration-300">
+              Sign In
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Mobile & Tablet Layout */}
-      <div className="lg:hidden px-4 py-4 h-[calc(100vh-80px)] flex flex-col justify-between overflow-hidden">
-        <div className="flex flex-col space-y-4">
-          {/* Headline */}
-          <div className="text-center space-y-4">
-            <h1 className="text-2xl font-bold text-[#1c1c1c] leading-tight">
-              <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                Overwhelmed by AI?
-              </span>
-            </h1>
-            
-             <p className="text-sm text-slate-600">
-               New tools drop every day. Most people don't know where to start.
-               That's why we built Brain Bytes — your AI starter kit that cuts through the noise and gives you exactly what you need based on your goals.
-             </p>
-            
-             {/* CTA Button */}
-             <div className="space-y-2">
-               <Button onClick={() => setIsWaitlistOpen(true)} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                 → Join the Waitlist — Be First to Access Brain Bytes AI
-               </Button>
-              <div className="text-center space-y-1">
-                <p className="text-xs text-muted-foreground">🔐 One-time $29 – No subscriptions</p>
-                <p className="text-xs text-muted-foreground">🚀 100% Personalized</p>
-                <p className="text-xs text-muted-foreground">🧠 Built by productivity nerds for productivity nerds</p>
-              </div>
+      <div className="lg:hidden">
+        {/* Hero Section */}
+        <div className="px-6 py-8 text-center space-y-6 bg-white">
+          <h1 className="text-3xl font-bold text-[#1c1c1c] leading-tight">
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              Overwhelmed by AI?
+            </span>
+          </h1>
+          
+          <p className="text-base text-slate-600 leading-relaxed max-w-md mx-auto">
+            There are too many tools. Most aren't worth your time.<br />
+            Brain Bytes helps you find the ones that are — with curated picks, how-to guides, and a productivity assistant to cut through the noise.
+          </p>
+          
+          {/* Feature Badges */}
+          <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto py-4">
+            <div className="flex flex-col items-center space-y-1 text-xs text-slate-600">
+              <span className="text-base">✅</span>
+              <span className="text-center leading-tight">Curated Tool Picks</span>
             </div>
-
-            {/* Demo Link */}
-            <div className="text-center mt-2">
-              <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-xs underline underline-offset-4 hover:underline-offset-2">
-                👀 Not ready? Watch a 60-second demo →
-              </Link>
+            <div className="flex flex-col items-center space-y-1 text-xs text-slate-600">
+              <span className="text-base">📘</span>
+              <span className="text-center leading-tight">How-To Guides</span>
+            </div>
+            <div className="flex flex-col items-center space-y-1 text-xs text-slate-600">
+              <span className="text-base">🧠</span>
+              <span className="text-center leading-tight">Productivity Assistant</span>
             </div>
           </div>
 
-          {/* Quiz Module */}
-          <Card className="p-5 bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-lg rounded-xl">
+          {/* CTA Button */}
+          <div className="space-y-3">
+            <Button onClick={() => setIsWaitlistOpen(true)} size="sm" className="w-full max-w-sm mx-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-base px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+              → Join the Waitlist
+            </Button>
+            <div className="text-center space-y-1">
+              <p className="text-xs text-muted-foreground">One-time $29 – No subscriptions</p>
+              <p className="text-xs text-muted-foreground">100% Personalized</p>
+            </div>
+          </div>
+
+          {/* Demo Link */}
+          <div className="text-center">
+            <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2">
+              👀 Not ready? Watch a 60-second demo →
+            </Link>
+          </div>
+        </div>
+
+        {/* Quiz Module */}
+        <div className="px-6 py-8 bg-slate-50">
+          <Card className="p-6 bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-lg rounded-xl">
+            <div className="text-center mb-4">
+              <h3 className="text-lg font-semibold text-slate-800 mb-2">Help us personalize your experience</h3>
+              <p className="text-sm text-slate-600">Answer a few quick questions to get started</p>
+            </div>
             {renderQuizStep()}
           </Card>
         </div>
         
         {/* Footer Links */}
-        <div className="pt-4 pb-2">
+        <div className="px-6 py-6 bg-white border-t border-slate-200">
           <div className="text-center text-xs text-muted-foreground">
             © 2025 Brain Bytes | 
             <Link to="/privacy-policy" className="hover:text-primary transition-colors duration-200 mx-1">
@@ -258,12 +283,6 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </Link> | 
             <Link to="/terms-of-service" className="hover:text-primary transition-colors duration-200 mx-1">
               Terms of Service
-            </Link> | 
-            <Link to="/refund-policy" className="hover:text-primary transition-colors duration-200 mx-1">
-              Refund Policy
-            </Link> | 
-            <Link to="/cookie-policy" className="hover:text-primary transition-colors duration-200 mx-1">
-              Cookie Policy
             </Link> | 
             <Link to="/contact" className="hover:text-primary transition-colors duration-200 mx-1">
               Contact
@@ -287,31 +306,46 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 </h1>
                 
                 <p className="text-lg lg:text-xl text-slate-600 leading-relaxed max-w-2xl">
-                  New tools drop every day. Most people don't know where to start.
-                  That's why we built Brain Bytes — your AI starter kit that cuts through the noise and gives you exactly what you need based on your goals.
+                  There are too many tools. Most aren't worth your time.<br />
+                  Brain Bytes helps you find the ones that are — with curated picks, how-to guides, and a productivity assistant to cut through the noise.
                 </p>
               </div>
 
-              <div className="space-y-6">
-                 {/* Enhanced CTA */}
-                   <div className="space-y-4">
-                    <Button onClick={() => setIsWaitlistOpen(true)} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
-                     boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
-                     animation: 'glow 4s ease-in-out infinite alternate'
-                   }}>
-                     → Join the Waitlist — Be First to Access Brain Bytes AI
-                     
-                     {/* Shimmer effect on hover */}
-                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                     </div>
-                   </Button>
-                   <div className="text-center space-y-1">
-                     <p className="text-sm text-muted-foreground">🔐 One-time $29 – No subscriptions</p>
-                     <p className="text-sm text-muted-foreground">🚀 100% Personalized</p>
-                     <p className="text-sm text-muted-foreground">🧠 Built by productivity nerds for productivity nerds</p>
-                   </div>
-                 </div>
+              <div className="space-y-8">
+                {/* Feature Badges */}
+                <div className="flex justify-center space-x-8">
+                  <div className="flex items-center space-x-2 text-sm text-slate-600">
+                    <span className="text-lg">✅</span>
+                    <span>Curated Tool Picks</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-slate-600">
+                    <span className="text-lg">📘</span>
+                    <span>How-To Guides</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-slate-600">
+                    <span className="text-lg">🧠</span>
+                    <span>Productivity Assistant</span>
+                  </div>
+                </div>
+
+                {/* Enhanced CTA */}
+                <div className="space-y-4">
+                  <Button onClick={() => setIsWaitlistOpen(true)} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
+                    boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
+                    animation: 'glow 4s ease-in-out infinite alternate'
+                  }}>
+                    → Join the Waitlist
+                    
+                    {/* Shimmer effect on hover */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    </div>
+                  </Button>
+                  <div className="text-center space-y-1">
+                    <p className="text-sm text-muted-foreground">One-time $29 – No subscriptions</p>
+                    <p className="text-sm text-muted-foreground">100% Personalized</p>
+                  </div>
+                </div>
 
                 {/* Demo Link */}
                 <div className="pt-2">
@@ -326,6 +360,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 {/* Subtle inner shadow */}
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-50/40 via-transparent to-slate-100/20 rounded-2xl"></div>
                 <div className="relative">
+                  <div className="text-center mb-6">
+                    <h3 className="text-xl font-semibold text-slate-800 mb-2">Help us personalize your experience</h3>
+                    <p className="text-sm text-slate-600">Answer a few quick questions to get started</p>
+                  </div>
                   {renderQuizStep()}
                 </div>
               </div>
