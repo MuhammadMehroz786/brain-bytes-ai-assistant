@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { WaitlistSignup } from "./WaitlistSignup";
 
 interface IntroScreenProps {
   onStart: () => void;
@@ -20,23 +20,12 @@ interface QuizAnswers {
 export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
   const [answers, setAnswers] = useState<QuizAnswers>({
     helpWith: "",
     experience: "",
     frustration: ""
   });
-
-  const handlePaymentClick = async () => {
-    try {
-      const { data, error } = await supabase.functions.invoke('create-payment');
-      if (error) throw error;
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
-    } catch (error) {
-      console.error('Payment error:', error);
-    }
-  };
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -117,7 +106,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
           
           <Button 
-            onClick={handlePaymentClick}
+            onClick={() => setIsWaitlistOpen(true)}
             className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-base px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
           >
             Join the Waitlist – Get Early Access
@@ -197,7 +186,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           <button onClick={onAuth} className="text-muted-foreground hover:text-foreground transition-colors duration-200">
             Log In
           </button>
-          <Button onClick={handlePaymentClick} className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:shadow-lg">
+          <Button onClick={() => setIsWaitlistOpen(true)} className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:shadow-lg">
             Join the Waitlist
           </Button>
         </div>
@@ -234,11 +223,11 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                That's why we built Brain Bytes — your AI starter kit that cuts through the noise and gives you exactly what you need based on your goals.
              </p>
             
-            {/* CTA Button */}
-            <div className="space-y-2">
-              <Button onClick={handlePaymentClick} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                → Join the Waitlist — Be First to Access Brain Bytes AI
-              </Button>
+             {/* CTA Button */}
+             <div className="space-y-2">
+               <Button onClick={() => setIsWaitlistOpen(true)} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                 → Join the Waitlist — Be First to Access Brain Bytes AI
+               </Button>
               <div className="text-center space-y-1">
                 <p className="text-xs text-muted-foreground">🔐 One-time $29 – No subscriptions</p>
                 <p className="text-xs text-muted-foreground">🚀 100% Personalized</p>
@@ -304,9 +293,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               </div>
 
               <div className="space-y-6">
-                {/* Enhanced CTA */}
-                  <div className="space-y-4">
-                   <Button onClick={handlePaymentClick} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
+                 {/* Enhanced CTA */}
+                   <div className="space-y-4">
+                    <Button onClick={() => setIsWaitlistOpen(true)} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
                      boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
                      animation: 'glow 4s ease-in-out infinite alternate'
                    }}>
@@ -463,6 +452,11 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
         </div>
       </div>
+      
+      <WaitlistSignup 
+        isOpen={isWaitlistOpen}
+        onClose={() => setIsWaitlistOpen(false)}
+      />
     </div>
   );
 };

@@ -3,24 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-
-const handlePaymentClick = async () => {
-  try {
-    const { data, error } = await supabase.functions.invoke('create-payment');
-    
-    if (error) throw error;
-    
-    if (data?.url) {
-      // Open Stripe checkout in a new tab
-      window.open(data.url, '_blank');
-    }
-  } catch (error) {
-    console.error('Payment error:', error);
-  }
-};
+import { WaitlistSignup } from "@/components/WaitlistSignup";
+import { useState } from "react";
 
 const Demo = () => {
+  const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8f9ff] via-[#f5f7ff] to-[#f2f4ff]">
       {/* Header */}
@@ -36,6 +23,12 @@ const Demo = () => {
             </div>
             <span className="text-lg font-bold text-foreground">Brain Bytes</span>
           </div>
+          <Button
+            onClick={() => setIsWaitlistOpen(true)}
+            className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-300 hover:shadow-lg"
+          >
+            Join the Waitlist
+          </Button>
         </div>
       </div>
 
@@ -97,16 +90,13 @@ const Demo = () => {
             {/* Primary CTA */}
             <div className="text-center">
               <Button 
-                onClick={handlePaymentClick}
+                onClick={() => setIsWaitlistOpen(true)}
                 size="sm"
                 className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="line-through text-xs opacity-75">$45</span>
-                    <span>$29 One-Time Fee</span>
-                  </div>
-                  <div className="text-xs opacity-90">Brain Bytes Exclusive • Offer Ends Soon</div>
+                  <div>Join the Waitlist</div>
+                  <div className="text-xs opacity-90">Be first to get your AI toolkit</div>
                 </div>
               </Button>
             </div>
@@ -179,16 +169,13 @@ const Demo = () => {
             {/* Final CTA */}
             <div className="text-center pb-4">
               <Button 
-                onClick={handlePaymentClick}
+                onClick={() => setIsWaitlistOpen(true)}
                 size="sm"
                 className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-sm px-4 py-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="line-through text-xs opacity-75">$45</span>
-                    <span>$29 One-Time Fee</span>
-                  </div>
-                  <div className="text-xs opacity-90">Brain Bytes Exclusive • Offer Ends Soon</div>
+                  <div>Join the Waitlist</div>
+                  <div className="text-xs opacity-90">Be first to get your AI toolkit</div>
                 </div>
               </Button>
             </div>
@@ -197,36 +184,105 @@ const Demo = () => {
 
         {/* Key Features - Desktop Only */}
         <div className="hidden md:block mt-12">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-foreground mb-2">How Brain Bytes works in 2 minutes</h2>
+            <p className="text-muted-foreground">Three simple steps to transform your productivity</p>
+          </div>
           <div className="grid md:grid-cols-3 gap-6">
-            <Card className="p-6 text-center bg-gradient-to-br from-primary-light to-accent-light border-primary/20">
-              <div className="w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-xl">⚡</span>
+            <Card className="group p-6 text-center bg-gradient-to-br from-primary-light to-accent-light border-primary/20 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer overflow-hidden relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-accent text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <span className="text-2xl font-bold">1</span>
+                </div>
+                <h3 className="text-lg font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">Answer 3 quick questions</h3>
+                <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+                  Get instantly matched with your ideal AI setup—zero fluff, just fast results.
+                </p>
               </div>
-              <h3 className="font-semibold text-foreground mb-2">2-Minute Setup</h3>
-              <p className="text-sm text-muted-foreground">
-                Answer 5 quick questions and get your personalized AI assistant instantly.
-              </p>
             </Card>
 
-            <Card className="p-6 text-center bg-gradient-to-br from-accent-light to-success-light border-accent/20">
-              <div className="w-12 h-12 bg-accent text-white rounded-xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-xl">🧠</span>
+            <Card className="group p-6 text-center bg-gradient-to-br from-accent-light to-success-light border-accent/20 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer overflow-hidden relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-success/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-accent to-success text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <span className="text-2xl font-bold">2</span>
+                </div>
+                <h3 className="text-lg font-bold text-foreground mb-3 group-hover:text-accent transition-colors duration-300">Get your starter kit</h3>
+                <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+                  Receive a curated set of AI tools and guides tailored to your specific needs.
+                </p>
               </div>
-              <h3 className="font-semibold text-foreground mb-2">Smart Calendar Sync</h3>
-              <p className="text-sm text-muted-foreground">
-                Automatically sync your Google Calendar and get AI insights on your schedule.
-              </p>
             </Card>
 
-            <Card className="p-6 text-center bg-gradient-to-br from-success-light to-primary-light border-success/20">
-              <div className="w-12 h-12 bg-success text-white rounded-xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-xl">📧</span>
+            <Card className="group p-6 text-center bg-gradient-to-br from-success-light to-primary-light border-success/20 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer overflow-hidden relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-success/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-success to-primary text-white rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <span className="text-2xl font-bold">3</span>
+                </div>
+                <h3 className="text-lg font-bold text-foreground mb-3 group-hover:text-success transition-colors duration-300">Start saving time</h3>
+                <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+                  Begin using AI effectively with confidence and clear guidance.
+                </p>
               </div>
-              <h3 className="font-semibold text-foreground mb-2">Email Summary</h3>
-              <p className="text-sm text-muted-foreground">
-                Get curated daily email recaps without inbox overload.
-              </p>
             </Card>
+          </div>
+
+          {/* Testimonials Section */}
+          <div className="mt-16">
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-bold text-foreground mb-2">Trusted by productive professionals</h2>
+              <p className="text-muted-foreground">See what early users are saying about Brain Bytes</p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-6 mb-12">
+              <Card className="group p-6 bg-gradient-to-br from-white to-primary-light/20 border-primary/20 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative">
+                  <div className="flex items-center mb-4">
+                    <div className="flex text-yellow-400 mr-2">
+                      <span>★★★★★</span>
+                    </div>
+                  </div>
+                  <blockquote className="text-foreground italic mb-4 text-lg leading-relaxed group-hover:text-primary transition-colors duration-300">
+                    "Brain Bytes transformed my daily routine. I'm saving 2+ hours every day and finally feel in control of my schedule."
+                  </blockquote>
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white font-bold mr-3">
+                      SM
+                    </div>
+                    <div>
+                      <div className="font-semibold text-foreground">Sarah M.</div>
+                      <div className="text-sm text-muted-foreground">Marketing Director</div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              
+              <Card className="group p-6 bg-gradient-to-br from-white to-accent-light/20 border-accent/20 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-success/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative">
+                  <div className="flex items-center mb-4">
+                    <div className="flex text-yellow-400 mr-2">
+                      <span>★★★★★</span>
+                    </div>
+                  </div>
+                  <blockquote className="text-foreground italic mb-4 text-lg leading-relaxed group-hover:text-accent transition-colors duration-300">
+                    "The personalized AI insights are incredible. It's like having a productivity coach that actually understands my workflow."
+                  </blockquote>
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-gradient-to-br from-accent to-success rounded-full flex items-center justify-center text-white font-bold mr-3">
+                      DL
+                    </div>
+                    <div>
+                      <div className="font-semibold text-foreground">David L.</div>
+                      <div className="text-sm text-muted-foreground">Software Engineer</div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
           </div>
 
           {/* CTA Section - Desktop Only */}
@@ -236,43 +292,45 @@ const Demo = () => {
                 Ready to get your own curated AI toolkit?
               </h2>
               <p className="text-muted-foreground">
-                Join thousands of users who've already unlocked their personalized productivity system.
+                Join the waitlist and be first to access your personalized productivity system.
               </p>
             </div>
             
             <div className="mt-8 space-y-4">
               <Button 
-                onClick={handlePaymentClick}
+                onClick={() => setIsWaitlistOpen(true)}
                 size="lg" 
                 className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
                 <div className="text-center">
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="line-through text-lg opacity-75">$45</span>
-                    <span>$29 One-Time Fee</span>
-                  </div>
-                  <div className="text-sm opacity-90">Brain Bytes Exclusive • Offer Ends Soon</div>
+                  <div>Join the Waitlist</div>
+                  <div className="text-sm opacity-90">Be first to get your AI toolkit</div>
                 </div>
               </Button>
               
               <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
-                  <span className="text-green-500">✓</span>
-                  <span>One-time payment</span>
+                  <span className="text-primary">✓</span>
+                  <span>One-time $29 fee</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-green-500">✓</span>
-                  <span>No monthly fees</span>
+                  <span className="text-primary">✓</span>
+                  <span>No subscriptions</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-green-500">✓</span>
-                  <span>Instant access</span>
+                  <span className="text-primary">✓</span>
+                  <span>100% personalized</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      
+      <WaitlistSignup 
+        isOpen={isWaitlistOpen}
+        onClose={() => setIsWaitlistOpen(false)}
+      />
     </div>
   );
 };
