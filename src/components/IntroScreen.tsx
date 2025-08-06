@@ -299,55 +299,52 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-slate-50/30 via-blue-50/40 to-indigo-50/50 min-h-screen">
+      <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#f4faff] via-blue-50/50 to-purple-50/30">
         {/* Hero Section */}
-        <div className="relative max-w-7xl mx-auto px-6 py-16">
-          <div className="grid lg:grid-cols-2 gap-20 items-center min-h-[75vh]">
+        <div className="relative max-w-7xl mx-auto px-6 py-12">
+          <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
             {/* Left Side - Hero Content */}
-            <div className="space-y-10">
-              {/* Hero background with subtle gradient */}
-              <div className="relative bg-gradient-to-br from-white/80 via-slate-50/60 to-blue-50/40 rounded-3xl p-8 backdrop-blur-sm border border-white/40 shadow-xl">
-                <div className="space-y-8">
-                  <h1 className="text-6xl lg:text-7xl xl:text-8xl font-black text-[#1c1c1c] leading-[1.05] tracking-tight">
-                    <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                      Overwhelmed by AI?
-                    </span>
-                  </h1>
-                  
-                  <p className="text-lg lg:text-xl text-slate-600 leading-relaxed max-w-2xl">
-                    There are too many tools. Most aren't worth your time.<br />
-                    Brain Bytes helps you find the ones that are — with curated picks, how-to guides, and a productivity assistant to cut through the noise.
-                  </p>
-                </div>
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <h1 className="text-6xl lg:text-7xl xl:text-8xl font-black text-[#1c1c1c] leading-[1.05] tracking-tight">
+                  <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                    Overwhelmed by AI?
+                  </span>
+                </h1>
+                
+                <p className="text-lg lg:text-xl text-slate-600 leading-relaxed max-w-2xl">
+                  There are too many tools. Most aren't worth your time.<br />
+                  Brain Bytes helps you find the ones that are — with curated picks, how-to guides, and a productivity assistant to cut through the noise.
+                </p>
               </div>
 
               <div className="space-y-8">
                 {/* Feature Badge Header */}
                 <div className="text-center">
-                  <p className="text-base text-slate-500 font-medium mb-6">What you get inside Brain Bytes:</p>
+                  <p className="text-base text-slate-500 font-medium mb-4">What you get inside Brain Bytes:</p>
                 </div>
 
-                {/* Feature Badges Group - Enhanced with card styling */}
-                <div className="bg-white/90 backdrop-blur-sm border border-slate-200/60 rounded-2xl px-8 py-6 max-w-2xl mx-auto shadow-lg hover:shadow-xl transition-all duration-300">
+                {/* Feature Badges Group */}
+                <div className="bg-slate-50/80 border border-slate-200/60 rounded-full px-8 py-4 max-w-lg mx-auto">
                   <div className="flex justify-center items-center space-x-8">
-                    <div className="flex items-center space-x-3 text-base text-slate-700 font-medium">
+                    <div className="flex items-center space-x-2 text-base text-slate-600">
                       <span className="text-xl">✅</span>
                       <span>Curated Tool Picks</span>
                     </div>
-                    <div className="flex items-center space-x-3 text-base text-slate-700 font-medium">
+                    <div className="flex items-center space-x-2 text-base text-slate-600">
                       <span className="text-xl">📘</span>
                       <span>How-To Guides</span>
                     </div>
-                    <div className="flex items-center space-x-3 text-base text-slate-700 font-medium">
+                    <div className="flex items-center space-x-2 text-base text-slate-600">
                       <span className="text-xl">🧠</span>
                       <span>Productivity Assistant</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Enhanced CTA - Full width */}
-                <div className="space-y-6 pt-6">
-                  <Button onClick={() => setIsWaitlistOpen(true)} className="w-full relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-16 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
+                {/* Enhanced CTA */}
+                <div className="space-y-8 pt-4">
+                  <Button onClick={() => setIsWaitlistOpen(true)} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-16 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
                     boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
                     animation: 'glow 4s ease-in-out infinite alternate'
                   }}>
@@ -360,17 +357,14 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                   </Button>
                 </div>
 
-                {/* Demo Link with Pricing - Moved closer to CTA */}
-                <div className="pt-2 text-center space-y-2">
-                  <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-base underline underline-offset-4 hover:underline-offset-2 block">👀 Not ready? Watch a 60-second demo →</Link>
+                {/* Demo Link with Pricing */}
+                <div className="pt-4 text-center space-y-3">
+                  <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2 block">👀 Not ready? Watch a 60-second demo →</Link>
                   <div className="text-center space-y-1">
                     <p className="text-sm text-muted-foreground">One-time $29 – No subscriptions</p>
                     <p className="text-sm text-muted-foreground">100% Personalized</p>
                   </div>
                 </div>
-
-                {/* Additional breathing room */}
-                <div className="pb-8"></div>
               </div>
             </div>
 
