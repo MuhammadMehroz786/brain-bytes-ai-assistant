@@ -228,38 +228,45 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             Brain Bytes helps you find the ones that are — with curated picks, how-to guides, and a productivity assistant to cut through the noise.
           </p>
           
-          {/* Feature Badges */}
-          <div className="grid grid-cols-3 gap-3 max-w-sm mx-auto py-4">
-            <div className="flex flex-col items-center space-y-1 text-xs text-slate-600">
-              <span className="text-base">✅</span>
-              <span className="text-center leading-tight">Curated Tool Picks</span>
-            </div>
-            <div className="flex flex-col items-center space-y-1 text-xs text-slate-600">
-              <span className="text-base">📘</span>
-              <span className="text-center leading-tight">How-To Guides</span>
-            </div>
-            <div className="flex flex-col items-center space-y-1 text-xs text-slate-600">
-              <span className="text-base">🧠</span>
-              <span className="text-center leading-tight">Productivity Assistant</span>
+          {/* Feature Badge Header */}
+          <div className="text-center py-2">
+            <p className="text-sm text-slate-500 font-medium">What you get inside Brain Bytes:</p>
+          </div>
+
+          {/* Feature Badges Group */}
+          <div className="bg-slate-50/80 border border-slate-200/60 rounded-full px-6 py-3 max-w-md mx-auto mb-6">
+            <div className="flex justify-center items-center space-x-6">
+              <div className="flex items-center space-x-2 text-sm text-slate-600">
+                <span className="text-base">✅</span>
+                <span>Curated Tool Picks</span>
+              </div>
+              <div className="flex items-center space-x-2 text-sm text-slate-600">
+                <span className="text-base">📘</span>
+                <span>How-To Guides</span>
+              </div>
+              <div className="flex items-center space-x-2 text-sm text-slate-600">
+                <span className="text-base">🧠</span>
+                <span>Productivity Assistant</span>
+              </div>
             </div>
           </div>
 
           {/* CTA Button */}
-          <div className="space-y-3">
-            <Button onClick={() => setIsWaitlistOpen(true)} size="sm" className="w-full max-w-sm mx-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-base px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+          <div className="space-y-8">
+            <Button onClick={() => setIsWaitlistOpen(true)} size="sm" className="w-full max-w-xs mx-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-5 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
               → Join the Waitlist
             </Button>
-            <div className="text-center space-y-1">
+          </div>
+
+          {/* Demo Link with Pricing */}
+          <div className="text-center space-y-2">
+            <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2 block">
+              👀 Not ready? Watch a 60-second demo →
+            </Link>
+            <div className="text-center space-y-1 pt-2">
               <p className="text-xs text-muted-foreground">One-time $29 – No subscriptions</p>
               <p className="text-xs text-muted-foreground">100% Personalized</p>
             </div>
-          </div>
-
-          {/* Demo Link */}
-          <div className="text-center">
-            <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2">
-              👀 Not ready? Watch a 60-second demo →
-            </Link>
           </div>
         </div>
 
@@ -312,25 +319,32 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               </div>
 
               <div className="space-y-8">
-                {/* Feature Badges */}
-                <div className="flex justify-center space-x-8">
-                  <div className="flex items-center space-x-2 text-sm text-slate-600">
-                    <span className="text-lg">✅</span>
-                    <span>Curated Tool Picks</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-slate-600">
-                    <span className="text-lg">📘</span>
-                    <span>How-To Guides</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-slate-600">
-                    <span className="text-lg">🧠</span>
-                    <span>Productivity Assistant</span>
+                {/* Feature Badge Header */}
+                <div className="text-center">
+                  <p className="text-base text-slate-500 font-medium mb-4">What you get inside Brain Bytes:</p>
+                </div>
+
+                {/* Feature Badges Group */}
+                <div className="bg-slate-50/80 border border-slate-200/60 rounded-full px-8 py-4 max-w-lg mx-auto">
+                  <div className="flex justify-center items-center space-x-8">
+                    <div className="flex items-center space-x-2 text-base text-slate-600">
+                      <span className="text-xl">✅</span>
+                      <span>Curated Tool Picks</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-base text-slate-600">
+                      <span className="text-xl">📘</span>
+                      <span>How-To Guides</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-base text-slate-600">
+                      <span className="text-xl">🧠</span>
+                      <span>Productivity Assistant</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Enhanced CTA */}
-                <div className="space-y-4">
-                  <Button onClick={() => setIsWaitlistOpen(true)} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-10 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
+                <div className="space-y-8 pt-4">
+                  <Button onClick={() => setIsWaitlistOpen(true)} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-16 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
                     boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
                     animation: 'glow 4s ease-in-out infinite alternate'
                   }}>
@@ -341,15 +355,15 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                     </div>
                   </Button>
+                </div>
+
+                {/* Demo Link with Pricing */}
+                <div className="pt-4 text-center space-y-3">
+                  <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2 block">👀 Not ready? Watch a 60-second demo →</Link>
                   <div className="text-center space-y-1">
                     <p className="text-sm text-muted-foreground">One-time $29 – No subscriptions</p>
                     <p className="text-sm text-muted-foreground">100% Personalized</p>
                   </div>
-                </div>
-
-                {/* Demo Link */}
-                <div className="pt-2">
-                  <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2">👀 Not ready? Watch a 60-second demo →</Link>
                 </div>
               </div>
             </div>
