@@ -170,7 +170,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   return (
     <div className="min-h-screen bg-[#f4faff]">
       {/* Desktop Header */}
-      <div className="hidden lg:flex sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 px-6 py-2 justify-between items-center">
+      <div className="hidden lg:flex sticky top-0 z-50 bg-gradient-to-r from-[#F6F0FF] to-[#EAF7FF] backdrop-blur-md border-b border-slate-200/60 px-6 py-2 justify-between items-center">
         <div className="flex items-center space-x-3">
           <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-light rounded-xl">
             <img alt="Brain Bytes Logo" className="w-6 h-6 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
@@ -178,13 +178,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           <span className="text-2xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
         </div>
         <div className="flex items-center space-x-6">
-          <Link to="/demo" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
+          <Link to="/demo" className="text-sm text-foreground hover:text-primary transition-colors duration-200">
             Demo
           </Link>
-          <Link to="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
+          <Link to="/contact" className="text-sm text-foreground hover:text-primary transition-colors duration-200">
             Contact
           </Link>
-          <button onClick={onAuth} className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
+          <button onClick={onAuth} className="text-sm text-foreground hover:text-primary transition-colors duration-200">
             Sign In
           </button>
           <Button onClick={() => setIsWaitlistOpen(true)} className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-300 hover:shadow-lg text-sm">
@@ -194,7 +194,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile & Tablet Header */}
-      <div className="lg:hidden bg-white/95 backdrop-blur-sm border-b border-slate-200/60 px-4 py-3">
+      <div className="lg:hidden bg-gradient-to-r from-[#F6F0FF] to-[#EAF7FF] backdrop-blur-sm border-b border-slate-200/60 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="inline-flex items-center justify-center w-8 h-8 bg-primary-light rounded-xl">
@@ -203,7 +203,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             <span className="text-xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
           </div>
           <div className="flex items-center space-x-3">
-            <Link to="/demo" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
+            <Link to="/demo" className="text-sm text-foreground hover:text-primary transition-colors duration-200">
               Demo
             </Link>
             <Button variant="outline" onClick={onAuth} className="px-3 py-1 text-sm border-primary/30 hover:bg-primary/10 transition-all duration-300">
@@ -234,26 +234,24 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
 
           {/* Feature Badges Group */}
-          <div className="bg-slate-50/80 border border-slate-200/60 rounded-full px-6 py-3 max-w-md mx-auto mb-6">
-            <div className="flex justify-center items-center space-x-6">
-              <div className="flex items-center space-x-2 text-sm text-slate-600">
-                <span className="text-base">✅</span>
-                <span>Curated Tool Picks</span>
+            <div className="max-w-md mx-auto grid grid-cols-3 gap-3 animate-fade-in">
+              <div className="flex flex-col items-center gap-2 group bg-white/70 border border-slate-200/60 rounded-xl p-3 shadow-sm hover:shadow-md hover-scale">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center text-lg">✅</div>
+                <span className="text-xs font-medium text-slate-700 text-center">Curated Tool Picks</span>
               </div>
-              <div className="flex items-center space-x-2 text-sm text-slate-600">
-                <span className="text-base">📘</span>
-                <span>How-To Guides</span>
+              <div className="flex flex-col items-center gap-2 group bg-white/70 border border-slate-200/60 rounded-xl p-3 shadow-sm hover:shadow-md hover-scale">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center text-lg">📘</div>
+                <span className="text-xs font-medium text-slate-700 text-center">How‑To Guides</span>
               </div>
-              <div className="flex items-center space-x-2 text-sm text-slate-600">
-                <span className="text-base">🧠</span>
-                <span>Productivity Assistant</span>
+              <div className="flex flex-col items-center gap-2 group bg-white/70 border border-slate-200/60 rounded-xl p-3 shadow-sm hover:shadow-md hover-scale">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center text-lg">🧠</div>
+                <span className="text-xs font-medium text-slate-700 text-center">Productivity Assistant</span>
               </div>
             </div>
-          </div>
 
           {/* CTA Button */}
           <div className="space-y-8">
-            <Button onClick={() => setIsWaitlistOpen(true)} size="sm" className="w-full max-w-xs mx-auto bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-5 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+            <Button onClick={() => setIsWaitlistOpen(true)} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-5 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
               → Join the Waitlist
             </Button>
           </div>
@@ -299,12 +297,12 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#f4faff] via-blue-50/50 to-purple-50/30">
+      <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#F6F0FF] to-[#EAF7FF]">
         {/* Hero Section */}
         <div className="relative max-w-7xl mx-auto px-6 py-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
             {/* Left Side - Hero Content */}
-            <div className="space-y-8">
+            <div className="space-y-8 max-w-2xl">
               <div className="space-y-6">
                 <h1 className="text-6xl lg:text-7xl xl:text-8xl font-black text-[#1c1c1c] leading-[1.05] tracking-tight">
                   <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
@@ -325,32 +323,25 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 </div>
 
                 {/* Feature Badges Group */}
-                <div className="bg-slate-50/80 border border-slate-200/60 rounded-full px-8 py-4 max-w-lg mx-auto">
-                  <div className="flex justify-center items-center space-x-8">
-                    <div className="flex items-center space-x-2 text-base text-slate-600">
-                      <span className="text-xl">✅</span>
-                      <span>Curated Tool Picks</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-base text-slate-600">
-                      <span className="text-xl">📘</span>
-                      <span>How-To Guides</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-base text-slate-600">
-                      <span className="text-xl">🧠</span>
-                      <span>Productivity Assistant</span>
-                    </div>
+                <div className="max-w-2xl mx-auto grid grid-cols-3 gap-6 animate-fade-in">
+                  <div className="flex flex-col items-center gap-3 group bg-white/70 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-lg hover-scale transition-all">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center text-2xl">✅</div>
+                    <span className="text-sm font-semibold text-slate-700 text-center">Curated Tool Picks</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-3 group bg-white/70 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-lg hover-scale transition-all">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center text-2xl">📘</div>
+                    <span className="text-sm font-semibold text-slate-700 text-center">How‑To Guides</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-3 group bg-white/70 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-lg hover-scale transition-all">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center text-2xl">🧠</div>
+                    <span className="text-sm font-semibold text-slate-700 text-center">Productivity Assistant</span>
                   </div>
                 </div>
 
                 {/* Enhanced CTA */}
                 <div className="space-y-8 pt-4">
-                  <Button onClick={() => setIsWaitlistOpen(true)} className="relative bg-gradient-to-r from-[#7C3AED] via-[#6366F1] to-[#06B6D4] hover:from-[#6D28D9] hover:via-[#4F46E5] hover:to-[#0891B2] text-white font-semibold text-xl px-16 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden animate-pulse hover:animate-none cursor-pointer hover:scale-105 hover:shadow-2xl hover:-translate-y-1" style={{
-                    boxShadow: '0px 4px 18px rgba(0,0,0,0.12), 0 0 20px rgba(124, 58, 237, 0.3)',
-                    animation: 'glow 4s ease-in-out infinite alternate'
-                  }}>
+                  <Button onClick={() => setIsWaitlistOpen(true)} className="relative w-full max-w-2xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-xl px-8 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden hover:shadow-2xl hover:-translate-y-0.5">
                     → Join the Waitlist
-                    
-                    {/* Shimmer effect on hover */}
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                     </div>
