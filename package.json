@@ -12,10 +12,12 @@
     "start": "concurrently --names \"FRONTEND,OAUTH\" --prefix-colors \"cyan,yellow\" \"vite preview --host 0.0.0.0\" \"node gmail-oauth-server.mjs\"",
     "start:frontend": "vite preview --host 0.0.0.0",
     "start:oauth": "node gmail-oauth-server.mjs",
+    "start:backend": "node gmail-oauth-server.mjs",
+    "start:production": "concurrently --names \"FRONTEND,BACKEND\" --prefix-colors \"cyan,yellow\" \"vite preview --host 0.0.0.0 --port 8080\" \"node gmail-oauth-server.mjs\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

@@ -26,8 +26,8 @@ try {
 
 // Configure CORS based on environment
 const allowedOrigins = NODE_ENV === 'production' 
-  ? process.env.ALLOWED_ORIGINS?.split(',') || ['https://your-production-domain.com']
-  : ['http://localhost:8081', 'http://localhost:3000', 'http://localhost:5173'];
+  ? process.env.ALLOWED_ORIGINS?.split(',') || ['https://brain-bytes-ai.lovable.app', 'https://*.lovable.app']
+  : ['http://localhost:8080', 'http://localhost:8081', 'http://localhost:3000', 'http://localhost:5173'];
 
 app.use(cors({
   origin: allowedOrigins,
@@ -53,7 +53,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // OAuth credentials from environment variables
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI = process.env.REDIRECT_URI || "http://localhost:8082/callback";
+const REDIRECT_URI = process.env.REDIRECT_URI || (NODE_ENV === 'production' ? "https://brain-bytes-ai.lovable.app:8082/callback" : "http://localhost:8082/callback");
 
 // Validate required environment variables
 if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
