@@ -195,12 +195,12 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile & Tablet Header */}
-      <div className="lg:hidden bg-gradient-to-r from-[#F6F0FF] to-[#EAF7FF] backdrop-blur-sm border-b border-slate-200/60 px-4 py-3">
+      <div className="lg:hidden h-14 bg-gradient-to-r from-primary-light to-accent-light backdrop-blur-sm border-b border-border px-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <span className="text-xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
+          <div className="flex items-center h-full">
+            <span className="text-xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Brain Bytes</span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center h-full">
             <Button variant="outline" onClick={onAuth} className="px-3 py-1 text-sm border-primary/30 hover:bg-primary/10 transition-all duration-300">
               Sign In
             </Button>
@@ -208,7 +208,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </div>
 
-      <div className="lg:hidden h-screen overflow-hidden flex flex-col bg-white">
+      <div className="lg:hidden h-[calc(100dvh-56px)] overflow-hidden flex flex-col bg-gradient-to-br from-primary-light via-accent-light to-success-light">
         {/* Hero Section */}
         <div className="px-6 pt-8 pb-4 text-center space-y-3">
           <h1 className="text-3xl font-bold leading-tight">
@@ -221,7 +221,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
 
         {/* Demo Video */}
-        <div className="px-6">
+        <div className="px-6 animate-fade-in">
           <div className="rounded-lg overflow-hidden bg-black/5 border border-slate-200/60 shadow-sm">
             <iframe
               src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ"
@@ -239,19 +239,19 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         {/* Three Pillars */}
         <div className="px-6 pt-4">
           <div className="grid grid-cols-3 gap-3">
-            <div className="flex flex-col items-center gap-1 bg-white/70 border border-slate-200/60 rounded-xl p-3 shadow-sm">
+            <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-300 hover-scale animate-fade-in">
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center">
                 <CheckCircle2 className="w-4 h-4 text-primary" />
               </div>
               <span className="text-[11px] font-medium text-foreground text-center">Curated Picks</span>
             </div>
-            <div className="flex flex-col items-center gap-1 bg-white/70 border border-slate-200/60 rounded-xl p-3 shadow-sm">
+            <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-300 hover-scale animate-fade-in">
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center">
                 <BookOpen className="w-4 h-4 text-accent" />
               </div>
               <span className="text-[11px] font-medium text-foreground text-center">How‑To Guides</span>
             </div>
-            <div className="flex flex-col items-center gap-1 bg-white/70 border border-slate-200/60 rounded-xl p-3 shadow-sm">
+            <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-xl p-3 shadow-sm hover:shadow-md transition-all duration-300 hover-scale animate-fade-in">
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center">
                 <Bot className="w-4 h-4 text-success" />
               </div>
@@ -261,9 +261,15 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
 
         {/* Pricing + Personalization */}
-        <div className="px-6 pb-4 pt-3 text-center space-y-1">
-          <p className="text-xs text-muted-foreground">One-time $29 – No subscriptions</p>
-          <p className="text-xs text-muted-foreground">100% Personalized</p>
+        <div className="px-6 pt-3 text-center space-y-3">
+          <p className="text-sm font-medium text-foreground">A fully curated experience that guides you through the chaos of modern AI.</p>
+          <p className="text-xs text-muted-foreground">Answer 5 questions after checkout to get your curated AI Assistant.</p>
+          <Button 
+            onClick={() => setIsWaitlistOpen(true)}
+            className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-base px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+          >
+            Join the Waitlist
+          </Button>
         </div>
       </div>
 
