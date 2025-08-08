@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Calendar, CheckCircle, XCircle, Loader } from 'lucide-react';
+import { useGoogleLogin } from '@react-oauth/google';
 
 export const GoogleCalendarSection = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -21,7 +22,9 @@ export const GoogleCalendarSection = () => {
   useEffect(() => {
     const calendarConnected = localStorage.getItem('google_calendar_connected');
     const gmailConnected = localStorage.getItem('gmail_connected');
-    if (calendarConnected === 'true') {
+    const accessToken = localStorage.getItem('google_calendar_access_token');
+    
+    if (calendarConnected === 'true' && accessToken) {
       setIsConnected(true);
       const lastSync = localStorage.getItem('google_calendar_last_sync');
       if (lastSync) {
@@ -42,32 +45,34 @@ export const GoogleCalendarSection = () => {
     setSuggestedTask(null);
 
     try {
-      const userEmail = localStorage.getItem('gmail_email');
-      if (!userEmail) {
-        toast.error('Please connect your Gmail account first.');
+      const accessToken = localStorage.getItem('google_calendar_access_token');
+      if (!accessToken) {
+        toast.error('Please connect your calendar first.');
         setIsSuggesting(false);
         return;
       }
 
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-      const response = await fetch('http://localhost:8082/suggest-focus-time-and-task', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, timezone }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setSuggestedTime(data.suggestedTime);
-        setSuggestedTask(data.suggestedTask);
-        setFocusText(data.suggestedTask); // Pre-fill input with suggested task
+      // Simple suggestion logic - find the next available hour during business hours
+      const now = new Date();
+      const suggestedTime = new Date(now);
+      suggestedTime.setMinutes(0, 0, 0);
+      
+      // If it's after business hours, suggest tomorrow at 9 AM
+      if (now.getHours() >= 17) {
+        suggestedTime.setDate(suggestedTime.getDate() + 1);
+        suggestedTime.setHours(9);
+      } else if (now.getHours() < 9) {
+        suggestedTime.setHours(9);
       } else {
-        toast.error('Failed to get focus suggestions.');
+        suggestedTime.setHours(now.getHours() + 1);
       }
+
+      setSuggestedTime(suggestedTime.toISOString());
+      setSuggestedTask('Deep work focus session');
+      setFocusText('Deep work focus session');
     } catch (error) {
-      console.error('Error fetching suggestions:', error);
-      toast.error('Error fetching focus suggestions.');
+      console.error('Error creating suggestions:', error);
+      toast.error('Error creating focus suggestions.');
     } finally {
       setIsSuggesting(false);
     }
@@ -75,81 +80,100 @@ export const GoogleCalendarSection = () => {
 
   const fetchCalendarEvents = async () => {
     try {
-      const userEmail = localStorage.getItem('gmail_email');
-      if (!userEmail) {
-        toast.error('Please connect your Gmail account first.');
+      const accessToken = localStorage.getItem('google_calendar_access_token');
+      if (!accessToken) {
+        toast.error('Please connect your calendar first.');
         return;
       }
 
-      const response = await fetch('http://localhost:8082/fetch-calendar-events', {
+      const now = new Date();
+      const threeDaysFromNow = new Date();
+      threeDaysFromNow.setDate(now.getDate() + 3);
+
+      // Fetch events
+      const eventsResponse = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${now.toISOString()}&timeMax=${threeDaysFromNow.toISOString()}&singleEvents=true&orderBy=startTime`,
+        {
+          headers: { 'Authorization': `Bearer ${accessToken}` },
+        }
+      );
+
+      if (!eventsResponse.ok) {
+        throw new Error('Failed to fetch calendar events');
+      }
+
+      const eventsData = await eventsResponse.json();
+      const events = eventsData.items || [];
+      console.log(`🗓️ Found ${events.length} calendar events`);
+
+      // Fetch free/busy information
+      const freeBusyResponse = await fetch('https://www.googleapis.com/calendar/v3/freeBusy', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail }),
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          timeMin: now.toISOString(),
+          timeMax: threeDaysFromNow.toISOString(),
+          items: [{ id: 'primary' }]
+        })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setCalendarEvents(data.events);
-        setBusySlots(data.busySlots);
-        console.log('Fetched events:', data.events);
-        console.log('Fetched busy slots:', data.busySlots);
-      } else {
-        toast.error('Failed to fetch calendar events.');
+      if (!freeBusyResponse.ok) {
+        throw new Error('Failed to fetch free/busy information');
       }
+
+      const freeBusyData = await freeBusyResponse.json();
+      const busySlots = freeBusyData.calendars.primary.busy || [];
+      console.log(`🕒 Found ${busySlots.length} busy slots`);
+
+      setCalendarEvents(events);
+      setBusySlots(busySlots);
     } catch (error) {
       console.error('Error fetching calendar events:', error);
       toast.error('Error fetching calendar events.');
     }
   };
 
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        console.log('Google OAuth success:', tokenResponse);
+        
+        // Store the access token
+        localStorage.setItem('google_calendar_access_token', tokenResponse.access_token);
+        localStorage.setItem('google_calendar_connected', 'true');
+        
+        const now = new Date();
+        setLastSyncTime(now.toLocaleString());
+        localStorage.setItem('google_calendar_last_sync', now.toISOString());
+        
+        setIsConnected(true);
+        toast.success('✅ Calendar Connected');
+        setShowFocusPopup(true);
+        
+        // Fetch calendar events after successful connection
+        await fetchCalendarEvents();
+      } catch (error) {
+        console.error('Error handling OAuth success:', error);
+        toast.error('Error connecting calendar');
+      }
+    },
+    onError: (error) => {
+      console.error('Google OAuth error:', error);
+      toast.error('Failed to connect Google Calendar');
+    },
+    scope: 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events',
+  });
+
   const handleSyncCalendar = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8082/auth/google/calendar');
-      const { authUrl } = await response.json();
-
-      const popup = window.open(authUrl, 'google-calendar-oauth', 'width=600,height=700');
-
-      const handleMessage = async (event: MessageEvent) => {
-        if (event.data.success) {
-          popup?.close();
-          window.removeEventListener('message', handleMessage);
-          
-          console.log('Received OAuth success event. Tokens:', event.data.tokens);
-          console.log('Received OAuth success event. User Info:', event.data.userInfo);
-          const tokenResponse = await fetch('http://localhost:8082/store-calendar-token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              tokens: event.data.tokens,
-              email: event.data.userInfo.email
-            }),
-          });
-
-          if(tokenResponse.ok) {
-            setIsConnected(true);
-            const now = new Date();
-            setLastSyncTime(now.toLocaleString());
-            localStorage.setItem('google_calendar_connected', 'true');
-            localStorage.setItem('google_calendar_last_sync', now.toISOString());
-            toast.success('✅ Calendar Connected');
-            setShowFocusPopup(true);
-          } else {
-            toast.error('Failed to store calendar token.');
-          }
-
-        } else if (event.data.error) {
-          popup?.close();
-          window.removeEventListener('message', handleMessage);
-          toast.error(`OAuth failed: ${event.data.error}`);
-        }
-      };
-
-      window.addEventListener('message', handleMessage);
-
+      googleLogin();
     } catch (error) {
       console.error('Error syncing calendar:', error);
-      toast.error('Error syncing calendar. Is the OAuth server running?');
+      toast.error('Error syncing calendar');
     } finally {
       setIsLoading(false);
     }
@@ -159,18 +183,28 @@ export const GoogleCalendarSection = () => {
     if (!focusText) return;
 
     try {
+      const accessToken = localStorage.getItem('google_calendar_access_token');
+      if (!accessToken) {
+        toast.error('Please connect your calendar first.');
+        return;
+      }
+
       const startTime = suggestedTime ? new Date(suggestedTime) : new Date();
       const endTime = new Date(startTime.getTime() + 30 * 60 * 1000);
 
-      const response = await fetch('http://localhost:8082/schedule-focus', {
+      const event = {
+        summary: focusText,
+        start: { dateTime: startTime.toISOString() },
+        end: { dateTime: endTime.toISOString() },
+      };
+
+      const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          summary: focusText,
-          email: localStorage.getItem('gmail_email'),
-          startTime: startTime.toISOString(),
-          endTime: endTime.toISOString(),
-        }),
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(event)
       });
 
       if (response.ok) {
@@ -181,6 +215,8 @@ export const GoogleCalendarSection = () => {
         setSuggestedTask(null);
         fetchCalendarEvents(); // Refresh calendar events after scheduling
       } else {
+        const errorData = await response.json();
+        console.error('Failed to create event:', errorData);
         toast.error('Failed to schedule focus time.');
       }
     } catch (error) {
@@ -192,9 +228,11 @@ export const GoogleCalendarSection = () => {
   const handleDisconnectCalendar = () => {
     localStorage.removeItem('google_calendar_connected');
     localStorage.removeItem('google_calendar_last_sync');
-    localStorage.removeItem('google_calendar_email'); // Clear associated email if any
+    localStorage.removeItem('google_calendar_access_token');
     setIsConnected(false);
     setLastSyncTime(null);
+    setCalendarEvents([]);
+    setBusySlots([]);
     toast.info('Calendar disconnected.');
   };
 
@@ -288,13 +326,10 @@ export const GoogleCalendarSection = () => {
         </div>
       ) : (
         <div>
-          <Button onClick={handleSyncCalendar} disabled={isLoading || !isGmailConnected} className="mt-4">
+          <Button onClick={handleSyncCalendar} disabled={isLoading} className="mt-4">
             {isLoading ? <Loader className="animate-spin w-5 h-5 mr-2" /> : <Calendar className="w-5 h-5 mr-2" />}
             Sync Calendar
           </Button>
-          {!isGmailConnected && (
-            <p className="text-sm text-red-500 mt-2">Please connect your Gmail account first.</p>
-          )}
         </div>
       )}
 

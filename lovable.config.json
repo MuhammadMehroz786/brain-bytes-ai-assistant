@@ -3,13 +3,14 @@
   "description": "A modern React application with Gmail OAuth integration and AI-powered features",
   "version": "1.0.0",
   "author": "Brain Bytes AI",
-  "homepage": "https://brain-bytes-ai.lovable.app",
+  "homepage": "https://preview--brain-bytes-ai-assistant.lovable.app",
   "deployment": {
     "type": "static",
     "buildCommand": "npm run build",
     "outputDirectory": "dist",
     "environmentVariables": {
       "optional": [
+        "VITE_OAUTH_SERVER_URL",
         "VITE_SUPABASE_URL",
         "VITE_SUPABASE_ANON_KEY"
       ]
