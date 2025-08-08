@@ -5,6 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { WaitlistSignup } from "./WaitlistSignup";
+import { ArrowDown, CheckCircle2, BookOpen, Bot } from "lucide-react";
 
 interface IntroScreenProps {
   onStart: () => void;
@@ -196,16 +197,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       {/* Mobile & Tablet Header */}
       <div className="lg:hidden bg-gradient-to-r from-[#F6F0FF] to-[#EAF7FF] backdrop-blur-sm border-b border-slate-200/60 px-4 py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="inline-flex items-center justify-center w-8 h-8 bg-primary-light rounded-xl">
-              <img alt="Brain Bytes Logo" className="w-5 h-5 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
-            </div>
+          <div className="flex items-center">
             <span className="text-xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
           </div>
-          <div className="flex items-center space-x-3">
-            <Link to="/demo" className="text-sm text-foreground hover:text-primary transition-colors duration-200">
-              Demo
-            </Link>
+          <div className="flex items-center">
             <Button variant="outline" onClick={onAuth} className="px-3 py-1 text-sm border-primary/30 hover:bg-primary/10 transition-all duration-300">
               Sign In
             </Button>
@@ -213,86 +208,62 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </div>
 
-      {/* Mobile & Tablet Layout */}
-      <div className="lg:hidden">
+      <div className="lg:hidden h-screen overflow-hidden flex flex-col bg-white">
         {/* Hero Section */}
-        <div className="px-6 py-8 text-center space-y-6 bg-white">
-          <h1 className="text-3xl font-bold text-[#1c1c1c] leading-tight">
+        <div className="px-6 pt-8 pb-4 text-center space-y-3">
+          <h1 className="text-3xl font-bold leading-tight">
             <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
               Overwhelmed by AI?
             </span>
           </h1>
-          
-          <p className="text-base text-slate-600 leading-relaxed max-w-md mx-auto">
-            There are too many tools. Most aren't worth your time.<br />
-            Brain Bytes helps you find the ones that are — with curated picks, how-to guides, and a productivity assistant to cut through the noise.
-          </p>
-          
-          {/* Feature Badge Header */}
-          <div className="text-center py-2">
-            <p className="text-sm text-slate-500 font-medium">What you get inside Brain Bytes:</p>
-          </div>
+          <p className="text-sm text-muted-foreground">We solve it for the price of lunch</p>
+          <ArrowDown className="mx-auto h-4 w-4 text-muted-foreground" />
+        </div>
 
-          {/* Feature Badges Group */}
-            <div className="max-w-md mx-auto grid grid-cols-3 gap-3 animate-fade-in">
-              <div className="flex flex-col items-center gap-2 group bg-white/70 border border-slate-200/60 rounded-xl p-3 shadow-sm hover:shadow-md hover-scale">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center text-lg">✅</div>
-                <span className="text-xs font-medium text-slate-700 text-center">Curated Tool Picks</span>
+        {/* Demo Video */}
+        <div className="px-6">
+          <div className="rounded-lg overflow-hidden bg-black/5 border border-slate-200/60 shadow-sm">
+            <iframe
+              src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ"
+              width="100%"
+              height="180"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full aspect-video"
+              title="Brain Bytes Demo"
+            />
+          </div>
+        </div>
+
+        {/* Three Pillars */}
+        <div className="px-6 pt-4">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="flex flex-col items-center gap-1 bg-white/70 border border-slate-200/60 rounded-xl p-3 shadow-sm">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center">
+                <CheckCircle2 className="w-4 h-4 text-primary" />
               </div>
-              <div className="flex flex-col items-center gap-2 group bg-white/70 border border-slate-200/60 rounded-xl p-3 shadow-sm hover:shadow-md hover-scale">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center text-lg">📘</div>
-                <span className="text-xs font-medium text-slate-700 text-center">How‑To Guides</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 group bg-white/70 border border-slate-200/60 rounded-xl p-3 shadow-sm hover:shadow-md hover-scale">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center text-lg">🧠</div>
-                <span className="text-xs font-medium text-slate-700 text-center">Productivity Assistant</span>
-              </div>
+              <span className="text-[11px] font-medium text-foreground text-center">Curated Picks</span>
             </div>
-
-          {/* CTA Button */}
-          <div className="space-y-8">
-            <Button onClick={() => setIsWaitlistOpen(true)} size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-lg px-12 py-5 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-              → Join the Waitlist
-            </Button>
-          </div>
-
-          {/* Demo Link with Pricing */}
-          <div className="text-center space-y-2">
-            <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2 block">
-              👀 Not ready? Watch a 60-second demo →
-            </Link>
-            <div className="text-center space-y-1 pt-2">
-              <p className="text-xs text-muted-foreground">One-time $29 – No subscriptions</p>
-              <p className="text-xs text-muted-foreground">100% Personalized</p>
+            <div className="flex flex-col items-center gap-1 bg-white/70 border border-slate-200/60 rounded-xl p-3 shadow-sm">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center">
+                <BookOpen className="w-4 h-4 text-accent" />
+              </div>
+              <span className="text-[11px] font-medium text-foreground text-center">How‑To Guides</span>
+            </div>
+            <div className="flex flex-col items-center gap-1 bg-white/70 border border-slate-200/60 rounded-xl p-3 shadow-sm">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center">
+                <Bot className="w-4 h-4 text-success" />
+              </div>
+              <span className="text-[11px] font-medium text-foreground text-center">Assistant</span>
             </div>
           </div>
         </div>
 
-        {/* Quiz Module */}
-        <div className="px-6 py-8 bg-slate-50">
-          <Card className="p-6 bg-white/95 backdrop-blur-sm border border-slate-200/80 shadow-lg rounded-xl">
-            <div className="text-center mb-4">
-              <h3 className="text-lg font-semibold text-slate-800 mb-2">Help us personalize your experience</h3>
-              <p className="text-sm text-slate-600">Answer a few quick questions to get started</p>
-            </div>
-            {renderQuizStep()}
-          </Card>
-        </div>
-        
-        {/* Footer Links */}
-        <div className="px-6 py-6 bg-white border-t border-slate-200">
-          <div className="text-center text-xs text-muted-foreground">
-            © 2025 Brain Bytes | 
-            <Link to="/privacy-policy" className="hover:text-primary transition-colors duration-200 mx-1">
-              Privacy Policy
-            </Link> | 
-            <Link to="/terms-of-service" className="hover:text-primary transition-colors duration-200 mx-1">
-              Terms of Service
-            </Link> | 
-            <Link to="/contact" className="hover:text-primary transition-colors duration-200 mx-1">
-              Contact
-            </Link>
-          </div>
+        {/* Pricing + Personalization */}
+        <div className="px-6 pb-4 pt-3 text-center space-y-1">
+          <p className="text-xs text-muted-foreground">One-time $29 – No subscriptions</p>
+          <p className="text-xs text-muted-foreground">100% Personalized</p>
         </div>
       </div>
 
