@@ -137,12 +137,33 @@ export const GoogleCalendarSection = () => {
   };
 
   const googleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
+    onSuccess: async (codeResponse) => {
       try {
-        console.log('Google OAuth success:', tokenResponse);
+        console.log('Google OAuth success:', codeResponse);
         
+        // Exchange authorization code for access token
+        const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            client_id: '904660239643-fok54c3i9bb0oq68or4rqrfc4q0tjnva.apps.googleusercontent.com',
+            client_secret: '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',
+            code: codeResponse.code,
+            grant_type: 'authorization_code',
+            redirect_uri: 'postmessage', // This is the magic value for @react-oauth/google
+          }),
+        });
+
+        const tokenData = await tokenResponse.json();
+        
+        if (!tokenResponse.ok) {
+          throw new Error(`Token exchange failed: ${tokenData.error}`);
+        }
+
         // Store the access token
-        localStorage.setItem('google_calendar_access_token', tokenResponse.access_token);
+        localStorage.setItem('google_calendar_access_token', tokenData.access_token);
         localStorage.setItem('google_calendar_connected', 'true');
         
         const now = new Date();
@@ -164,6 +185,7 @@ export const GoogleCalendarSection = () => {
       console.error('Google OAuth error:', error);
       toast.error('Failed to connect Google Calendar');
     },
+    flow: 'auth-code',
     scope: 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events',
   });
 
