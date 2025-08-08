@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { RefreshCw, Mail, User, AlertCircle, Loader, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useGoogleLogin } from '@react-oauth/google';
 
 interface EmailSummary {
   id: string;
@@ -59,136 +60,53 @@ export const EmailSummarySection = () => {
     }
   };
 
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        console.log('✅ Google OAuth successful:', tokenResponse);
+        
+        // Get user info
+        const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+        });
+        const userInfo = await userInfoResponse.json();
+        
+        console.log('👤 User info:', userInfo);
+        
+        // Store tokens and user info in localStorage
+        localStorage.setItem('gmail_connected', 'true');
+        localStorage.setItem('gmail_email', userInfo.email);
+        localStorage.setItem('gmail_access_token', tokenResponse.access_token);
+        
+        setIsConnected(true);
+        toast.success(`Gmail connected successfully! (${userInfo.email})`);
+        
+        // Fetch emails directly using the access token
+        fetchEmailsWithToken(tokenResponse.access_token, userInfo.email);
+        
+      } catch (error) {
+        console.error('❌ Error handling OAuth success:', error);
+        toast.error('Failed to complete Gmail connection');
+        setErrorMessage('Failed to complete Gmail connection');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    onError: (error) => {
+      console.error('❌ Google OAuth error:', error);
+      toast.error('Gmail connection failed');
+      setErrorMessage('Gmail connection failed');
+      setIsLoading(false);
+    },
+    scope: 'https://www.googleapis.com/auth/gmail.readonly email profile'
+  });
+
   const handleConnectGmail = async () => {
     try {
       setIsLoading(true);
       setErrorMessage('');
-      
       console.log('🔄 Starting Gmail connection...');
-
-      // First, test if the OAuth server is running
-      try {
-        const testResponse = await fetch('http://localhost:8082/');
-        if (!testResponse.ok) {
-          throw new Error('OAuth server not responding');
-        }
-        const serverStatus = await testResponse.json();
-        console.log('✅ OAuth server status:', serverStatus);
-      } catch (error) {
-        console.error('❌ OAuth server not running:', error);
-        throw new Error('OAuth server is not running. Please start it first: node gmail-oauth-server.mjs');
-      }
-      
-      const response = await fetch('http://localhost:8082/auth/google');
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to get authorization URL');
-      }
-      
-      const { authUrl } = await response.json();
-      console.log('🔗 OAuth URL generated:', authUrl);
-      
-      // Open popup window for OAuth
-      const popup = window.open(
-        authUrl,
-        'gmail-oauth',
-        'width=600,height=700,scrollbars=yes,resizable=yes,left=200,top=200'
-      );
-      
-      if (!popup) {
-        throw new Error('Popup blocked! Please allow popups for this site.');
-      }
-      
-      console.log('🪟 OAuth popup opened');
-      
-      // Listen for OAuth completion
-      const handleMessage = async (event: MessageEvent) => {
-        console.log('📨 Received message:', event.data);
-        
-        if (event.data.success) {
-          try {
-            console.log('✅ OAuth successful, storing tokens...');
-            console.log('🎫 Received tokens:', {
-              hasAccessToken: !!event.data.tokens.access_token,
-              hasRefreshToken: !!event.data.tokens.refresh_token,
-              expiresIn: event.data.tokens.expires_in,
-              userEmail: event.data.userInfo.email
-            });
-            
-            const storeResponse = await fetch('http://localhost:8082/store-tokens', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                tokens: event.data.tokens,
-                userInfo: event.data.userInfo,
-              }),
-            });
-
-            if (!storeResponse.ok) {
-              const errorData = await storeResponse.json().catch(() => ({ error: 'Unknown error' }));
-              console.error('💥 Store response error:', errorData);
-              throw new Error(`Failed to store tokens: ${errorData.error || storeResponse.status}`);
-            }
-
-            const storeResult = await storeResponse.json();
-            console.log('✅ Tokens stored successfully:', storeResult);
-            
-            toast.success(`Gmail connected successfully! (${event.data.userInfo.email})`);
-            
-            // Store connection state in localStorage for persistence
-            localStorage.setItem('gmail_connected', 'true');
-            localStorage.setItem('gmail_email', event.data.userInfo.email);
-            localStorage.setItem('gmail_access_token', event.data.tokens.access_token);
-            
-            setIsConnected(true);
-            
-            // Show success email
-            setEmailSummaries([
-              {
-                id: '1',
-                senderName: 'Gmail OAuth',
-                senderEmail: event.data.userInfo.email,
-                subject: 'Connection Successful!',
-                date: new Date().toISOString(),
-                snippet: 'Your Gmail account has been successfully connected. Email fetching will be implemented next.',
-                aiSummary: 'Gmail OAuth flow completed successfully. Ready to fetch and summarize emails.',
-                suggestedReplies: [],
-                body: 'Gmail connection established successfully.'
-              }
-            ]);
-          } catch (error) {
-            console.error('❌ Error storing tokens:', error);
-            toast.error(error instanceof Error ? error.message : 'Failed to store tokens');
-            setErrorMessage(error instanceof Error ? error.message : 'Failed to store tokens');
-          }
-          
-          popup?.close();
-        } else if (event.data.error) {
-          console.error('❌ OAuth error:', event.data.error);
-          toast.error(`OAuth failed: ${event.data.error}`);
-          setErrorMessage(`OAuth failed: ${event.data.error}`);
-        }
-        
-        window.removeEventListener('message', handleMessage);
-        setIsLoading(false);
-      };
-      
-      window.addEventListener('message', handleMessage);
-      
-      // Check if popup was closed manually
-      const checkClosed = setInterval(() => {
-        if (popup?.closed) {
-          console.log('🪟 Popup was closed manually');
-          clearInterval(checkClosed);
-          window.removeEventListener('message', handleMessage);
-          setIsLoading(false);
-          toast.info('OAuth popup was closed');
-        }
-      }, 1000);
-      
+      googleLogin();
     } catch (error) {
       console.error('❌ Gmail connection error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to connect Gmail';
@@ -200,45 +118,109 @@ export const EmailSummarySection = () => {
 
   const [nextPageToken, setNextPageToken] = useState<string | null>(null);
 
+  const fetchEmailsWithToken = async (accessToken: string, userEmail: string, pageToken: string | null = null) => {
+    try {
+      // Fetch emails from Gmail API directly
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const afterTimestamp = Math.floor(twentyFourHoursAgo.getTime() / 1000);
+      
+      const query = `after:${afterTimestamp}`;
+      let url = `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10&q=${query}`;
+      if (pageToken) {
+        url += `&pageToken=${pageToken}`;
+      }
+
+      const gmailResponse = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+
+      if (!gmailResponse.ok) {
+        throw new Error('Failed to fetch emails from Gmail API');
+      }
+
+      const gmailData = await gmailResponse.json();
+      const messages = gmailData.messages || [];
+
+      console.log(`📨 Found ${messages.length} messages`);
+
+      const processedEmails = [];
+
+      for (const message of messages) {
+        try {
+          const messageResponse = await fetch(
+            `https://gmail.googleapis.com/gmail/v1/users/me/messages/${message.id}`,
+            {
+              headers: { 'Authorization': `Bearer ${accessToken}` }
+            }
+          );
+
+          if (!messageResponse.ok) continue;
+
+          const messageData = await messageResponse.json();
+          const headers = messageData.payload.headers || [];
+          
+          const getHeader = (name: string) => headers.find((h: any) => 
+            h.name.toLowerCase() === name.toLowerCase()
+          )?.value || '';
+          
+          const from = getHeader('from');
+          const subject = getHeader('subject');
+          const date = new Date(parseInt(messageData.internalDate)).toISOString();
+          
+          const fromMatch = from.match(/^(.+?)\s*<(.+?)>$/) || [null, from.split('@')[0], from];
+          const senderName = fromMatch[1]?.replace(/"/g, '').trim() || fromMatch[2]?.split('@')[0] || 'Unknown';
+          const senderEmail = fromMatch[2] || from;
+          
+          processedEmails.push({
+            id: messageData.id,
+            senderName,
+            senderEmail,
+            subject: subject || 'No Subject',
+            date,
+            snippet: messageData.snippet || '',
+            aiSummary: `Email from ${senderName}: ${subject}`,
+            suggestedReplies: [
+              "Thank you for your email.",
+              "I'll review this and get back to you.",
+              "Thanks for reaching out."
+            ],
+            body: messageData.snippet || ''
+          });
+        } catch (error) {
+          console.error(`Error processing message ${message.id}:`, error);
+        }
+      }
+
+      setEmailSummaries(prevEmails => pageToken ? [...prevEmails, ...processedEmails] : processedEmails);
+      setNextPageToken(gmailData.nextPageToken || null);
+      setLastSyncTime(new Date().toLocaleTimeString());
+
+    } catch (error) {
+      console.error('Error fetching emails with token:', error);
+      throw error;
+    }
+  };
+
   const fetchEmails = async (pageToken: string | null = null) => {
     setIsSyncing(true);
     setErrorMessage('');
 
     try {
+      const accessToken = localStorage.getItem('gmail_access_token');
       const userEmail = localStorage.getItem('gmail_email');
-      if (!userEmail) {
+      
+      if (!accessToken || !userEmail) {
         throw new Error('Not authenticated');
       }
       
-      const response = await fetch('http://localhost:8082/fetch-emails', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userEmail: userEmail,
-          pageToken: pageToken,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      if (Array.isArray(data.emails)) {
-        setEmailSummaries(prevEmails => pageToken ? [...prevEmails, ...data.emails] : data.emails);
-        setNextPageToken(data.nextPageToken || null);
-      }
-      setLastSyncTime(new Date().toLocaleTimeString());
+      await fetchEmailsWithToken(accessToken, userEmail, pageToken);
 
     } catch (error) {
       console.error('Error fetching emails:', error);
       const errorMsg = error instanceof Error ? error.message : 'Failed to fetch emails';
       setErrorMessage(errorMsg);
       
-      if (errorMsg.includes('Gmail not connected')) {
+      if (errorMsg.includes('Not authenticated')) {
         setIsConnected(false);
       }
       

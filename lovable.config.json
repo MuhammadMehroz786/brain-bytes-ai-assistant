@@ -5,29 +5,13 @@
   "author": "Brain Bytes AI",
   "homepage": "https://brain-bytes-ai.lovable.app",
   "deployment": {
-    "type": "fullstack",
-    "frontend": {
-      "buildCommand": "npm run build",
-      "outputDirectory": "dist",
-      "startCommand": "npm run preview"
-    },
-    "backend": {
-      "main": "gmail-oauth-server.mjs",
-      "startCommand": "node gmail-oauth-server.mjs",
-      "port": 8082
-    },
+    "type": "static",
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
     "environmentVariables": {
-      "required": [
-        "GOOGLE_CLIENT_ID",
-        "GOOGLE_CLIENT_SECRET"
-      ],
       "optional": [
-        "OPENAI_API_KEY",
         "VITE_SUPABASE_URL",
-        "VITE_SUPABASE_ANON_KEY",
-        "NODE_ENV",
-        "PORT",
-        "REDIRECT_URI"
+        "VITE_SUPABASE_ANON_KEY"
       ]
     }
   },
