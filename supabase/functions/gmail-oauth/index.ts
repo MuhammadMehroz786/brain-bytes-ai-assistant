@@ -8,7 +8,7 @@ const corsHeaders = {
 // OAuth credentials from environment variables
 const GOOGLE_CLIENT_ID = Deno.env.get("GOOGLE_CLIENT_ID") || "your-google-client-id-here"
 const GOOGLE_CLIENT_SECRET = Deno.env.get("GOOGLE_CLIENT_SECRET") || "your-google-client-secret-here"
-const REDIRECT_URI = "http://localhost:8081/callback"
+const REDIRECT_URI = "https://preview--brain-bytes-ai-assistant.lovable.app/callback"
 
 Deno.serve(async (req) => {
   // Handle CORS preflight requests

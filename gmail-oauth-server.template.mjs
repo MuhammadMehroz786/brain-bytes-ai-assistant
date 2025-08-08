@@ -35,7 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 // Latest OAuth credentials
 const GOOGLE_CLIENT_ID = "your-google-client-id-here";
 const GOOGLE_CLIENT_SECRET = "your-google-client-secret-here";
-const REDIRECT_URI = "http://localhost:8082/callback";
+const REDIRECT_URI = process.env.REDIRECT_URI;
 
 console.log('🔧 OAuth Configuration:');
 console.log('📧 Client ID:', GOOGLE_CLIENT_ID);

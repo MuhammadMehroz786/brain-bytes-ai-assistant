@@ -148,7 +148,7 @@ serve(async (req) => {
         email: sanitizedEmail,
         password: sanitizedPassword,
         options: {
-          emailRedirectTo: `${req.headers.get('origin') || 'http://localhost:8080'}/`
+          emailRedirectTo: `${req.headers.get('origin') || 'https://preview--brain-bytes-ai-assistant.lovable.app'}/`
         }
       });
       userId = result.data.user?.id;
