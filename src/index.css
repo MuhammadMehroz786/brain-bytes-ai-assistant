@@ -144,3 +144,57 @@ All colors MUST be HSL.
 .animate-slide-up {
   animation: slide-up 0.5s ease-out;
 }
+
+/* Mobile helpers: arrows, sticky CTA, why strip */
+.section-arrow {
+  display: block;
+  margin: 10px auto;
+  color: hsl(215 12% 64%);
+  font-size: 16px;
+  animation: arrow-bounce 3s infinite;
+}
+@keyframes arrow-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .section-arrow { animation: none; }
+}
+
+.sticky-cta {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)));
+  box-shadow: 0 -4px 12px rgba(16,24,40,0.05);
+  padding: 14px 0;
+  border-radius: 16px;
+  color: #fff;
+  font-size: 17px;
+  text-align: center;
+}
+
+.why-strip {
+  background: hsla(239 84% 66% / 0.06);
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-around;
+  gap: 8px;
+  font-size: 13px;
+  color: hsl(222.2 47.4% 11.2%);
+}
+.why-strip-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Optional wrapper for sticky CTA gradient background */
+.cta-wrap {
+  position: sticky;
+  bottom: 0;
+  z-index: 15;
+  padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(246,248,251,0), rgba(246,248,251,1) 40%);
+}

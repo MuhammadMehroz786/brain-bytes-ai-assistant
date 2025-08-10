@@ -5,7 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { WaitlistSignup } from "./WaitlistSignup";
-import { ArrowDown, CheckCircle2, BookOpen, Bot, LayoutDashboard, ListChecks, Zap } from "lucide-react";
+import { ChevronDown, CheckCircle2, BookOpen, Bot, LayoutDashboard, ListChecks, Zap } from "lucide-react";
 
 interface IntroScreenProps {
   onStart: () => void;
@@ -195,135 +195,128 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile & Tablet Header */}
-      <header className="lg:hidden h-11 bg-card/70 backdrop-blur-md border-b border-border px-4 shadow-sm">
-        <div className="flex items-center justify-between h-full">
-          <div className="flex items-center">
-            <span className="text-base font-bold bg-gradient-to-r from-gradient-start via-gradient-mid to-gradient-start bg-clip-text text-transparent">
-              Brain Bytes
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="secondary"
-              onClick={onAuth}
-              className="h-8 px-3 text-xs bg-card border border-border hover:bg-secondary/80 active:scale-[0.98] transition"
-            >
-              Sign In
-            </Button>
-            <Button
-              onClick={() => setIsWaitlistOpen(true)}
-              className="h-8 px-3 text-xs bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90 rounded-lg shadow-sm hover:shadow-md"
-            >
-              Join the Waitlist
-            </Button>
+      <header className="lg:hidden h-[58px] bg-white/85 backdrop-blur-md border-b border-[#E9ECF2]">
+        <div className="h-full">
+          <div className="mx-auto max-w-[640px] px-6 flex items-center justify-between h-full">
+            <div className="flex items-center">
+              <span className="text-[20px] font-extrabold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Brain Bytes
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                onClick={() => setIsWaitlistOpen(true)}
+                className="h-10 px-3 text-sm rounded-[12px] bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90"
+              >
+                Join the Waitlist
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={onAuth}
+                className="h-10 px-3 text-sm rounded-[12px] bg-card border border-border hover:bg-secondary/80"
+              >
+                Sign In
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="lg:hidden h-[calc(100dvh-44px)] overflow-y-auto bg-primary-light/60">
-        <div className="grid grid-rows-[1.15fr_.85fr_1.05fr_.9fr_.65fr] h-full">
-          {/* 1. Hero block */}
-          <section className="px-6 pt-5 pb-1 text-center flex flex-col justify-between">
-            <div>
-              <h1 className="text-[clamp(22px,5vw,28px)] font-bold leading-tight">
-                <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                  Overwhelmed by AI?
-                </span>
-              </h1>
-              <p className="mt-1.5 text-[13px] text-muted-foreground">We solve it for the price of lunch</p>
-            </div>
-            <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/80 animate-float mx-auto mb-0.5" aria-hidden="true" />
+      <main className="lg:hidden h-[calc(100dvh-58px)] overflow-y-auto bg-primary-light/60">
+        <div className="mx-auto max-w-[640px] px-6">
+          {/* 1. Hero */}
+          <section className="py-4 text-center">
+            <h1 className="text-[clamp(22px,5vw,28px)] font-bold leading-tight">
+              <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                Overwhelmed by AI?
+              </span>
+            </h1>
+            <p className="mt-2 text-[13px] text-muted-foreground">We solve it for the price of lunch</p>
           </section>
+          <ChevronDown className="section-arrow" aria-hidden="true" />
 
-          {/* 2. 3‑Step Process (minimal) */}
-          <section className="px-5 flex flex-col justify-between">
-            <div className="grid grid-cols-3 gap-2.5">
-              <div className="flex flex-col items-center gap-1.5">
-                <ListChecks className="w-4 h-4 text-primary" />
-                <span className="text-[11px] font-medium text-foreground text-center">Answer 5 Questions</span>
-                <span className="text-[10px] text-muted-foreground text-center">Tell us your goals.</span>
+          {/* 2. 3‑Step Process (flat) */}
+          <section className="py-4">
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="flex flex-col items-center">
+                <ListChecks className="w-5 h-5 text-primary mb-1.5" />
+                <span className="text-[15px] font-semibold text-foreground">Answer 5 Questions</span>
+                <span className="text-[13px] text-muted-foreground">Tell us your goals.</span>
               </div>
-              <div className="flex flex-col items-center gap-1.5">
-                <LayoutDashboard className="w-4 h-4 text-accent" />
-                <span className="text-[11px] font-medium text-foreground text-center">Get Your Dashboard</span>
-                <span className="text-[10px] text-muted-foreground text-center">Your tools & guides.</span>
+              <div className="flex flex-col items-center">
+                <LayoutDashboard className="w-5 h-5 text-accent mb-1.5" />
+                <span className="text-[15px] font-semibold text-foreground">Get Your Dashboard</span>
+                <span className="text-[13px] text-muted-foreground">Tools & guides.</span>
               </div>
-              <div className="flex flex-col items-center gap-1.5">
-                <Zap className="w-4 h-4 text-success" />
-                <span className="text-[11px] font-medium text-foreground text-center">Start in Minutes</span>
-                <span className="text-[10px] text-muted-foreground text-center">Skip the overwhelm.</span>
+              <div className="flex flex-col items-center">
+                <Zap className="w-5 h-5 text-success mb-1.5" />
+                <span className="text-[15px] font-semibold text-foreground">Start in Minutes</span>
+                <span className="text-[13px] text-muted-foreground">Skip the overwhelm.</span>
               </div>
             </div>
-            <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/80 animate-float mx-auto" aria-hidden="true" />
           </section>
+          <ChevronDown className="section-arrow" aria-hidden="true" />
 
-          {/* 3. Product Teaser (video) */}
-          <section className="px-5 flex flex-col justify-between">
-            <div className="rounded-xl overflow-hidden border border-border shadow-sm bg-card">
+          {/* 3. Video/Mockup */}
+          <section className="py-4">
+            <div className="rounded-2xl overflow-hidden border border-[#E9ECF2] bg-card aspect-video">
               <iframe
-                src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ"
+                src="https://www.youtube.com/embed/1NnXmp1M0KM?rel=0&modestbranding=1"
                 width="100%"
-                height="180"
+                height="100%"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                className="w-full aspect-video"
+                className="w-full h-full"
                 title="Brain Bytes Demo"
               />
             </div>
-            <p className="mt-1 text-center text-[11px] text-muted-foreground">See what you’ll get.</p>
-            <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/80 animate-float mx-auto mt-0.5" aria-hidden="true" />
+            <p className="mt-2 text-center text-[13px] text-[#7A8191]">See what you’ll get.</p>
           </section>
+          <ChevronDown className="section-arrow" aria-hidden="true" />
 
-          {/* 4. Features (3 small cards) */}
-          <section className="px-5 flex flex-col justify-between">
-            <div className="grid grid-cols-3 gap-2.5">
-              <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-2.5 shadow-sm hover:shadow-md transition-all">
-                <CheckCircle2 className="w-4 h-4 text-primary" />
-                <span className="text-[11px] font-semibold text-foreground text-center">Curated Picks</span>
-                <span className="text-[10px] text-muted-foreground text-center">Only what matters.</span>
+          {/* 4. Features */}
+          <section className="py-4">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="flex flex-col items-center bg-white rounded-2xl p-4 text-center shadow-[0_2px_8px_rgba(16,24,40,0.06)] transition-transform duration-150 active:-translate-y-1 active:shadow-lg">
+                <CheckCircle2 className="w-[22px] h-[22px] text-primary" />
+                <h4 className="mt-1.5 text-[16px] font-semibold text-foreground">Curated Picks</h4>
+                <p className="mt-0.5 text-[13px] text-[#6B7280] leading-snug">Only what matters.</p>
               </div>
-              <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-2.5 shadow-sm hover:shadow-md transition-all">
-                <BookOpen className="w-4 h-4 text-accent" />
-                <span className="text-[11px] font-semibold text-foreground text-center">How‑To Guides</span>
-                <span className="text-[10px] text-muted-foreground text-center">Bite-size steps.</span>
+              <div className="flex flex-col items-center bg-white rounded-2xl p-4 text-center shadow-[0_2px_8px_rgba(16,24,40,0.06)] transition-transform duration-150 active:-translate-y-1 active:shadow-lg">
+                <BookOpen className="w-[22px] h-[22px] text-accent" />
+                <h4 className="mt-1.5 text-[16px] font-semibold text-foreground">How‑To Guides</h4>
+                <p className="mt-0.5 text-[13px] text-[#6B7280] leading-snug">Bite-size steps.</p>
               </div>
-              <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-2.5 shadow-sm hover:shadow-md transition-all">
-                <Bot className="w-4 h-4 text-success" />
-                <span className="text-[11px] font-semibold text-foreground text-center">Assistant</span>
-                <span className="text-[10px] text-muted-foreground text-center">Personal to you.</span>
+              <div className="flex flex-col items-center bg-white rounded-2xl p-4 text-center shadow-[0_2px_8px_rgba(16,24,40,0.06)] transition-transform duration-150 active:-translate-y-1 active:shadow-lg">
+                <Bot className="w-[22px] h-[22px] text-success" />
+                <h4 className="mt-1.5 text-[16px] font-semibold text-foreground">Assistant</h4>
+                <p className="mt-0.5 text-[13px] text-[#6B7280] leading-snug">Personal to you.</p>
               </div>
             </div>
-
-            {/* Why This Works strip */}
-            <div className="mt-2 grid grid-cols-3 gap-2.5">
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-base leading-none">🏁</span>
-                <span className="text-[11px] font-medium text-foreground text-center">No AI Experience Required</span>
-                <span className="text-[10px] text-muted-foreground text-center">Start from zero, get results fast.</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-base leading-none">🎯</span>
-                <span className="text-[11px] font-medium text-foreground text-center">Skip the Noise</span>
-                <span className="text-[10px] text-muted-foreground text-center">Only see tools relevant to you.</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <span className="text-base leading-none">📈</span>
-                <span className="text-[11px] font-medium text-foreground text-center">Learn While You Work</span>
-                <span className="text-[10px] text-muted-foreground text-center">Grow skills as you use AI daily.</span>
-              </div>
-            </div>
-            {/* No arrow here – replaced by the strip per spec */}
           </section>
+          <ChevronDown className="section-arrow" aria-hidden="true" />
 
-          {/* 5. CTA block */}
-          <section className="px-5 flex flex-col justify-center">
-            <Button onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-base px-6 py-3.5 rounded-2xl shadow-md hover:shadow-lg transition-all">
-              Join the Waitlist
-            </Button>
-            <p className="mt-2 text-center text-[11px] text-muted-foreground">Launching soon. Early members get perks.</p>
-            <footer className="mt-2 pt-3">
-              <div className="text-center text-[11px] text-muted-foreground">
+          {/* 5. Why This Works */}
+          <section className="py-4">
+            <div className="why-strip">
+              <div className="why-strip-item"><div>🏁</div><div>No experience needed</div></div>
+              <div className="why-strip-item"><div>🎯</div><div>Only relevant tools</div></div>
+              <div className="why-strip-item"><div>📈</div><div>Learn while you work</div></div>
+            </div>
+          </section>
+          <ChevronDown className="section-arrow" aria-hidden="true" />
+
+          {/* 6. CTA (sticky) + 7. Footer */}
+          <section className="pt-2 pb-4">
+            <div className="sticky bottom-0 z-20 pt-3 pb-[calc(env(safe-area-inset-bottom)+8px)] bg-gradient-to-b from-transparent to-[#F6F8FB]">
+              <Button onClick={() => setIsWaitlistOpen(true)} className="w-full h-14 text-[17px] rounded-2xl bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-[0_-4px_12px_rgba(16,24,40,0.05)]">
+                Join the Waitlist
+              </Button>
+              <p className="mt-2 text-center text-[12.5px] text-[#7A8191]">Launching soon. Early members get perks.</p>
+            </div>
+            <footer className="pt-4 pb-6">
+              <div className="text-center text-[12px] text-[#7A8191]">
                 © 2025 Brain Bytes | 
                 <Link to="/privacy-policy" className="hover:text-primary transition-colors duration-200 mx-1">Privacy Policy</Link> | 
                 <Link to="/terms-of-service" className="hover:text-primary transition-colors duration-200 mx-1">Terms of Service</Link> | 
