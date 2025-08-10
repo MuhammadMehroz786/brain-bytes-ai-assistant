@@ -195,7 +195,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile & Tablet Header */}
-      <header className="lg:hidden h-12 bg-card/70 backdrop-blur-md border-b border-border px-4 shadow-sm">
+      <header className="lg:hidden h-11 bg-card/70 backdrop-blur-md border-b border-border px-4 shadow-sm">
         <div className="flex items-center justify-between h-full">
           <div className="flex items-center">
             <span className="text-base font-bold bg-gradient-to-r from-gradient-start via-gradient-mid to-gradient-start bg-clip-text text-transparent">
@@ -212,7 +212,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </Button>
             <Button
               onClick={() => setIsWaitlistOpen(true)}
-              className="h-9 px-3 text-xs bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90 rounded-lg shadow-sm hover:shadow-md"
+              className="h-8 px-3 text-xs bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90 rounded-lg shadow-sm hover:shadow-md"
             >
               Join the Waitlist
             </Button>
@@ -220,7 +220,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </header>
 
-      <main className="lg:hidden h-[calc(100dvh-48px)] overflow-hidden bg-primary-light/60">
+      <main className="lg:hidden h-[calc(100dvh-44px)] overflow-y-auto bg-primary-light/60">
         <div className="grid grid-rows-[1.15fr_.85fr_1.05fr_.9fr_.65fr] h-full">
           {/* 1. Hero block */}
           <section className="px-6 pt-5 pb-1 text-center flex flex-col justify-between">
@@ -322,6 +322,16 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               Join the Waitlist
             </Button>
             <p className="mt-2 text-center text-[11px] text-muted-foreground">Launching soon. Early members get perks.</p>
+            <footer className="mt-2 pt-3">
+              <div className="text-center text-[11px] text-muted-foreground">
+                © 2025 Brain Bytes | 
+                <Link to="/privacy-policy" className="hover:text-primary transition-colors duration-200 mx-1">Privacy Policy</Link> | 
+                <Link to="/terms-of-service" className="hover:text-primary transition-colors duration-200 mx-1">Terms of Service</Link> | 
+                <Link to="/refund-policy" className="hover:text-primary transition-colors duration-200 mx-1">Refund Policy</Link> | 
+                <Link to="/cookie-policy" className="hover:text-primary transition-colors duration-200 mx-1">Cookie Policy</Link> | 
+                <Link to="/contact" className="hover:text-primary transition-colors duration-200 mx-1">Contact</Link>
+              </div>
+            </footer>
           </section>
         </div>
       </main>
