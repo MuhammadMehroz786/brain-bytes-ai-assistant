@@ -260,7 +260,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             />
           </figure>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">See what you’ll get</p>
-          <button onClick={() => setIsWaitlistOpen(true)} className="mt-1 inline-block text-center text-[11px] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent hover:opacity-90 px-2 py-1 rounded-md">Get early access →</button>
+          <button onClick={() => setIsWaitlistOpen(true)} className="mt-1 inline-block text-center text-[11px] font-semibold bg-gradient-to-r from-primary/90 to-accent/90 bg-clip-text text-transparent hover:opacity-95 px-2 py-1 rounded-md">Get early access →</button>
           <div className="h-4 mt-1" aria-hidden="true" />
         </section>
 

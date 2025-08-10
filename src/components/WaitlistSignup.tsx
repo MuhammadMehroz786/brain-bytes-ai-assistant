@@ -102,8 +102,8 @@ export const WaitlistSignup = ({ isOpen, onClose, triggerText }: WaitlistSignupP
 
                 <Button
                   type="submit"
-                  disabled={isSubmitting || !email}
-                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:from-muted disabled:to-muted text-white font-semibold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                 >
                   {isSubmitting ? (
                     <div className="flex items-center gap-2">
