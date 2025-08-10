@@ -80,6 +80,19 @@ All colors MUST be HSL.
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  :root {
+    /* Calendar semantic tokens */
+    --cal-focus: 262 83% 58%; /* #7C3AED */
+    --cal-focus-accent: 189 92% 55%; /* #22D3EE */
+    --cal-meeting: 217 91% 60%; /* #3B82F6 */
+    --cal-personal: 152 76% 40%; /* #10B981 */
+    --cal-busy: 38 92% 50%; /* #F59E0B */
+
+    --cal-morning-bg: 210 100% 98%; /* ~#F5FAFF */
+    --cal-afternoon-bg: 220 100% 98%; /* ~#F9FBFF */
+    --cal-evening-bg: 255 100% 98%; /* ~#F8F6FF */
+  }
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;

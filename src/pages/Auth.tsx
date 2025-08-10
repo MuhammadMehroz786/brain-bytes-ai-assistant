@@ -13,6 +13,7 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [staySignedIn, setStaySignedIn] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 

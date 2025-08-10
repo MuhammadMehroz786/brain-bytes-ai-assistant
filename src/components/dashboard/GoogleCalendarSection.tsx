@@ -3,9 +3,11 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Calendar, CheckCircle, XCircle, Loader } from 'lucide-react';
+import { Calendar, CheckCircle, XCircle, Loader, MoreHorizontal } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { NaturalLanguageCalendar } from '../NaturalLanguageCalendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export const GoogleCalendarSection = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -19,6 +21,16 @@ export const GoogleCalendarSection = () => {
   const [isSuggesting, setIsSuggesting] = useState(false);
   const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
   const [busySlots, setBusySlots] = useState<any[]>([]);
+  const [aiSuggestions, setAiSuggestions] = useState(true);
+  const [compact, setCompact] = useState(false);
+  // Quick Add UI state
+  const [qaOpen, setQaOpen] = useState(false);
+  const [qaTitle, setQaTitle] = useState("");
+  const [qaType, setQaType] = useState<'focus'|'meeting'|'other'>('other');
+  const [qaStart, setQaStart] = useState<Date | null>(null);
+  const [qaDuration, setQaDuration] = useState<number>(30);
+  const [dragStartHour, setDragStartHour] = useState<number | null>(null);
+  const [dragEndHour, setDragEndHour] = useState<number | null>(null);
 
   useEffect(() => {
     const calendarConnected = localStorage.getItem('google_calendar_connected');
@@ -309,42 +321,200 @@ export const GoogleCalendarSection = () => {
             <p className="text-sm text-gray-500 mt-2">No busy slots found for the next 3 days.</p>
           )}
 
-          <h4 className="text-md font-medium mt-6">Full Day Calendar:</h4>
-          <div className="mt-2 border rounded-lg p-4">
-            {/* This is a simplified representation. A real calendar view would be more complex. */}
-            {Array.from({ length: 24 }).map((_, hour) => {
-              const hourStart = new Date();
-              hourStart.setHours(hour, 0, 0, 0);
-              const hourEnd = new Date(hourStart.getTime() + 60 * 60 * 1000);
+          <div className="mt-6 flex items-center justify-between">
+            <div className="text-slate-700 font-semibold">
+              {new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+            </div>
+            <div className="hidden sm:flex items-center gap-3 text-xs">
+              <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-focus))' }} /> Focus</span>
+              <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-meeting))' }} /> Meeting</span>
+              <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-personal))' }} /> Personal</span>
+              <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-busy))' }} /> Busy</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant={aiSuggestions ? 'secondary' : 'outline'} size="sm" aria-pressed={aiSuggestions} onClick={() => setAiSuggestions((v)=>!v)} className="rounded-full px-2.5 py-1 text-xs">
+                AI Suggestions
+              </Button>
+              <Button variant={compact ? 'secondary' : 'outline'} size="sm" aria-pressed={compact} onClick={() => setCompact((v)=>!v)} className="rounded-full px-2.5 py-1 text-xs">
+                Compact
+              </Button>
+            </div>
+          </div>
 
-              const isBusy = busySlots.some(slot => {
-                const slotStart = new Date(slot.start);
-                const slotEnd = new Date(slot.end);
-                return (hourStart < slotEnd && hourEnd > slotStart);
-              });
+          <div className="mt-3 border rounded-lg">
+            <div className={`max-h-[520px] overflow-y-auto divide-y`}> 
+              {Array.from({ length: 24 }).map((_, hour) => {
+                const hourStart = new Date();
+                hourStart.setHours(hour, 0, 0, 0);
+                const hourEnd = new Date(hourStart.getTime() + 60 * 60 * 1000);
 
-              const eventsInHour = calendarEvents.filter(event => {
-                const eventStart = new Date(event.start.dateTime || event.start.date);
-                const eventEnd = new Date(event.end.dateTime || event.end.date);
-                return (eventStart < hourEnd && eventEnd > hourStart);
-              });
+                const isBusy = busySlots.some(slot => {
+                  const slotStart = new Date(slot.start);
+                  const slotEnd = new Date(slot.end);
+                  return (hourStart < slotEnd && hourEnd > slotStart);
+                });
 
-              return (
-                <div key={hour} className="flex items-center py-1 border-b last:border-b-0">
-                  <span className="w-16 text-sm text-gray-600">{hour}:00</span>
-                  <div className="flex-1 ml-2">
-                    {isBusy ? (
-                      <span className="text-red-500 text-sm">Busy</span>
-                    ) : (
-                      <span className="text-green-500 text-sm">Free</span>
+                const eventsInHour = calendarEvents.filter(event => {
+                  const eventStart = new Date(event.start.dateTime || event.start.date);
+                  const eventEnd = new Date(event.end.dateTime || event.end.date);
+                  return (eventStart < hourEnd && eventEnd > hourStart);
+                });
+
+                const sectionBg = hour >= 5 && hour < 12
+                  ? 'hsl(var(--cal-morning-bg))'
+                  : hour >= 12 && hour < 18
+                  ? 'hsl(var(--cal-afternoon-bg))'
+                  : hour >= 18
+                  ? 'hsl(var(--cal-evening-bg))'
+                  : 'transparent';
+
+                const showSectionHeader = hour === 5 || hour === 12 || hour === 18;
+                const sectionTitle = hour === 5 ? 'Morning' : hour === 12 ? 'Afternoon' : 'Evening';
+
+                const rowClasses = compact ? 'py-1.5' : 'py-2.5';
+
+                return (
+                  <div key={hour} id={showSectionHeader ? sectionTitle.toLowerCase() : undefined} style={{ backgroundColor: sectionBg }} className="relative">
+                    {showSectionHeader && (
+                      <div className="sticky top-0 z-10 px-4 py-1.5 text-xs font-semibold text-slate-700 bg-white/70 backdrop-blur border-b">
+                        {sectionTitle}
+                      </div>
                     )}
-                    {eventsInHour.map(event => (
-                      <span key={event.id} className="ml-2 text-blue-700 text-sm">{event.summary}</span>
-                    ))}
+
+                    <div 
+                      className={`group flex items-stretch ${rowClasses} px-4`}
+                      onMouseDown={(e) => {
+                        if (eventsInHour.length === 0 && !isBusy) {
+                          setDragStartHour(hour);
+                          setDragEndHour(hour);
+                        }
+                      }}
+                      onMouseEnter={() => {
+                        if (dragStartHour !== null) setDragEndHour(hour);
+                      }}
+                      onMouseUp={() => {
+                        if (dragStartHour !== null) {
+                          const start = new Date(); start.setHours(Math.min(dragStartHour, hour), 0, 0, 0);
+                          const end = new Date(); end.setHours(Math.max(dragStartHour, hour) + 1, 0, 0, 0);
+                          setQaStart(start);
+                          setQaDuration(Math.max(15, Math.round((end.getTime() - start.getTime()) / 60000)));
+                          setQaTitle('');
+                          setQaType('other');
+                          setQaOpen(true);
+                          setDragStartHour(null);
+                          setDragEndHour(null);
+                        }
+                      }}
+                    >
+                      <span className="w-16 shrink-0 text-xs text-muted-foreground leading-6">{hour.toString().padStart(2, '0')}:00</span>
+                      <div className="flex-1 min-h-[28px] relative">
+                        {eventsInHour.length > 0 ? (
+                          <div className="flex flex-col gap-1">
+                            {eventsInHour.map(event => {
+                              const title = event.summary || 'Untitled';
+                              const lower = title.toLowerCase();
+                              const type: 'focus'|'meeting'|'personal'|'busy' = lower.includes('focus') ? 'focus' : (lower.includes('meet') || lower.includes('call')) ? 'meeting' : 'personal';
+                              const colorVar = type === 'focus' ? '--cal-focus' : type === 'meeting' ? '--cal-meeting' : '--cal-personal';
+                              return (
+                                <TooltipProvider key={event.id}>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className="relative rounded-lg border px-3 py-2 shadow-sm hover:shadow-lg transition"
+                                        style={{ backgroundColor: `hsl(var(${colorVar}) / 0.12)`, borderColor: `hsl(var(${colorVar}) / 0.2)` }}
+                                      >
+                                        <div className="flex items-center justify-between gap-2">
+                                          <div className="min-w-0">
+                                            <div className="text-sm font-medium truncate">{title}</div>
+                                            <div className="text-xs text-muted-foreground truncate">
+                                              {formatTime(event.start.dateTime || event.start.date)} - {formatTime(event.end.dateTime || event.end.date)}
+                                            </div>
+                                          </div>
+                                          <button aria-label="Event actions" className="opacity-0 group-hover:opacity-100 transition text-muted-foreground">
+                                            <MoreHorizontal className="h-4 w-4" />
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <div className="max-w-xs">
+                                        <div className="font-semibold text-sm mb-1">{title}</div>
+                                        <div className="text-xs text-muted-foreground mb-1">{formatTime(event.start.dateTime || event.start.date)} - {formatTime(event.end.dateTime || event.end.date)}</div>
+                                        {event.location && <div className="text-xs">{event.location}</div>}
+                                        {event.description && <div className="text-xs truncate">{event.description}</div>}
+                                      </div>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span>&mdash;</span>
+                            <Popover open={qaOpen} onOpenChange={setQaOpen}>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  aria-label={`Quick add at ${hour}:00`}
+                                  onClick={() => {
+                                    const start = new Date(); start.setHours(hour, 0, 0, 0);
+                                    setQaStart(start);
+                                    setQaDuration(30);
+                                    setQaTitle('');
+                                    setQaType('other');
+                                  }}
+                                  className="opacity-0 group-hover:opacity-100 transition text-xs"
+                                >
+                                  + Quick add
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-72" align="end">
+                                <div className="space-y-2">
+                                  <Input value={qaTitle} onChange={(e)=>setQaTitle(e.target.value)} placeholder="Title" aria-label="Title" />
+                                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                    <span>{qaStart ? qaStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : `${hour.toString().padStart(2,'0')}:00`}</span>
+                                    <span>&middot;</span>
+                                    <select value={qaDuration} onChange={(e)=>setQaDuration(parseInt(e.target.value))} className="border rounded px-2 py-1 bg-background">
+                                      {[15,30,60,90].map(d => <option key={d} value={d}>{d}m</option>)}
+                                    </select>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {(['focus','meeting','other'] as const).map(t => (
+                                      <Button key={t} type="button" variant={qaType===t?'secondary':'outline'} size="sm" className="rounded-full px-2.5 py-1 text-xs" onClick={()=>setQaType(t)}>
+                                        {t.charAt(0).toUpperCase()+t.slice(1)}
+                                      </Button>
+                                    ))}
+                                  </div>
+                                  <div className="flex justify-end gap-2">
+                                    <Button variant="outline" size="sm" onClick={()=>setQaOpen(false)}>Cancel</Button>
+                                    <Button size="sm" onClick={async()=>{
+                                      const accessToken = localStorage.getItem('google_calendar_access_token');
+                                      if (!accessToken) { toast.error('Please connect your calendar first.'); return; }
+                                      const start = qaStart || new Date(new Date().setHours(hour,0,0,0));
+                                      const end = new Date(start.getTime() + qaDuration*60000);
+                                      const event = { summary: qaTitle || (qaType==='focus'?'Focus':qaType==='meeting'?'Meeting':'Task'), start: { dateTime: start.toISOString() }, end: { dateTime: end.toISOString() } };
+                                      const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', { method:'POST', headers:{ 'Authorization': `Bearer ${accessToken}`, 'Content-Type':'application/json' }, body: JSON.stringify(event) });
+                                      if (res.ok) { toast.success('Event added'); setQaOpen(false); setQaTitle(''); setQaStart(null); fetchCalendarEvents(); } else { toast.error('Failed to add'); }
+                                    }}>Add</Button>
+                                  </div>
+                                </div>
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {aiSuggestions && eventsInHour.length === 0 && !isBusy && ((hour <= 21) && (hour % 3 === 0)) && (
+                      <div className="px-4 pb-1">
+                        <button className="text-xs italic text-slate-400/70 hover:text-slate-500" onClick={() => { setQaOpen(true); const start = new Date(); start.setHours(hour,0,0,0); setQaStart(start); setQaTitle('Quick writing block'); setQaDuration(30); }}>✍️ 30‑min writing block?</button>
+                      </div>
+                    )}
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       ) : (
