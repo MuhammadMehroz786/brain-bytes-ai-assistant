@@ -169,7 +169,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   };
 
   return (
-    <div className="min-h-[100dvh] overflow-hidden lg:overflow-visible bg-primary-light/60">
+    <div className="min-h-[100dvh] overflow-hidden lg:overflow-visible bg-[#f4faff]">
       {/* Desktop Header */}
       <div className="hidden lg:flex sticky top-0 z-50 bg-gradient-to-r from-[#F6F0FF] to-[#EAF7FF] backdrop-blur-md border-b border-slate-200/60 px-6 py-2 justify-between items-center">
         <div className="flex items-center space-x-3">
@@ -221,7 +221,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <section className="px-6 pt-5 pb-3 text-center">
           <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
           <p className="mt-2 text-sm text-muted-foreground">We solve it for the price of lunch.</p>
-          <p className="mt-2 text-[11px] text-muted-foreground">Hand-picked tools and steps, tested by the Brain Bytes team.</p>
+          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
+          <p className="mt-1 text-[11px] text-muted-foreground">Hand-picked tools and steps, tested by the Brain Bytes team.</p>
         </section>
         {/* 1) First Section: Three-step row */}
         <section className="px-6 pt-2 pb-1 flex flex-col justify-between">
@@ -239,6 +240,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               <span className="text-[11px] font-medium text-foreground text-center">Start in Minutes</span>
             </div>
           </div>
+          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
         </section>
 
         {/* 2) Second Section: Video + caption */}
@@ -257,6 +259,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </figure>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">See what you’ll get</p>
           <a href="#join-cta" className="mt-1 inline-block text-center text-[11px] text-muted-foreground hover:text-primary underline underline-offset-2">Get early access →</a>
+          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
         </section>
 
         {/* 3) Third Section: Feature row */}
@@ -278,12 +281,12 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               
             </div>
           </div>
-          
+          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
         </section>
 
         {/* 4) Fourth Section: CTA */}
         <section className="px-6 pb-4 flex flex-col justify-center">
-          <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-xl px-7 py-5 rounded-2xl shadow-md hover:shadow-lg transition-all">
+          <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-lg px-6 py-4 rounded-2xl shadow-md hover:shadow-lg transition-all">
             Join the Waitlist
           </Button>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">Launch price: $29 (less than lunch).</p>
