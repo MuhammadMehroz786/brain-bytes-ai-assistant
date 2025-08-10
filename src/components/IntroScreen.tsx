@@ -169,7 +169,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4faff]">
+    <div className="min-h-[100dvh] overflow-hidden lg:overflow-visible bg-[#f4faff]">
       {/* Desktop Header */}
       <div className="hidden lg:flex sticky top-0 z-50 bg-gradient-to-r from-[#F6F0FF] to-[#EAF7FF] backdrop-blur-md border-b border-slate-200/60 px-6 py-2 justify-between items-center">
         <div className="flex items-center space-x-3">
@@ -213,15 +213,15 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </header>
 
-      <main className="lg:hidden min-h-[calc(100dvh-56px)] bg-primary-light/60 overflow-x-hidden">
+      <main className="lg:hidden h-[calc(100dvh-56px-48px)] bg-primary-light/60 overflow-x-hidden overflow-y-hidden">
         {/* Hero Section */}
         <section className="px-6 pt-5 pb-3 text-center">
           <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
-          <p className="mt-2 text-sm text-muted-foreground">We solve it for the price of lunch</p>
-          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-2" aria-hidden="true" />
+          <p className="mt-2 text-sm text-muted-foreground">We solve it for the price of lunch.</p>
+          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
         </section>
         {/* 1) First Section: Three-step row */}
-        <section className="px-6 pt-4 pb-2 flex flex-col justify-between">
+        <section className="px-6 pt-2 pb-1 flex flex-col justify-between">
           <div className="grid grid-cols-3 gap-3">
             <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm">
               <ListChecks className="w-4 h-4 text-primary" />
@@ -236,7 +236,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               <span className="text-[11px] font-medium text-foreground text-center">Start in Minutes</span>
             </div>
           </div>
-          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-2" aria-hidden="true" />
+          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
         </section>
 
         {/* 2) Second Section: Video + caption */}
@@ -245,7 +245,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             <iframe
               src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ"
               width="100%"
-              height="180"
+              height="160"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -263,17 +263,17 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm">
               <CheckCircle2 className="w-4 h-4 text-primary" />
               <span className="text-[11px] font-semibold text-foreground text-center">Curated Picks</span>
-              <span className="text-[10px] text-muted-foreground text-center">Only what matters.</span>
+              
             </div>
             <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm">
               <BookOpen className="w-4 h-4 text-accent" />
               <span className="text-[11px] font-semibold text-foreground text-center">How‑To Guides</span>
-              <span className="text-[10px] text-muted-foreground text-center">Bite-size steps.</span>
+              
             </div>
             <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm">
               <Bot className="w-4 h-4 text-success" />
-              <span className="text-[11px] font-semibold text-foreground text-center">Assistant</span>
-              <span className="text-[10px] text-muted-foreground text-center">Personal to you.</span>
+              <span className="text-[11px] font-semibold text-foreground text-center">AI Assistant</span>
+              
             </div>
           </div>
           <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
@@ -281,7 +281,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
         {/* 4) Fourth Section: CTA */}
         <section className="px-6 pb-4 flex flex-col justify-center">
-          <Button onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-base px-6 py-3 rounded-2xl shadow-md hover:shadow-lg transition-all">
+          <Button onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-lg px-6 py-4 rounded-2xl shadow-md hover:shadow-lg transition-all">
             Join the Waitlist
           </Button>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">Launching soon. Early members get perks.</p>
@@ -289,7 +289,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </main>
 
       {/* Mobile Footer */}
-      <footer className="lg:hidden px-4 pb-4">
+      <footer className="lg:hidden px-4 pb-4 bg-primary-light/60">
         <div className="text-[10px] text-muted-foreground text-center">
           © 2025 Brain Bytes · <Link to="/privacy-policy" className="hover:text-primary">Privacy</Link> · <Link to="/terms-of-service" className="hover:text-primary">Terms</Link> · <Link to="/refund-policy" className="hover:text-primary">Refund</Link> · <Link to="/cookie-policy" className="hover:text-primary">Cookies</Link> · <Link to="/contact" className="hover:text-primary">Contact</Link>
         </div>
