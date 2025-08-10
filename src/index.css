@@ -198,3 +198,51 @@ All colors MUST be HSL.
   padding: 12px 0 calc(12px + env(safe-area-inset-bottom));
   background: linear-gradient(180deg, rgba(246,248,251,0), rgba(246,248,251,1) 40%);
 }
+
+/* Compact Mobile (≤640px) non-scroll rebuild */
+@media (max-width: 640px){
+  html,body{height:100%; background:#F9FAFB;}
+  .m-wrap{height:100dvh; display:grid; grid-template-rows:56px 90px 12px 88px 12px 140px 72px 56px 64px 24px; gap:8px;}
+  .m-container{padding:0 12px; max-width:640px; margin:0 auto;}
+
+  /* Header */
+  .m-header{display:flex; align-items:center; justify-content:space-between; padding:0 12px; border-bottom:1px solid #E9ECF2; background:rgba(255,255,255,.9);}  
+  .m-logo{font:700 20px/1 Inter,system-ui; background:linear-gradient(90deg,#7C3AED,#06B6D4); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .m-actions{display:flex; gap:8px;}
+  .btn{height:40px; padding:0 14px; border-radius:12px; display:flex; align-items:center; font:700 14px/1 Inter; border:1px solid #E5E7EB; background:#fff; color:#111827;}
+  .btn.primary{border:none; color:#fff; background:linear-gradient(90deg,#7C3AED,#06B6D4);} 
+
+  /* Hero */
+  .hero{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;}
+  .hero h1{margin:0 0 4px; font:800 26px/1.15 Inter; background:linear-gradient(90deg,#7C3AED,#06B6D4); -webkit-background-clip:text; color:transparent;}
+  .hero p{margin:0; font:400 14px/1.35 Inter; color:#6B7280; max-width:20ch;}
+
+  /* Arrow */
+  .arrow{display:flex; align-items:center; justify-content:center; color:#9AA1AE; font-size:16px;}
+
+  /* Steps */
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); align-items:center; text-align:center; gap:8px;}
+  .steps .ic{width:20px; height:20px; margin:0 auto 4px; opacity:.85;}
+  .steps h4{margin:0; font:700 14px/1.2 Inter; color:#111827;}
+  .steps p{margin:2px 0 0; font:400 12px/1.25 Inter; color:#6B7280; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+
+  /* Video */
+  .video{height:120px; border:1px solid #E5E7EB; border-radius:16px; overflow:hidden; background:#E8EEF7;}
+  .video-cap{font:600 13px/1.3 Inter; color:#7A8191; text-align:center; margin-top:4px;}
+
+  /* Feature chips */
+  .chips{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; align-items:center;}
+  .chip{display:flex; align-items:center; justify-content:center; gap:6px; background:#fff; border-radius:12px; padding:10px 8px; box-shadow:0 1px 4px rgba(16,24,40,.06);} 
+  .chip .ic{width:18px; height:18px; opacity:.9;}
+  .chip span{font:600 14px/1 Inter; color:#111827; white-space:nowrap;}
+
+  /* Why strip */
+  .why{display:flex; justify-content:space-around; align-items:center; background:rgba(99,102,241,.06); border-radius:12px; padding:8px;}
+  .why div{font:500 13px/1.2 Inter; color:#111827; white-space:nowrap;}
+
+  /* CTA */
+  .cta{display:flex; align-items:center; justify-content:center; background:linear-gradient(90deg,#7C3AED,#06B6D4); color:#fff; border-radius:18px; font:800 17px/1 Inter;}
+
+  /* Footer */
+  .foot{display:flex; align-items:center; justify-content:center; gap:10px; color:#7A8191; font:500 12px/1 Inter; overflow:hidden; white-space:nowrap;}
+}
