@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RefreshCw, Mail, User, AlertCircle, Loader, LogOut } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { RefreshCw, Mail, User, AlertCircle, Loader, LogOut, Pin, Filter } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useGoogleLogin } from '@react-oauth/google';
+import { EmailCard } from './EmailCard';
 
 interface EmailSummary {
   id: string;
@@ -26,34 +29,36 @@ export const EmailSummarySection = () => {
   const [lastSyncTime, setLastSyncTime] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isConnected, setIsConnected] = useState(false);
-  
+
+  // UI-only state (client-only, no backend writes)
+  const [pinnedIds, setPinnedIds] = useState<Set<string>>(new Set());
+  const [search, setSearch] = useState('');
+  const [showPinnedOnly, setShowPinnedOnly] = useState(false);
+  const [showHasSummaryOnly, setShowHasSummaryOnly] = useState(false);
+
   // Debug logging
   console.log('🔍 EmailSummarySection rendered - isConnected:', isConnected, 'isLoading:', isLoading);
-  
+
   // Check if user has Gmail connected on component mount
   useEffect(() => {
     checkGmailConnection();
   }, []);
-  
+
   const checkGmailConnection = async () => {
     try {
-      // First check if we have a stored connection state in localStorage
       const storedConnection = localStorage.getItem('gmail_connected');
       const storedEmail = localStorage.getItem('gmail_email');
-      
+
       if (storedConnection === 'true' && storedEmail) {
         console.log('📧 Found stored Gmail connection for:', storedEmail);
         setIsConnected(true);
-        // Set a mock email to show connection is active
-        // Fetch real emails now that we have a connection
         fetchEmails();
         return;
       }
-      
-      // If no stored connection, default to disconnected state
+
       setIsConnected(false);
       setEmailSummaries([]);
-      
+
     } catch (error) {
       console.error('Error checking Gmail connection:', error);
       setIsConnected(false);
@@ -64,26 +69,23 @@ export const EmailSummarySection = () => {
     onSuccess: async (tokenResponse) => {
       try {
         console.log('✅ Google OAuth successful:', tokenResponse);
-        
-        // Get user info
+
         const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
         });
         const userInfo = await userInfoResponse.json();
-        
+
         console.log('👤 User info:', userInfo);
-        
-        // Store tokens and user info in localStorage
+
         localStorage.setItem('gmail_connected', 'true');
         localStorage.setItem('gmail_email', userInfo.email);
         localStorage.setItem('gmail_access_token', tokenResponse.access_token);
-        
+
         setIsConnected(true);
         toast.success(`Gmail connected successfully! (${userInfo.email})`);
-        
-        // Fetch emails directly using the access token
+
         fetchEmailsWithToken(tokenResponse.access_token, userInfo.email);
-        
+
       } catch (error) {
         console.error('❌ Error handling OAuth success:', error);
         toast.error('Failed to complete Gmail connection');
@@ -120,10 +122,9 @@ export const EmailSummarySection = () => {
 
   const fetchEmailsWithToken = async (accessToken: string, userEmail: string, pageToken: string | null = null) => {
     try {
-      // Fetch emails from Gmail API directly
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
       const afterTimestamp = Math.floor(twentyFourHoursAgo.getTime() / 1000);
-      
+
       const query = `after:${afterTimestamp}`;
       let url = `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10&q=${query}`;
       if (pageToken) {
@@ -143,7 +144,7 @@ export const EmailSummarySection = () => {
 
       console.log(`📨 Found ${messages.length} messages`);
 
-      const processedEmails = [];
+      const processedEmails = [] as EmailSummary[];
 
       for (const message of messages) {
         try {
@@ -158,19 +159,19 @@ export const EmailSummarySection = () => {
 
           const messageData = await messageResponse.json();
           const headers = messageData.payload.headers || [];
-          
-          const getHeader = (name: string) => headers.find((h: any) => 
+
+          const getHeader = (name: string) => headers.find((h: any) =>
             h.name.toLowerCase() === name.toLowerCase()
           )?.value || '';
-          
+
           const from = getHeader('from');
           const subject = getHeader('subject');
           const date = new Date(parseInt(messageData.internalDate)).toISOString();
-          
+
           const fromMatch = from.match(/^(.+?)\s*<(.+?)>$/) || [null, from.split('@')[0], from];
           const senderName = fromMatch[1]?.replace(/"/g, '').trim() || fromMatch[2]?.split('@')[0] || 'Unknown';
           const senderEmail = fromMatch[2] || from;
-          
+
           processedEmails.push({
             id: messageData.id,
             senderName,
@@ -208,22 +209,22 @@ export const EmailSummarySection = () => {
     try {
       const accessToken = localStorage.getItem('gmail_access_token');
       const userEmail = localStorage.getItem('gmail_email');
-      
+
       if (!accessToken || !userEmail) {
         throw new Error('Not authenticated');
       }
-      
+
       await fetchEmailsWithToken(accessToken, userEmail, pageToken);
 
     } catch (error) {
       console.error('Error fetching emails:', error);
       const errorMsg = error instanceof Error ? error.message : 'Failed to fetch emails';
       setErrorMessage(errorMsg);
-      
+
       if (errorMsg.includes('Not authenticated')) {
         setIsConnected(false);
       }
-      
+
       toast.error(errorMsg);
     } finally {
       setIsSyncing(false);
@@ -237,10 +238,9 @@ export const EmailSummarySection = () => {
 
   const handleDisconnectEmail = async () => {
     try {
-      // Remove stored connection state
       localStorage.removeItem('gmail_connected');
       localStorage.removeItem('gmail_email');
-      
+
       setIsConnected(false);
       setEmailSummaries([]);
       setLastSyncTime('');
@@ -249,6 +249,32 @@ export const EmailSummarySection = () => {
       console.error('Error disconnecting Gmail:', error);
       toast.error('Failed to disconnect Gmail');
     }
+  };
+
+  // Derived list with client-only filters and sorting
+  const filteredEmails = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    let items = emailSummaries.filter((e) =>
+      !q || e.subject.toLowerCase().includes(q) || e.senderName.toLowerCase().includes(q) || e.senderEmail.toLowerCase().includes(q)
+    );
+    if (showHasSummaryOnly) items = items.filter((e) => !!e.aiSummary);
+    if (showPinnedOnly) items = items.filter((e) => pinnedIds.has(e.id));
+
+    // Sort: pinned first, then by date desc
+    return items.slice().sort((a, b) => {
+      const aPinned = pinnedIds.has(a.id) ? 1 : 0;
+      const bPinned = pinnedIds.has(b.id) ? 1 : 0;
+      if (aPinned !== bPinned) return bPinned - aPinned;
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+  }, [emailSummaries, search, showHasSummaryOnly, showPinnedOnly, pinnedIds]);
+
+  const togglePin = (id: string) => {
+    setPinnedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
   };
 
   // Disconnected View
@@ -275,14 +301,14 @@ export const EmailSummarySection = () => {
               Sign in with Google to get AI-powered summaries of your recent emails.
               We only require read-only access.
             </p>
-            
+
             {errorMessage && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700 text-sm">
                 <AlertCircle className="w-4 h-4" />
                 {errorMessage}
               </div>
             )}
-            
+
             <Button 
               onClick={handleConnectGmail}
               disabled={isLoading}
@@ -303,7 +329,8 @@ export const EmailSummarySection = () => {
   // Connected View
   return (
     <div className="space-y-4 sm:space-y-6">
-      <div className="flex items-center justify-between mb-4 sm:mb-6 gap-3">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-2 sm:mb-3 gap-3">
         <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
           <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
             <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
@@ -338,65 +365,76 @@ export const EmailSummarySection = () => {
           </Badge>
         </div>
       </div>
-      
-      {/* Loading state and email display */}
-      <div className="grid gap-4 sm:gap-6">
-        {isSyncing && emailSummaries.length === 0 ? (
-           <div className="flex justify-center items-center p-8">
-             <Loader className="w-8 h-8 animate-spin text-primary" />
-           </div>
-        ) : emailSummaries.length === 0 ? (
-          <Card className="p-8 text-center">
-            <Mail className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-medium text-foreground mb-2">No Emails Found</h3>
-            <p className="text-sm text-muted-foreground">
-              We couldn't find any recent emails. Try refreshing in a bit.
-            </p>
-          </Card>
-        ) : (
-          emailSummaries.map((email, index) => (
-            <Card 
-              key={`${email.subject}-${index}`} // Using index as a fallback key
-              className="p-4 sm:p-6 bg-white border border-gray-200"
-            >
-              <div className="flex items-start justify-between mb-3 gap-3">
-                <div className="flex items-center gap-2 flex-1 min-w-0">
-                  <User className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <h4 className="font-medium text-foreground text-sm sm:text-base truncate">
-                      {email.senderName}
-                    </h4>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {email.senderEmail}
-                    </p>
+
+      {/* Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex-1">
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by subject or sender..."
+            aria-label="Search emails"
+            className="w-full"
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant={showPinnedOnly ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setShowPinnedOnly((v) => !v)}
+            aria-pressed={showPinnedOnly}
+          >
+            <Pin className="h-4 w-4 mr-1" /> Pinned
+          </Button>
+          <Button
+            variant={showHasSummaryOnly ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setShowHasSummaryOnly((v) => !v)}
+            aria-pressed={showHasSummaryOnly}
+          >
+            <Filter className="h-4 w-4 mr-1" /> Has summary
+          </Button>
+        </div>
+      </div>
+
+      {/* Loading & Empty States */}
+      {isSyncing && emailSummaries.length === 0 ? (
+        <div className="grid gap-4 sm:gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i} className="p-5 rounded-2xl border border-slate-200 bg-white/70">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                  <div>
+                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-3 w-24 mt-2" />
                   </div>
                 </div>
-                <span className="text-xs sm:text-sm text-muted-foreground">
-                  {new Date(email.date).toLocaleDateString()}
-                </span>
+                <Skeleton className="h-4 w-16" />
               </div>
-
-              <h5 className="font-medium text-foreground text-sm sm:text-base mb-2 leading-tight">
-                {email.subject}
-              </h5>
-
-              <p className="text-sm text-muted-foreground mb-4">{email.snippet}</p>
-
-              {email.aiSummary && (
-                <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <span className="text-xs font-medium text-blue-700">AI Summary</span>
-                  <p className="text-sm text-blue-800 mt-1">
-                    {email.aiSummary}
-                  </p>
-                </div>
-              )}
+              <Skeleton className="h-5 w-3/4 mt-4" />
+              <Skeleton className="h-20 w-full mt-4 rounded-xl" />
             </Card>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      ) : filteredEmails.length === 0 ? (
+        <Card className="p-10 text-center rounded-2xl border border-slate-200 bg-white/70">
+          <Mail className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-1">No emails to summarize yet</h3>
+          <p className="text-sm text-muted-foreground">Refresh or adjust filters.</p>
+        </Card>
+      ) : (
+        // Masonry on xl screens
+        <div className="columns-1 xl:columns-2">
+          {filteredEmails.map((email) => (
+            <EmailCard key={email.id} email={email as any} pinned={pinnedIds.has(email.id)} onTogglePin={togglePin} />
+          ))}
+        </div>
+      )}
+
       {nextPageToken && (
         <div className="flex justify-center">
-          <Button onClick={() => fetchEmails(nextPageToken)} disabled={isSyncing}>
+          <Button onClick={() => fetchEmails(nextPageToken)} disabled={isSyncing} className="bg-gradient-to-r from-primary via-secondary to-accent text-white">
             {isSyncing ? 'Loading...' : 'Load More'}
           </Button>
         </div>
