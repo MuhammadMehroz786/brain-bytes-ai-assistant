@@ -260,7 +260,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             />
           </figure>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">See what you’ll get</p>
-          <button onClick={() => setIsWaitlistOpen(true)} className="mt-1 inline-block text-center text-[11px] text-muted-foreground hover:text-primary underline underline-offset-2 px-2 py-1 rounded-md">Get early access →</button>
+          <button onClick={() => setIsWaitlistOpen(true)} className="mt-1 inline-block text-center text-[11px] bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent hover:opacity-90 px-2 py-1 rounded-md">Get early access →</button>
           <div className="h-4 mt-1" aria-hidden="true" />
         </section>
 
@@ -289,15 +289,15 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         {/* 4) Fourth Section: CTA */}
         <section className="px-6 pb-4 flex flex-col justify-center">
           <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-lg px-6 py-4 rounded-2xl shadow-md hover:shadow-lg transition-all">
-            Get your AI Assistant now
+            Get your AI Assistant now – Limited spots available.
           </Button>
+          <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90">Your personalized AI dashboard in under 5 minutes.</p>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">Launch price: $29 (less than lunch).</p>
-          
         </section>
       </main>
 
       {/* Mobile Footer */}
-      <footer className="lg:hidden px-4 pb-4 bg-transparent">
+      <footer className="lg:hidden px-4 pb-4 bg-primary-light/60">
         <div className="text-[10px] text-muted-foreground text-center">
           © 2025 Brain Bytes · <Link to="/privacy-policy" className="hover:text-primary">Privacy</Link> · <Link to="/terms-of-service" className="hover:text-primary">Terms</Link> · <Link to="/refund-policy" className="hover:text-primary">Refund</Link> · <Link to="/cookie-policy" className="hover:text-primary">Cookies</Link> · <Link to="/contact" className="hover:text-primary">Contact</Link>
         </div>
