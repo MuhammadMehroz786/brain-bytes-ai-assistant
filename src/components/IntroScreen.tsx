@@ -197,14 +197,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       {/* Mobile & Tablet Header */}
       <header className="lg:hidden h-14 bg-gradient-to-r from-primary-light to-accent-light backdrop-blur-sm border-b border-border px-4 shadow-md">
         <div className="flex items-center justify-between h-full">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <img src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" alt="Brain Bytes logo icon" className="w-4 h-4" />
-            </div>
-            <span className="text-base font-semibold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Brain Bytes</span>
+          <div className="flex items-center">
+            <span className="text-lg font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+              Brain Bytes
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            <Button onClick={onAuth} className="h-8 px-3 text-xs rounded-xl bg-card text-foreground hover:bg-secondary">
+            <Button onClick={onAuth} className="h-8 px-3 text-xs rounded-xl bg-card text-foreground shadow-sm hover:bg-secondary">
               Sign In
             </Button>
             <Button onClick={() => setIsWaitlistOpen(true)} className="h-8 px-3 text-xs rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90">
@@ -215,6 +214,12 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </header>
 
       <main className="lg:hidden min-h-[calc(100dvh-56px)] bg-primary-light/60 overflow-x-hidden">
+        {/* Hero Section */}
+        <section className="px-6 pt-5 pb-3 text-center">
+          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
+          <p className="mt-2 text-sm text-muted-foreground">We solve it for the price of lunch</p>
+          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-2" aria-hidden="true" />
+        </section>
         {/* 1) First Section: Three-step row */}
         <section className="px-6 pt-4 pb-2 flex flex-col justify-between">
           <div className="grid grid-cols-3 gap-3">
