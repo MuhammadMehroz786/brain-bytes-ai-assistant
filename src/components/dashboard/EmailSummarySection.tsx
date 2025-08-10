@@ -4,12 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { RefreshCw, Mail, User, AlertCircle, Loader, LogOut, Pin, Filter } from 'lucide-react';
+import { RefreshCw, Mail, AlertCircle, Loader, LogOut, Pin, Filter } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useGoogleLogin } from '@react-oauth/google';
-import { EmailCard } from './EmailCard';
-
+import { InsightCard } from './InsightCard';
+import { EmailDetailsModal } from './EmailDetailsModal';
+import { getReadIds, addReadId, removeReadId } from '@/utils/readState';
 interface EmailSummary {
   id: string;
   senderName: string;
@@ -35,6 +36,13 @@ export const EmailSummarySection = () => {
   const [search, setSearch] = useState('');
   const [showPinnedOnly, setShowPinnedOnly] = useState(false);
   const [showHasSummaryOnly, setShowHasSummaryOnly] = useState(false);
+  // Read state and view prefs
+  const [readIds, setReadIds] = useState<Set<string>>(getReadIds());
+  const [unreadOnly, setUnreadOnly] = useState<boolean>(() => localStorage.getItem('bb_email_unread_mode') !== 'all');
+  const [timeRange, setTimeRange] = useState<'24h' | 'all'>(() => (localStorage.getItem('bb_email_time_range') as '24h' | 'all') || '24h');
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [detailsEmail, setDetailsEmail] = useState<EmailSummary | null>(null);
 
   // Debug logging
   console.log('🔍 EmailSummarySection rendered - isConnected:', isConnected, 'isLoading:', isLoading);
@@ -122,11 +130,12 @@ export const EmailSummarySection = () => {
 
   const fetchEmailsWithToken = async (accessToken: string, userEmail: string, pageToken: string | null = null) => {
     try {
-      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      const afterTimestamp = Math.floor(twentyFourHoursAgo.getTime() / 1000);
-
-      const query = `after:${afterTimestamp}`;
-      let url = `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10&q=${query}`;
+      let url = `https://gmail.googleapis.com/gmail/v1/users/me/messages?maxResults=10`;
+      if (timeRange === '24h') {
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+        const afterTimestamp = Math.floor(twentyFourHoursAgo.getTime() / 1000);
+        url += `&q=after:${afterTimestamp}`;
+      }
       if (pageToken) {
         url += `&pageToken=${pageToken}`;
       }
@@ -259,6 +268,7 @@ export const EmailSummarySection = () => {
     );
     if (showHasSummaryOnly) items = items.filter((e) => !!e.aiSummary);
     if (showPinnedOnly) items = items.filter((e) => pinnedIds.has(e.id));
+    if (unreadOnly) items = items.filter((e) => !readIds.has(e.id));
 
     // Sort: pinned first, then by date desc
     return items.slice().sort((a, b) => {
@@ -267,7 +277,7 @@ export const EmailSummarySection = () => {
       if (aPinned !== bPinned) return bPinned - aPinned;
       return new Date(b.date).getTime() - new Date(a.date).getTime();
     });
-  }, [emailSummaries, search, showHasSummaryOnly, showPinnedOnly, pinnedIds]);
+  }, [emailSummaries, search, showHasSummaryOnly, showPinnedOnly, pinnedIds, unreadOnly, readIds]);
 
   const togglePin = (id: string) => {
     setPinnedIds((prev) => {
@@ -276,6 +286,85 @@ export const EmailSummarySection = () => {
       return next;
     });
   };
+
+  const handleMarkAsRead = (id: string) => {
+    const idx = emailSummaries.findIndex((e) => e.id === id);
+    const removed = emailSummaries[idx];
+    if (!removed) return;
+
+    setReadIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+    addReadId(id);
+
+    setEmailSummaries((prev) => prev.filter((e) => e.id !== id));
+
+    const remaining = Math.max(0, filteredEmails.length - 1);
+    if (remaining < 10 && nextPageToken) {
+      fetchEmails(nextPageToken);
+    }
+
+    toast.success('Marked as read', {
+      action: {
+        label: 'Undo',
+        onClick: () => {
+          setEmailSummaries((prev) => {
+            const next = prev.slice();
+            next.splice(idx, 0, removed);
+            return next;
+          });
+          setReadIds((prev) => {
+            const next = new Set(prev);
+            next.delete(id);
+            return next;
+          });
+          removeReadId(id);
+        },
+      },
+    });
+  };
+
+  useEffect(() => {
+    localStorage.setItem('bb_email_unread_mode', unreadOnly ? 'unread' : 'all');
+  }, [unreadOnly]);
+
+  useEffect(() => {
+    localStorage.setItem('bb_email_time_range', timeRange);
+  }, [timeRange]);
+
+  useEffect(() => {
+    if (activeIndex >= filteredEmails.length) setActiveIndex(Math.max(0, filteredEmails.length - 1));
+  }, [filteredEmails.length]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!filteredEmails.length) return;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActiveIndex((i) => Math.min(i + 1, filteredEmails.length - 1));
+      }
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActiveIndex((i) => Math.max(i - 1, 0));
+      }
+      if (e.key.toLowerCase() === 'r') {
+        const email = filteredEmails[activeIndex];
+        if (email) handleMarkAsRead(email.id);
+      }
+      if (e.key.toLowerCase() === 'p') {
+        const email = filteredEmails[activeIndex];
+        if (email) togglePin(email.id);
+      }
+      if (e.key === 'Enter') {
+        const email = filteredEmails[activeIndex];
+        if (email) { setDetailsEmail(email); setDetailsOpen(true); }
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [filteredEmails, activeIndex]);
 
   // Disconnected View
   if (!isConnected) {
@@ -368,6 +457,24 @@ export const EmailSummarySection = () => {
 
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex items-center gap-2">
+          <div className="inline-flex rounded-md border p-0.5">
+            <Button size="sm" variant={timeRange==='24h' ? 'default':'ghost'} onClick={()=>setTimeRange('24h')} aria-pressed={timeRange==='24h'}>
+              Last 24h
+            </Button>
+            <Button size="sm" variant={timeRange==='all' ? 'default':'ghost'} onClick={()=>setTimeRange('all')} aria-pressed={timeRange==='all'}>
+              All
+            </Button>
+          </div>
+          <div className="inline-flex rounded-md border p-0.5">
+            <Button size="sm" variant={unreadOnly ? 'default':'ghost'} onClick={()=>setUnreadOnly(true)} aria-pressed={unreadOnly}>
+              Unread
+            </Button>
+            <Button size="sm" variant={!unreadOnly ? 'default':'ghost'} onClick={()=>setUnreadOnly(false)} aria-pressed={!unreadOnly}>
+              All
+            </Button>
+          </div>
+        </div>
         <div className="flex-1">
           <Input
             value={search}
@@ -399,46 +506,53 @@ export const EmailSummarySection = () => {
 
       {/* Loading & Empty States */}
       {isSyncing && emailSummaries.length === 0 ? (
-        <div className="grid gap-4 sm:gap-6">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i} className="p-5 rounded-2xl border border-slate-200 bg-white/70">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <Skeleton className="h-9 w-9 rounded-full" />
-                  <div>
-                    <Skeleton className="h-4 w-40" />
-                    <Skeleton className="h-3 w-24 mt-2" />
-                  </div>
-                </div>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Card key={i} className="p-4 rounded-2xl">
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-14 w-full mt-3 rounded-xl" />
+              <div className="mt-2 flex items-center justify-between">
+                <Skeleton className="h-4 w-24" />
                 <Skeleton className="h-4 w-16" />
               </div>
-              <Skeleton className="h-5 w-3/4 mt-4" />
-              <Skeleton className="h-20 w-full mt-4 rounded-xl" />
             </Card>
           ))}
         </div>
       ) : filteredEmails.length === 0 ? (
-        <Card className="p-10 text-center rounded-2xl border border-slate-200 bg-white/70">
+        <Card className="p-10 text-center rounded-2xl">
           <Mail className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-medium text-foreground mb-1">No emails to summarize yet</h3>
-          <p className="text-sm text-muted-foreground">Refresh or adjust filters.</p>
+          <h3 className="text-lg font-medium text-foreground mb-1">{unreadOnly && timeRange==='24h' ? 'No unread insights from the last 24 hours.' : 'No insights found.'}</h3>
+          <div className="flex items-center justify-center gap-2 mt-3">
+            <Button variant="outline" onClick={()=>setUnreadOnly(false)}>Show all</Button>
+            <Button variant="outline" onClick={handleRefreshEmails}>Refresh</Button>
+          </div>
         </Card>
       ) : (
-        // Masonry on xl screens
-        <div className="columns-1 xl:columns-2">
-          {filteredEmails.map((email) => (
-            <EmailCard key={email.id} email={email as any} pinned={pinnedIds.has(email.id)} onTogglePin={togglePin} />
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          {filteredEmails.map((email, idx) => (
+            <InsightCard
+              key={email.id}
+              email={email as any}
+              pinned={pinnedIds.has(email.id)}
+              isActive={idx === activeIndex}
+              onPin={() => togglePin(email.id)}
+              onCopy={() => {}}
+              onView={() => { setDetailsEmail(email); setDetailsOpen(true); }}
+              onMarkRead={() => handleMarkAsRead(email.id)}
+            />
           ))}
         </div>
       )}
 
       {nextPageToken && (
         <div className="flex justify-center">
-          <Button onClick={() => fetchEmails(nextPageToken)} disabled={isSyncing} className="bg-gradient-to-r from-primary via-secondary to-accent text-white">
+          <Button onClick={() => fetchEmails(nextPageToken)} disabled={isSyncing}>
             {isSyncing ? 'Loading...' : 'Load More'}
           </Button>
         </div>
       )}
+
+      <EmailDetailsModal open={detailsOpen} onOpenChange={setDetailsOpen} email={detailsEmail} />
     </div>
   );
 };
