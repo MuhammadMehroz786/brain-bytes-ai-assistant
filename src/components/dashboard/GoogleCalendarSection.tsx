@@ -283,48 +283,35 @@ export const GoogleCalendarSection = () => {
           <Button onClick={handleDisconnectCalendar} variant="outline" className="mt-4 ml-2">Disconnect Calendar</Button>
           <Button onClick={fetchCalendarEvents} variant="outline" className="mt-4 ml-2">Refresh Calendar</Button>
 
-          <h4 className="text-md font-medium mt-6 mb-3">Upcoming Events:</h4>
+          <h4 className="text-md font-medium mt-6">Upcoming Events:</h4>
           {calendarEvents.length > 0 ? (
-            <div className="space-y-3">
+            <ul className="list-disc pl-5 mt-2">
               {calendarEvents.map(event => (
-                <div key={event.id} className="flex items-center p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100 shadow-sm hover:shadow-md transition-shadow duration-200">
-                  <Calendar className="w-5 h-5 text-blue-600 mr-3 flex-shrink-0" />
-                  <div className="flex-1">
-                    <h5 className="font-medium text-gray-900">{event.summary}</h5>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {formatDate(event.start.dateTime || event.start.date)} • {formatTime(event.start.dateTime || event.start.date)} - {formatTime(event.end.dateTime || event.end.date)}
-                    </p>
-                  </div>
-                </div>
+                <li key={event.id} className="text-sm text-gray-700">
+                  {event.summary} ({formatDate(event.start.dateTime || event.start.date)} {formatTime(event.start.dateTime || event.start.date)} - {formatTime(event.end.dateTime || event.end.date)})
+                </li>
               ))}
-            </div>
+            </ul>
           ) : (
-            <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
-              <p className="text-sm text-gray-500 text-center">No upcoming events found for the next 3 days.</p>
-            </div>
+            <p className="text-sm text-gray-500 mt-2">No upcoming events found for the next 3 days.</p>
           )}
 
-          <h4 className="text-md font-medium mt-6 mb-3">Quick Overview:</h4>
+          <h4 className="text-md font-medium mt-6">Busy Slots:</h4>
           {busySlots.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <ul className="list-disc pl-5 mt-2">
               {busySlots.map((slot, index) => (
-                <div key={index} className="flex items-center p-3 bg-red-50 rounded-lg border border-red-100">
-                  <div className="w-3 h-3 bg-red-400 rounded-full mr-3"></div>
-                  <div className="text-sm">
-                    <div className="font-medium text-red-800">{formatDate(slot.start)}</div>
-                    <div className="text-red-600">{formatTime(slot.start)} - {formatTime(slot.end)}</div>
-                  </div>
-                </div>
+                <li key={index} className="text-sm text-gray-700">
+                  {formatDate(slot.start)} {formatTime(slot.start)} - {formatTime(slot.end)}
+                </li>
               ))}
-            </div>
+            </ul>
           ) : (
-            <div className="p-4 bg-green-50 rounded-xl border border-green-200">
-              <p className="text-sm text-green-700 text-center">No busy time slots - you're free for the next 3 days!</p>
-            </div>
+            <p className="text-sm text-gray-500 mt-2">No busy slots found for the next 3 days.</p>
           )}
 
-          <h4 className="text-md font-medium mt-6 mb-3">Today's Schedule:</h4>
-          <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-6 border border-gray-200 shadow-sm">
+          <h4 className="text-md font-medium mt-6">Full Day Calendar:</h4>
+          <div className="mt-2 border rounded-lg p-4">
+            {/* This is a simplified representation. A real calendar view would be more complex. */}
             {Array.from({ length: 24 }).map((_, hour) => {
               const hourStart = new Date();
               hourStart.setHours(hour, 0, 0, 0);
@@ -342,37 +329,18 @@ export const GoogleCalendarSection = () => {
                 return (eventStart < hourEnd && eventEnd > hourStart);
               });
 
-              const timeLabel = hour === 0 ? '12:00 AM' : 
-                               hour < 12 ? `${hour}:00 AM` : 
-                               hour === 12 ? '12:00 PM' : 
-                               `${hour - 12}:00 PM`;
-
               return (
-                <div key={hour} className="flex items-center py-3 border-b border-gray-100 last:border-b-0 hover:bg-white/50 transition-colors duration-150 rounded-lg px-2 -mx-2">
-                  <div className="w-20 text-sm font-medium text-gray-700">
-                    {timeLabel}
-                  </div>
-                  <div className="flex-1 ml-4">
+                <div key={hour} className="flex items-center py-1 border-b last:border-b-0">
+                  <span className="w-16 text-sm text-gray-600">{hour}:00</span>
+                  <div className="flex-1 ml-2">
                     {isBusy ? (
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-red-400 rounded-full mr-3 shadow-sm"></div>
-                        <div className="flex-1">
-                          {eventsInHour.map(event => (
-                            <div key={event.id} className="inline-flex items-center bg-red-100 text-red-800 px-3 py-1.5 rounded-full text-sm font-medium mr-2 mb-1 border border-red-200 shadow-sm">
-                              <Calendar className="w-3 h-3 mr-2" />
-                              {event.summary}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                      <span className="text-red-500 text-sm">Busy</span>
                     ) : (
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 bg-green-400 rounded-full mr-3 shadow-sm"></div>
-                        <span className="text-green-700 text-sm font-medium bg-green-100 px-3 py-1 rounded-full border border-green-200">
-                          Available
-                        </span>
-                      </div>
+                      <span className="text-green-500 text-sm">Free</span>
                     )}
+                    {eventsInHour.map(event => (
+                      <span key={event.id} className="ml-2 text-blue-700 text-sm">{event.summary}</span>
+                    ))}
                   </div>
                 </div>
               );

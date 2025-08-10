@@ -86,9 +86,27 @@ const parseNaturalLanguageCommand = (command: string, timezone: string): ParsedE
     targetDate.setDate(targetDate.getDate() + 1);
   }
   
-  // Determine duration first
+  // Extract the task/summary
+  let summary = command;
+  
+  // Remove common scheduling words
+  summary = summary.replace(/set a focus block for|schedule|at|about|for|on (today|tomorrow)/gi, '');
+  summary = summary.replace(timeStr, '');
+  summary = summary.replace(/(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/gi, '');
+  summary = summary.trim();
+  
+  // If the summary starts with "about", remove it
+  if (summary.toLowerCase().startsWith('about ')) {
+    summary = summary.substring(6);
+  }
+  
+  if (!summary) {
+    summary = 'Focus time';
+  }
+  
+  // Determine duration
   let duration = 60; // default 1 hour in minutes
-  if (lowerCommand.includes('focus block') || lowerCommand.includes('focus time') || lowerCommand.includes('book a block')) {
+  if (lowerCommand.includes('focus block') || lowerCommand.includes('focus time')) {
     duration = 30; // focus blocks are 30 minutes
   }
   
@@ -101,52 +119,6 @@ const parseNaturalLanguageCommand = (command: string, timezone: string): ParsedE
       duration = num * 60;
     } else {
       duration = num;
-    }
-  }
-  
-  // Extract the task/summary with better logic
-  let summary = command;
-  
-  // Remove time-related patterns first
-  summary = summary.replace(timeStr, '');
-  summary = summary.replace(/(today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday)/gi, '');
-  
-  // Remove scheduling command patterns
-  summary = summary.replace(/book\s+a\s+block\s+for/gi, '');
-  summary = summary.replace(/set\s+a\s+focus\s+block\s+for/gi, '');
-  summary = summary.replace(/schedule/gi, '');
-  summary = summary.replace(/\d+\s*(minutes?|mins?|hours?|hrs?)/gi, '');
-  summary = summary.replace(/\s+(at|for|about|on)\s+/gi, ' ');
-  summary = summary.trim();
-  
-  // Clean up extra words
-  if (summary.toLowerCase().startsWith('about ')) {
-    summary = summary.substring(6);
-  }
-  if (summary.toLowerCase().startsWith('for ')) {
-    summary = summary.substring(4);
-  }
-  
-  // Generate meaningful names based on time and duration
-  if (!summary || summary.length < 2) {
-    const hour = targetDate.getHours();
-    const isEvening = hour >= 18;
-    const isNight = hour >= 22 || hour < 6;
-    const isMorning = hour >= 6 && hour < 12;
-    const isAfternoon = hour >= 12 && hour < 18;
-    
-    if (duration <= 30) {
-      if (isNight) summary = 'Late night focus session';
-      else if (isEvening) summary = 'Evening focus block';
-      else if (isMorning) summary = 'Morning focus time';
-      else if (isAfternoon) summary = 'Afternoon focus block';
-      else summary = 'Focus session';
-    } else {
-      if (isNight) summary = 'Late night work block';
-      else if (isEvening) summary = 'Evening work session';
-      else if (isMorning) summary = 'Morning work time';
-      else if (isAfternoon) summary = 'Afternoon work block';
-      else summary = 'Work session';
     }
   }
   
