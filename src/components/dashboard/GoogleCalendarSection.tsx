@@ -585,7 +585,7 @@ export const GoogleCalendarSection = () => {
                           </div>
                         )}
                         {isSameDay(selectedDate, now) && hour === now.getHours() && (
-                          <div className="absolute left-0 right-0 h-px bg-primary/50" style={{ top: `${(now.getMinutes()/60)*100}%` }} />
+                          <div className="absolute left-0 right-0 h-px bg-primary/50" style={{ top: (now.getMinutes() / 60) * 100 + '%' }} />
                         )}
                       </div>
 
@@ -595,7 +595,7 @@ export const GoogleCalendarSection = () => {
                       </div>
                     )}
                   </div>
-                );
+                )
               })}
             </div>
           </div>
@@ -608,6 +608,7 @@ export const GoogleCalendarSection = () => {
           </Button>
         </div>
       )}
+      </Card>
 
       {showFocusPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -642,6 +643,7 @@ export const GoogleCalendarSection = () => {
           </div>
         </div>
       )}
+
       <Sheet open={suggestionsOpen} onOpenChange={setSuggestionsOpen}>
         <SheetContent side="right" className="w-[360px] sm:w-[420px]">
           <div className="space-y-4">
@@ -650,7 +652,6 @@ export const GoogleCalendarSection = () => {
           </div>
         </SheetContent>
       </Sheet>
-      </Card>
     </div>
   );
 };
