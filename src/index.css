@@ -201,7 +201,9 @@ All colors MUST be HSL.
 
 /* Compact mobile grid layout (non-scroll) */
 @media (max-width: 640px) {
-  html, body { height: 100%; background: hsl(210 20% 98%); }
+  html, body { height: 100%; width: 100%; max-width: 100%; overflow-x: hidden; background: hsl(210 20% 98%); }
+  * { box-sizing: border-box; }
+  img, svg, video, iframe { max-width: 100%; height: auto; display: block; }
   .m-wrap { height: 100dvh; display: grid; grid-template-rows: 56px 90px 12px 88px 12px 140px 72px 56px 64px 24px; gap: 8px; background: hsl(210 20% 98%); }
   .m-container { padding: 0 12px; max-width: 640px; margin: 0 auto; }
 
@@ -245,6 +247,27 @@ All colors MUST be HSL.
 
   /* Footer */
   .foot { display: flex; align-items: center; justify-content: center; gap: 10px; color: hsl(219 10% 56%); font: 500 12px/1 Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; overflow: hidden; white-space: nowrap; height: 100%; }
+
+  /* Header layout fix */
+  .header, .m-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-inline: 12px; }
+  .header .actions, .m-actions { display: flex; gap: 8px; flex-wrap: wrap; max-width: 60%; justify-content: flex-end; }
+  .header .btn, .m-actions .btn { flex: 0 1 auto; white-space: nowrap; height: 40px; padding: 0 14px; border-radius: 12px; }
+
+  /* Brand text clip if too long */
+  .brand, .m-logo { max-width: 38%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Video wrapper fix */
+  .video-wrap { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; border: 1px solid hsl(var(--input)); }
+  .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* CTA bar fix */
+  .cta-bar { position: sticky; bottom: 0; z-index: 10; background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent))); color: #fff; border-radius: 16px; text-align: center; min-height: 52px; display: flex; align-items: center; justify-content: center; margin: 8px 12px; padding: 12px 16px; }
+  .cta-spacer { height: calc(12px + env(safe-area-inset-bottom)); }
+}
+
+/* Very small devices adjustments */
+@media (max-width: 360px) {
+  .header .actions, .m-actions { flex-direction: column; align-items: flex-end; }
 }
 
 /* Fallback for short-height devices */

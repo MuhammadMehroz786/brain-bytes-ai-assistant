@@ -260,16 +260,16 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <div className="m-container">
           <section aria-label="Product teaser">
             <div className="video">
-              <iframe
-                src="https://www.youtube.com/embed/1NnXmp1M0KM?rel=0&modestbranding=1&controls=0"
-                width="100%"
-                height="100%"
-                frameBorder={0}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-                title="Brain Bytes Demo"
-              />
+              <div className="video-wrap">
+                <iframe
+                  src="https://www.youtube.com/embed/1NnXmp1M0KM?rel=0&modestbranding=1&controls=0"
+                  frameBorder={0}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                  title="Brain Bytes Demo"
+                />
+              </div>
             </div>
             <div className="video-cap">See what you’ll get.</div>
           </section>
