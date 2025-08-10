@@ -194,130 +194,103 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </div>
 
-      {/* Mobile-only compact grid (non-scroll) */}
+      {/* Mobile grid (<=640px) - non-scroll compact layout */}
       <div className="lg:hidden m-wrap">
-        {/* Row 1: Header */}
+        {/* 1. Header */}
         <div className="m-container">
-          <div className="m-header">
+          <header className="m-header">
             <div className="m-logo">Brain Bytes</div>
             <div className="m-actions">
-              <button
-                className="btn primary"
-                onClick={() => setIsWaitlistOpen(true)}
-              >
-                Join the Waitlist
-              </button>
-              <button
-                className="btn"
-                onClick={onAuth}
-              >
-                Sign In
-              </button>
+              <button className="btn primary" onClick={() => setIsWaitlistOpen(true)}>Join the Waitlist</button>
+              <button className="btn" onClick={onAuth}>Sign In</button>
             </div>
-          </div>
+          </header>
         </div>
 
-        {/* Row 2: Hero */}
+        {/* 2. Hero (keep current headline + mini line) */}
         <div className="m-container">
-          <section className="hero" aria-labelledby="mobile-hero-title">
-            <h1 id="mobile-hero-title">Overwhelmed by AI?</h1>
+          <section className="hero">
+            <h1>Overwhelmed by AI?</h1>
             <p>We solve it for the price of lunch</p>
           </section>
         </div>
 
-        {/* Row 3: Arrow #1 */}
+        {/* 3. Arrow #1 */}
         <div className="m-container">
-          <div className="arrow" aria-hidden>⌄</div>
+          <div className="arrow">⌄</div>
         </div>
 
-        {/* Row 4: 3-Step */}
+        {/* 4. 3-Step row */}
         <div className="m-container">
-          <section className="steps" aria-label="Three step quickstart">
+          <section className="steps">
             <div>
-              <ListChecks className="ic" aria-hidden />
+              <ListChecks className="ic" aria-hidden="true" />
               <h4>Answer 5 Questions</h4>
               <p>Tell us your goals.</p>
             </div>
             <div>
-              <LayoutDashboard className="ic" aria-hidden />
+              <LayoutDashboard className="ic" aria-hidden="true" />
               <h4>Get Your Dashboard</h4>
               <p>Tools & guides.</p>
             </div>
             <div>
-              <Zap className="ic" aria-hidden />
+              <Zap className="ic" aria-hidden="true" />
               <h4>Start in Minutes</h4>
               <p>Skip the overwhelm.</p>
             </div>
           </section>
         </div>
 
-        {/* Row 5: Arrow #2 */}
+        {/* 5. Arrow #2 */}
         <div className="m-container">
-          <div className="arrow" aria-hidden>⌄</div>
+          <div className="arrow">⌄</div>
         </div>
 
-        {/* Row 6: Video + Caption */}
+        {/* 6. Video/teaser (120px) + caption (20px) */}
         <div className="m-container">
-          <section aria-label="Product teaser">
-            <div className="video">
-              <iframe
-                src="https://www.youtube.com/embed/1NnXmp1M0KM?rel=0&modestbranding=1&controls=0"
-                width="100%"
-                height="100%"
-                frameBorder={0}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-                title="Brain Bytes Demo"
-              />
-            </div>
-            <div className="video-cap">See what you’ll get.</div>
+          <div className="video">
+            <iframe
+              src="https://www.youtube.com/embed/1NnXmp1M0KM?rel=0&modestbranding=1&controls=0"
+              width="100%"
+              height="100%"
+              frameBorder={0}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              title="Brain Bytes Demo"
+              className="w-full h-full"
+            />
+          </div>
+          <div className="video-cap">See what you’ll get.</div>
+        </div>
+
+        {/* 7. Feature chips */}
+        <div className="m-container">
+          <section className="chips">
+            <div className="chip"><CheckCircle2 className="ic" aria-hidden="true" /><span>Curated Picks</span></div>
+            <div className="chip"><BookOpen className="ic" aria-hidden="true" /><span>How‑To Guides</span></div>
+            <div className="chip"><Bot className="ic" aria-hidden="true" /><span>Assistant</span></div>
           </section>
         </div>
 
-        {/* Row 7: Feature chips */}
+        {/* 8. Why strip */}
         <div className="m-container">
-          <div className="chips" aria-label="Feature highlights">
-            <div className="chip"><CheckCircle2 className="ic" aria-hidden /><span>Curated Picks</span></div>
-            <div className="chip"><BookOpen className="ic" aria-hidden /><span>How‑To Guides</span></div>
-            <div className="chip"><Bot className="ic" aria-hidden /><span>Assistant</span></div>
-          </div>
+          <section className="why">
+            <div>🏁 No experience needed</div>
+            <div>🎯 Only relevant tools</div>
+            <div>📈 Learn while you work</div>
+          </section>
         </div>
 
-        {/* Row 8: Why strip */}
+        {/* 9. CTA block */}
         <div className="m-container">
-          <div className="why" aria-label="Why this works">
-            <div>🏁&nbsp;No experience needed</div>
-            <div>🎯&nbsp;Only relevant tools</div>
-            <div>📈&nbsp;Learn while you work</div>
-          </div>
+          <button className="cta" onClick={() => setIsWaitlistOpen(true)}>Join the Waitlist</button>
         </div>
 
-        {/* Row 9: CTA */}
+        {/* 10. Footer */}
         <div className="m-container">
-          <button
-            className="cta w-full h-full"
-            onClick={() => setIsWaitlistOpen(true)}
-            aria-label="Join the Waitlist"
-          >
-            Join the Waitlist
-          </button>
-        </div>
-
-        {/* Row 10: Footer */}
-        <div className="m-container">
-          <div className="foot">
-            <span>© 2025 Brain Bytes ·</span>
-            <Link to="/privacy-policy" className="hover:text-primary transition-colors">&nbsp;Privacy</Link>
-            <span>&nbsp;·</span>
-            <Link to="/terms-of-service" className="hover:text-primary transition-colors">&nbsp;Terms</Link>
-            <span>&nbsp;·</span>
-            <Link to="/refund-policy" className="hover:text-primary transition-colors">&nbsp;Refund</Link>
-            <span>&nbsp;·</span>
-            <Link to="/cookie-policy" className="hover:text-primary transition-colors">&nbsp;Cookies</Link>
-            <span>&nbsp;·</span>
-            <Link to="/contact" className="hover:text-primary transition-colors">&nbsp;Contact</Link>
-          </div>
+          <footer className="foot">
+            © 2025 Brain Bytes · <Link to="/privacy-policy">Privacy</Link> · <Link to="/terms-of-service">Terms</Link> · <Link to="/refund-policy">Refund</Link> · <Link to="/cookie-policy">Cookies</Link> · <Link to="/contact">Contact</Link>
+          </footer>
         </div>
       </div>
 
