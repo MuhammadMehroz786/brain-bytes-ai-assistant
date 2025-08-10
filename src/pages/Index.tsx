@@ -1,7 +1,7 @@
-import { ProductivityAssistant } from "./ProductivityAssistant";
+import { IntroScreen } from "@/components/IntroScreen";
 
 const Index = () => {
-  return <ProductivityAssistant />;
+  return <IntroScreen onStart={() => {}} onAuth={() => {}} />;
 };
 
 export default Index;
