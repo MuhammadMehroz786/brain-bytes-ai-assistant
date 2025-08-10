@@ -41,6 +41,15 @@ All colors MUST be HSL.
     --gradient-mid: 174 72% 56%;
     --gradient-end: 142 76% 73%;
     
+    /* Category color tokens (HSL) */
+    --cat-alert: 38 92% 50%;       /* #F59E0B */
+    --cat-finance: 262 83% 58%;     /* #7C3AED */
+    --cat-calendar: 172 66% 47%;    /* #14B8A6 */
+    --cat-security: 0 84% 60%;      /* #EF4444 */
+    --cat-shopping: 152 76% 40%;    /* #10B981 */
+    --cat-social: 217 91% 60%;      /* #3B82F6 */
+    --cat-general: 213 27% 84%;     /* #CBD5E1 */
+    
     /* Light accent backgrounds */
     --accent-light: 262 50% 97%;
     --primary-light: 262 50% 96%;

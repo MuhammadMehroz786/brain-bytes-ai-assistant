@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { CardMenu } from "./CardMenu";
 
 interface InsightActionsProps {
   pinned?: boolean;
@@ -15,9 +16,11 @@ interface InsightActionsProps {
   onCopy: () => void;
   onView: () => void;
   onMarkRead: () => void;
+  isClean: boolean;
+  onToggleClean: () => void;
 }
 
-export const InsightActions: React.FC<InsightActionsProps> = ({ pinned, onPin, onCopy, onView, onMarkRead }) => {
+export const InsightActions: React.FC<InsightActionsProps> = ({ pinned, onPin, onCopy, onView, onMarkRead, isClean, onToggleClean }) => {
   return (
     <div className="flex items-center gap-1">
       {/* Desktop: inline actions */}
@@ -41,11 +44,11 @@ export const InsightActions: React.FC<InsightActionsProps> = ({ pinned, onPin, o
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label={pinned ? "Unpin" : "Pin"} onClick={onPin} className="h-8 w-8">
-                {pinned ? <Star className="h-4 w-4 text-yellow-500" /> : <StarOff className="h-4 w-4" />}
+              <Button variant="ghost" size="sm" aria-label="Toggle Clean/Raw" onClick={onToggleClean} className="h-8 px-2">
+                {isClean ? 'Clean' : 'Raw'}
               </Button>
             </TooltipTrigger>
-            <TooltipContent>{pinned ? "Unpin" : "Pin"}</TooltipContent>
+            <TooltipContent>Toggle Clean/Raw</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -75,6 +78,9 @@ export const InsightActions: React.FC<InsightActionsProps> = ({ pinned, onPin, o
             </DropdownMenuItem>
             <DropdownMenuItem onClick={onPin}>
               {pinned ? <Star className="h-4 w-4 mr-2 text-yellow-500" /> : <StarOff className="h-4 w-4 mr-2" />} {pinned ? "Unpin" : "Pin"}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onToggleClean}>
+              {isClean ? 'Show Raw' : 'Show Clean'}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={onMarkRead}>
               <Check className="h-4 w-4 mr-2" /> Mark as read
