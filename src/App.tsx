@@ -18,7 +18,7 @@ import CookieConsent from "./components/CookieConsent";
 
 const queryClient = new QueryClient();
 
-const GOOGLE_CLIENT_ID = "904660239643-fok54c3i9bb0oq68or4rqrfc4q0tjnva.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "462032172381-rhempvkgs9st5obdvm476c4phnk02rj3.apps.googleusercontent.com";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
