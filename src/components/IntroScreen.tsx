@@ -289,7 +289,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         {/* 4) Fourth Section: CTA */}
         <section className="px-6 pb-4 flex flex-col justify-center">
           <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-lg px-6 py-4 rounded-2xl shadow-md hover:shadow-lg transition-all">
-            Get your AI Assistant now – Limited spots available.
+            Get your AI Assistant now.
           </Button>
           <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90">Your personalized AI dashboard in under 5 minutes.</p>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">Launch price: $29 (less than lunch).</p>
