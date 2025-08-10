@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { validateEmail, sanitizeInput, RateLimiter } from '@/utils/security';
 
 interface ContactForm {
   fullName: string;
@@ -17,6 +18,8 @@ interface ContactForm {
   subject: string;
   message: string;
 }
+
+const contactRateLimiter = new RateLimiter(3, 15 * 60 * 1000);
 
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,10 +37,30 @@ const Contact = () => {
 
   const onSubmit = async (data: ContactForm) => {
     setIsSubmitting(true);
-    
+
     try {
+      // Client-side email validation
+      const emailCheck = validateEmail(data.email);
+      if (!emailCheck.isValid) {
+        throw new Error(emailCheck.error || 'Invalid email address');
+      }
+
+      // Client-side rate limiting
+      if (!contactRateLimiter.isAllowed('contact_form')) {
+        const remainingMs = contactRateLimiter.getRemainingTime('contact_form');
+        const seconds = Math.ceil(remainingMs / 1000);
+        throw new Error(`Too many attempts. Try again in ${seconds}s`);
+      }
+
+      const sanitizedData: ContactForm = {
+        fullName: sanitizeInput(data.fullName).slice(0, 120),
+        email: data.email.trim().toLowerCase(),
+        subject: sanitizeInput(data.subject).slice(0, 150),
+        message: data.message.trim().slice(0, 2000),
+      };
+
       const { error } = await supabase.functions.invoke('send-contact-email', {
-        body: data
+        body: sanitizedData,
       });
 
       if (error) {
@@ -47,15 +70,15 @@ const Contact = () => {
       setIsSubmitted(true);
       form.reset();
       toast({
-        title: "Message sent!",
+        title: 'Message sent!',
         description: "Thanks for reaching out! We'll get back to you within 24 hours.",
       });
-    } catch (error) {
-      console.error('Error sending contact email:', error);
+    } catch (error: any) {
+      console.error('Error sending contact email:', { name: error?.name, message: error?.message });
       toast({
-        title: "Error",
-        description: "Failed to send message. Please try again.",
-        variant: "destructive",
+        title: 'Error',
+        description: error?.message || 'Failed to send message. Please try again.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
@@ -104,7 +127,7 @@ const Contact = () => {
                 <FormField
                   control={form.control}
                   name="fullName"
-                  rules={{ required: "Full name is required" }}
+                  rules={{ required: "Full name is required", maxLength: { value: 120, message: "Max 120 characters" } }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-white">Full Name *</FormLabel>
@@ -149,7 +172,7 @@ const Contact = () => {
                 <FormField
                   control={form.control}
                   name="subject"
-                  rules={{ required: "Please select a subject" }}
+                  rules={{ required: "Please select a subject", maxLength: { value: 150, message: "Max 150 characters" } }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-white">Subject *</FormLabel>
@@ -174,7 +197,7 @@ const Contact = () => {
                 <FormField
                   control={form.control}
                   name="message"
-                  rules={{ required: "Message is required" }}
+                  rules={{ required: "Message is required", maxLength: { value: 2000, message: "Max 2000 characters" } }}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-white">Message *</FormLabel>

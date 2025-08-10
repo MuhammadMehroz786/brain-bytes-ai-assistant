@@ -100,10 +100,16 @@ export const secureSignIn = async (email: string, password: string): Promise<Aut
 export const secureEmailStorage = {
   async store(email: string, password: string): Promise<{ success: boolean; error?: string }> {
     try {
+      // Local validation before invoking the Edge Function
+      const emailValidation = validateEmail(email);
+      if (!emailValidation.isValid) {
+        return { success: false, error: emailValidation.error };
+      }
+
       const { data, error } = await supabase.functions.invoke('secure-email-storage', {
         body: {
           action: 'store',
-          email,
+          email: normalizeEmail(email),
           password
         }
       });
