@@ -8,6 +8,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { NaturalLanguageCalendar } from '../NaturalLanguageCalendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 
 export const GoogleCalendarSection = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -32,6 +33,17 @@ export const GoogleCalendarSection = () => {
   const [dragStartHour, setDragStartHour] = useState<number | null>(null);
   const [dragEndHour, setDragEndHour] = useState<number | null>(null);
 
+  // View state
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [now, setNow] = useState<Date>(new Date());
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
+  const [workingHours, setWorkingHours] = useState<{ start: string; end: string }>(() => {
+    try { return JSON.parse(localStorage.getItem('bb_calendar_working_hours') || '{"start":"08:00","end":"20:00"}'); } catch { return { start: '08:00', end: '20:00' }; }
+  });
+  const [quietHours, setQuietHours] = useState<{ start: string; end: string }>(() => {
+    try { return JSON.parse(localStorage.getItem('bb_calendar_quiet_hours') || '{"start":"22:00","end":"07:00"}'); } catch { return { start: '22:00', end: '07:00' }; }
+  });
+
   useEffect(() => {
     const calendarConnected = localStorage.getItem('google_calendar_connected');
     const gmailConnected = localStorage.getItem('gmail_connected');
@@ -48,6 +60,17 @@ export const GoogleCalendarSection = () => {
     if (gmailConnected === 'true') {
       setIsGmailConnected(true);
     }
+
+    // Ensure prefs exist and start timer for "now" marker
+    if (!localStorage.getItem('bb_calendar_working_hours')) {
+      localStorage.setItem('bb_calendar_working_hours', JSON.stringify({ start: '08:00', end: '20:00' }));
+    }
+    if (!localStorage.getItem('bb_calendar_quiet_hours')) {
+      localStorage.setItem('bb_calendar_quiet_hours', JSON.stringify({ start: '22:00', end: '07:00' }));
+    }
+
+    const interval = setInterval(() => setNow(new Date()), 60000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleSetFocusClick = async () => {
@@ -274,6 +297,22 @@ export const GoogleCalendarSection = () => {
     return new Date(isoString).toLocaleDateString();
   };
 
+  const isSameDay = (a: Date, b: Date) => a.toDateString() === b.toDateString();
+  const parseHHMM = (s: string) => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+  const inWorkingHours = (hour: number) => {
+    const mins = hour * 60;
+    const start = parseHHMM(workingHours.start);
+    const end = parseHHMM(workingHours.end);
+    return start <= end ? (mins >= start && mins < end) : (mins >= start || mins < end);
+  };
+  const inQuietHours = (hour: number) => {
+    const mins = hour * 60;
+    const start = parseHHMM(quietHours.start);
+    const end = parseHHMM(quietHours.end);
+    return start <= end ? (mins >= start && mins < end) : (mins >= start || mins < end);
+  };
+  const canShowHint = (hour: number) => aiSuggestions && inWorkingHours(hour) && !inQuietHours(hour);
+
   return (
     <div className="space-y-6">
       {/* Natural Language Calendar Component */}
@@ -321,28 +360,67 @@ export const GoogleCalendarSection = () => {
             <p className="text-sm text-gray-500 mt-2">No busy slots found for the next 3 days.</p>
           )}
 
-          <div className="mt-6 flex items-center justify-between">
-            <div className="text-slate-700 font-semibold">
-              {new Date().toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
-            </div>
-            <div className="hidden sm:flex items-center gap-3 text-xs">
-              <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-focus))' }} /> Focus</span>
-              <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-meeting))' }} /> Meeting</span>
-              <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-personal))' }} /> Personal</span>
-              <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-busy))' }} /> Busy</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant={aiSuggestions ? 'secondary' : 'outline'} size="sm" aria-pressed={aiSuggestions} onClick={() => setAiSuggestions((v)=>!v)} className="rounded-full px-2.5 py-1 text-xs">
-                AI Suggestions
-              </Button>
-              <Button variant={compact ? 'secondary' : 'outline'} size="sm" aria-pressed={compact} onClick={() => setCompact((v)=>!v)} className="rounded-full px-2.5 py-1 text-xs">
-                Compact
-              </Button>
-            </div>
-          </div>
-
-          <div className="mt-3 border rounded-lg">
-            <div className={`max-h-[520px] overflow-y-auto divide-y`}> 
+          <div className="mt-6 border rounded-lg">
+            <div className="max-h-[520px] overflow-y-auto">
+              <div className="sticky top-0 z-20 bg-white/80 backdrop-blur px-4 py-2 border-b flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="text-slate-700 font-semibold">
+                    {selectedDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                  </div>
+                  <Input
+                    type="date"
+                    aria-label="Choose date"
+                    value={new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset()*60000)).toISOString().slice(0,10)}
+                    onChange={(e)=>{ const d = new Date(e.target.value + 'T00:00:00'); setSelectedDate(d); }}
+                    className="h-8 w-[9.5rem]"
+                  />
+                  <div className="sm:hidden flex items-center gap-1 text-[11px] text-muted-foreground">
+                    <a href="#morning" className="chips rounded-full px-2.5 py-1 border bg-white/60 backdrop-blur border-slate-200">Morning</a>
+                    <span>&bull;</span>
+                    <a href="#afternoon" className="chips rounded-full px-2.5 py-1 border bg-white/60 backdrop-blur border-slate-200">Afternoon</a>
+                    <span>&bull;</span>
+                    <a href="#evening" className="chips rounded-full px-2.5 py-1 border bg-white/60 backdrop-blur border-slate-200">Evening</a>
+                    <span>&bull;</span>
+                    <a href="#night" className="chips rounded-full px-2.5 py-1 border bg-white/60 backdrop-blur border-slate-200">Night</a>
+                  </div>
+                </div>
+                <div className="hidden sm:flex items-center gap-3 text-xs">
+                  <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-focus))' }} /> Focus</span>
+                  <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-meeting))' }} /> Meeting</span>
+                  <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-personal))' }} /> Personal</span>
+                  <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-busy))' }} /> Busy</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant={aiSuggestions ? 'secondary' : 'outline'} size="sm" aria-pressed={aiSuggestions} onClick={() => setAiSuggestions((v)=>!v)} className="rounded-full px-2.5 py-1 text-xs">
+                    Hints
+                  </Button>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="sm" aria-label="Preferences" className="rounded-full px-2.5 py-1 text-xs">Preferences</Button>
+                    </PopoverTrigger>
+                    <PopoverContent align="end" className="w-64">
+                      <div className="space-y-3">
+                        <div className="text-sm font-medium">Working Hours</div>
+                        <div className="flex items-center gap-2 text-xs">
+                          <input type="time" aria-label="Working hours start" value={workingHours.start} onChange={(e)=>{ const v={...workingHours,start:e.target.value}; setWorkingHours(v); localStorage.setItem('bb_calendar_working_hours', JSON.stringify(v)); }} className="border rounded px-2 py-1 bg-background" />
+                          <span>&ndash;</span>
+                          <input type="time" aria-label="Working hours end" value={workingHours.end} onChange={(e)=>{ const v={...workingHours,end:e.target.value}; setWorkingHours(v); localStorage.setItem('bb_calendar_working_hours', JSON.stringify(v)); }} className="border rounded px-2 py-1 bg-background" />
+                        </div>
+                        <div className="text-sm font-medium">Quiet Hours</div>
+                        <div className="flex items-center gap-2 text-xs">
+                          <input type="time" aria-label="Quiet hours start" value={quietHours.start} onChange={(e)=>{ const v={...quietHours,start:e.target.value}; setQuietHours(v); localStorage.setItem('bb_calendar_quiet_hours', JSON.stringify(v)); }} className="border rounded px-2 py-1 bg-background" />
+                          <span>&ndash;</span>
+                          <input type="time" aria-label="Quiet hours end" value={quietHours.end} onChange={(e)=>{ const v={...quietHours,end:e.target.value}; setQuietHours(v); localStorage.setItem('bb_calendar_quiet_hours', JSON.stringify(v)); }} className="border rounded px-2 py-1 bg-background" />
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <Button variant="outline" size="sm" onClick={()=>setSuggestionsOpen(true)} aria-label="Open AI Suggestions" className="rounded-full px-2.5 py-1 text-xs">AI Suggestions</Button>
+                  <Button variant={compact ? 'secondary' : 'outline'} size="sm" aria-pressed={compact} onClick={() => setCompact((v)=>!v)} className="rounded-full px-2.5 py-1 text-xs">
+                    Compact
+                  </Button>
+                </div>
+              </div>
               {Array.from({ length: 24 }).map((_, hour) => {
                 const hourStart = new Date();
                 hourStart.setHours(hour, 0, 0, 0);
@@ -357,32 +435,35 @@ export const GoogleCalendarSection = () => {
                 const eventsInHour = calendarEvents.filter(event => {
                   const eventStart = new Date(event.start.dateTime || event.start.date);
                   const eventEnd = new Date(event.end.dateTime || event.end.date);
-                  return (eventStart < hourEnd && eventEnd > hourStart);
+                  const dayStart = new Date(selectedDate); dayStart.setHours(0,0,0,0);
+                  const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
+                  const inSelectedDay = (eventStart < dayEnd && eventEnd > dayStart);
+                  return inSelectedDay && (eventStart < hourEnd && eventEnd > hourStart);
                 });
 
-                const sectionBg = hour >= 5 && hour < 12
+                const sectionBg = (hour >= 6 && hour < 12)
                   ? 'hsl(var(--cal-morning-bg))'
-                  : hour >= 12 && hour < 18
+                  : (hour >= 12 && hour < 18)
                   ? 'hsl(var(--cal-afternoon-bg))'
-                  : hour >= 18
+                  : (hour >= 18 && hour < 22)
                   ? 'hsl(var(--cal-evening-bg))'
-                  : 'transparent';
+                  : 'hsl(var(--cal-night-bg))';
 
-                const showSectionHeader = hour === 5 || hour === 12 || hour === 18;
-                const sectionTitle = hour === 5 ? 'Morning' : hour === 12 ? 'Afternoon' : 'Evening';
+                const showSectionHeader = hour === 6 || hour === 12 || hour === 18 || hour === 22;
+                const sectionTitle = hour === 6 ? 'Morning' : hour === 12 ? 'Afternoon' : hour === 18 ? 'Evening' : 'Night';
 
                 const rowClasses = compact ? 'py-1.5' : 'py-2.5';
 
                 return (
                   <div key={hour} id={showSectionHeader ? sectionTitle.toLowerCase() : undefined} style={{ backgroundColor: sectionBg }} className="relative">
                     {showSectionHeader && (
-                      <div className="sticky top-0 z-10 px-4 py-1.5 text-xs font-semibold text-slate-700 bg-white/70 backdrop-blur border-b">
+                      <div className="sticky top-[40px] z-10 px-4 py-1.5 text-xs font-semibold text-slate-700 bg-white/70 backdrop-blur border-b">
                         {sectionTitle}
                       </div>
                     )}
 
                     <div 
-                      className={`group flex items-stretch ${rowClasses} px-4`}
+                      className={`group flex items-stretch ${rowClasses} px-4 odd:bg-muted/20 hover:bg-muted/30`}
                       onMouseDown={(e) => {
                         if (eventsInHour.length === 0 && !isBusy) {
                           setDragStartHour(hour);
@@ -419,12 +500,12 @@ export const GoogleCalendarSection = () => {
                                 <TooltipProvider key={event.id}>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <div className="relative rounded-lg border px-3 py-2 shadow-sm hover:shadow-lg transition"
+                                      <div className={`relative rounded-lg border ${compact ? 'px-2 py-1.5' : 'px-3 py-2'} shadow-sm hover:shadow-lg transition`}
                                         style={{ backgroundColor: `hsl(var(${colorVar}) / 0.12)`, borderColor: `hsl(var(${colorVar}) / 0.2)` }}
                                       >
                                         <div className="flex items-center justify-between gap-2">
                                           <div className="min-w-0">
-                                            <div className="text-sm font-medium truncate">{title}</div>
+                                            <div className="text-sm font-medium truncate"><span className="mr-1">{type==='focus'?'🧠':type==='meeting'?'👥':'✅'}</span>{title}</div>
                                             <div className="text-xs text-muted-foreground truncate">
                                               {formatTime(event.start.dateTime || event.start.date)} - {formatTime(event.end.dateTime || event.end.date)}
                                             </div>
@@ -503,10 +584,12 @@ export const GoogleCalendarSection = () => {
                             </Popover>
                           </div>
                         )}
+                        {isSameDay(selectedDate, now) && hour === now.getHours() && (
+                          <div className="absolute left-0 right-0 h-px bg-primary/50" style={{ top: `${(now.getMinutes()/60)*100}%` }} />
+                        )}
                       </div>
-                    </div>
 
-                    {aiSuggestions && eventsInHour.length === 0 && !isBusy && ((hour <= 21) && (hour % 3 === 0)) && (
+                    {canShowHint(hour) && eventsInHour.length === 0 && !isBusy && (hour % 3 === 0) && (
                       <div className="px-4 pb-1">
                         <button className="text-xs italic text-slate-400/70 hover:text-slate-500" onClick={() => { setQaOpen(true); const start = new Date(); start.setHours(hour,0,0,0); setQaStart(start); setQaTitle('Quick writing block'); setQaDuration(30); }}>✍️ 30‑min writing block?</button>
                       </div>
@@ -559,6 +642,14 @@ export const GoogleCalendarSection = () => {
           </div>
         </div>
       )}
+      <Sheet open={suggestionsOpen} onOpenChange={setSuggestionsOpen}>
+        <SheetContent side="right" className="w-[360px] sm:w-[420px]">
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold">AI Suggestions</h3>
+            <div className="text-sm text-muted-foreground">Nothing for now</div>
+          </div>
+        </SheetContent>
+      </Sheet>
       </Card>
     </div>
   );

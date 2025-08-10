@@ -91,6 +91,7 @@ All colors MUST be HSL.
     --cal-morning-bg: 210 100% 98%; /* ~#F5FAFF */
     --cal-afternoon-bg: 220 100% 98%; /* ~#F9FBFF */
     --cal-evening-bg: 255 100% 98%; /* ~#F8F6FF */
+    --cal-night-bg: 240 20% 98%; /* subtle night tint */
   }
 
   .dark {

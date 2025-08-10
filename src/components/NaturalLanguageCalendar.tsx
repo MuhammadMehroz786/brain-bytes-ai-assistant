@@ -137,6 +137,7 @@ export const NaturalLanguageCalendar: React.FC<NaturalLanguageCalendarProps> = (
   const [command, setCommand] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [lastScheduledEvent, setLastScheduledEvent] = useState<string | null>(null);
+  const [showExamples, setShowExamples] = useState(false);
 
   const handleNaturalLanguageInput = async () => {
     if (!command.trim()) {
@@ -223,30 +224,28 @@ export const NaturalLanguageCalendar: React.FC<NaturalLanguageCalendarProps> = (
   ];
 
   return (
-    <Card className="p-6">
-      <div className="flex items-center mb-4">
-        <MessageSquare className="w-6 h-6 mr-2 text-blue-600" />
-        <h3 className="text-lg font-medium">Natural Language Calendar</h3>
+    <Card className="p-4">
+      <div className="mb-2">
+        <h3 className="text-sm font-semibold text-slate-700">Quick Add (natural language)</h3>
       </div>
-      
-      <p className="text-sm text-gray-600 mb-4">
-        Tell me what you want to schedule, and I'll create the calendar event for you!
-      </p>
 
       <div className="space-y-4">
         <div className="flex gap-2">
           <Input
+            id="nlc-input"
             value={command}
             onChange={(e) => setCommand(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="e.g., set a focus block for 10 am about doing homework"
             className="flex-1"
             disabled={isProcessing || !isCalendarConnected}
+            aria-label="Natural language quick add"
           />
           <Button 
             onClick={handleNaturalLanguageInput}
             disabled={isProcessing || !isCalendarConnected || !command.trim()}
             size="icon"
+            aria-label="Submit quick add"
           >
             {isProcessing ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -271,20 +270,24 @@ export const NaturalLanguageCalendar: React.FC<NaturalLanguageCalendarProps> = (
           </div>
         )}
 
-        <div className="mt-6">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Example commands:</h4>
-          <div className="grid grid-cols-1 gap-2">
-            {exampleCommands.map((example, index) => (
-              <button
-                key={index}
-                onClick={() => setCommand(example)}
-                className="text-left text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 p-2 rounded transition-colors"
-                disabled={isProcessing || !isCalendarConnected}
-              >
-                "{example}"
-              </button>
-            ))}
-          </div>
+        <div className="mt-3">
+          <button type="button" className="text-xs text-muted-foreground hover:text-foreground underline" onClick={()=>setShowExamples(v=>!v)}>
+            {showExamples ? 'Hide examples' : 'Show examples'}
+          </button>
+          {showExamples && (
+            <div className="mt-2 grid grid-cols-1 gap-2">
+              {exampleCommands.map((example, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCommand(example)}
+                  className="text-left text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 p-2 rounded transition-colors"
+                  disabled={isProcessing || !isCalendarConnected}
+                >
+                  "{example}"
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </Card>
