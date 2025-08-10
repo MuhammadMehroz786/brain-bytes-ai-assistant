@@ -130,7 +130,7 @@ export const InsightCard: React.FC<InsightCardProps> = ({ email, pinned, isActiv
         {/* Meta */}
         <div className="mt-2 flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
-            <img src={favicon} alt={domain ? `${domain} favicon` : "Sender favicon"} className="h-4 w-4 rounded-sm" onError={(e) => ((e.currentTarget.style.display = 'none'))} />
+            {domain && (<img src={favicon} alt={`${domain} favicon`} className="h-4 w-4 rounded-sm" onError={(e) => ((e.currentTarget.style.display = 'none'))} />)}
             <TokenChip label={domain} />
           </div>
           <div className="flex items-center gap-2">

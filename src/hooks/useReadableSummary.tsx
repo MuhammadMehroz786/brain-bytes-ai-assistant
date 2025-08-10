@@ -18,13 +18,15 @@ function stripBoilerplate(text: string) {
   return text
     .split(/\n+/)
     .filter((line) => !boilerplatePatterns.some((p) => p.test(line)))
-    .join("\n");
+    .join("\n")
+    .replace(/^\s*email\s+from\s*:/i, "");
 }
 
-function keepFirstEmoji(text: string) {
+function keepBrandEmoji(text: string, domain: string) {
+  const allowBee = /beehiiv/i.test(domain);
   let found = '';
   const cleaned = text.replace(emojiPattern, (m) => {
-    if (!found) {
+    if (allowBee && !found && m === '🐝') {
       found = m;
       return m;
     }
@@ -38,6 +40,11 @@ function firstSentence(text: string) {
   return match ? match[0].trim() : text.trim();
 }
 
+// Remove leading "Email from ..." or "From: ..." prefixes in summaries
+function stripSourcePrefix(text: string) {
+  return text.replace(/^\s*(email\s+from\s+[^:]+:\s*|from:\s*[^-–—\n]+[-–—]?\s*)/i, '');
+}
+
 function extractBullets(text: string) {
   const lines = text.split(/\n+/).map((l) => l.trim());
   const bullets = lines.filter((l) => /^[-•]/.test(l)).map((l) => l.replace(/^[-•]\s?/, ''));
@@ -45,6 +52,20 @@ function extractBullets(text: string) {
   // fallback: split by ; and pick concise fragments
   const parts = text.split(/;|\u2022/).map((p) => p.trim()).filter(Boolean);
   return parts.slice(1, 3); // after TL;DR
+}
+
+// Render helper: bold date/time tokens inside plain text segments
+function renderTextWithDates(t: string) {
+  const nodes: Array<React.ReactNode> = [];
+  let lastIndex = 0;
+  t.replace(dateRegex, (m, _g1, offset: number) => {
+    nodes.push(t.slice(lastIndex, offset));
+    nodes.push(<strong key={offset} className="font-semibold">{m}</strong>);
+    lastIndex = offset + m.length;
+    return m;
+  });
+  nodes.push(t.slice(lastIndex));
+  return nodes;
 }
 
 function highlightAmounts(tldr: string) {
@@ -71,7 +92,8 @@ export function useReadableSummary(aiSummary: string, senderEmail: string) {
     const domain = (senderEmail.split('@')[1] || '').toLowerCase();
 
     const base = stripBoilerplate(aiSummary || '').trim();
-    const { text: noExtraEmoji } = keepFirstEmoji(base);
+    const withoutSource = stripSourcePrefix(base);
+    const { text: noExtraEmoji, emoji } = keepBrandEmoji(withoutSource, domain);
 
     const amounts = Array.from(noExtraEmoji.matchAll(amountRegex)).map((m) => m[0]);
     const dates = Array.from(noExtraEmoji.matchAll(dateRegex)).map((m) => m[0]);
@@ -84,13 +106,18 @@ export function useReadableSummary(aiSummary: string, senderEmail: string) {
     const cleanNodes = (
       <div className="text-sm text-muted-foreground" style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
         <span>
+          {emoji && <span className="mr-1" aria-hidden="true">{emoji}</span>}
           {highlighted.map((p, i) =>
             p.amount ? (
-              <mark key={i} className="amount" style={{ backgroundColor: "hsl(var(--cat-current) / 0.12)", color: "hsl(var(--cat-current))" }}>
+              <mark
+                key={`a-${i}`}
+                className="amount font-semibold"
+                style={{ backgroundColor: "hsl(var(--cat-current) / 0.12)", color: "hsl(var(--cat-current))" }}
+              >
                 {p.amount}
               </mark>
             ) : (
-              <span key={i}>{p.text}</span>
+              <span key={`t-${i}`}>{renderTextWithDates(p.text || '')}</span>
             )
           )}
         </span>
