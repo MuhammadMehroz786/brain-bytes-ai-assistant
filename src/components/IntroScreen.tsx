@@ -194,140 +194,132 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </div>
 
-      {/* Mobile & Tablet Header */}
-      <header className="lg:hidden h-[60px] bg-white/90 border-b border-[#E9ECF2]">
-        <div className="h-full">
-          <div className="mx-auto max-w-[640px] px-3 flex items-center justify-between h-full">
-            <div className="flex items-center">
-              <span className="text-[20px] font-extrabold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Brain Bytes
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
+      {/* Mobile-only compact grid (non-scroll) */}
+      <div className="lg:hidden m-wrap">
+        {/* Row 1: Header */}
+        <div className="m-container">
+          <div className="m-header">
+            <div className="m-logo">Brain Bytes</div>
+            <div className="m-actions">
+              <button
+                className="btn primary"
                 onClick={() => setIsWaitlistOpen(true)}
-                className="h-[42px] px-3 text-[14px] rounded-[12px] bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90"
               >
                 Join the Waitlist
-              </Button>
-              <Button
-                variant="secondary"
+              </button>
+              <button
+                className="btn"
                 onClick={onAuth}
-                className="h-[42px] px-3 text-[14px] rounded-[12px] bg-white border border-border hover:bg-secondary/80"
               >
                 Sign In
-              </Button>
+              </button>
             </div>
           </div>
         </div>
-      </header>
 
-      <main className="lg:hidden h-[calc(100dvh-60px)] overflow-y-auto bg-[hsl(210_20%_98%)] font-sans">
-        <div className="mx-auto max-w-[640px] px-3">
-          {/* 1. Hero */}
-          <section className="py-8 text-center">
-            <h1 className="text-[28px] font-bold leading-tight">
-              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Overwhelmed by AI?
-              </span>
-            </h1>
-            <p className="mt-2 text-[16px] text-[hsl(220_9%_46%)]">We solve it for the price of lunch</p>
+        {/* Row 2: Hero */}
+        <div className="m-container">
+          <section className="hero" aria-labelledby="mobile-hero-title">
+            <h1 id="mobile-hero-title">Overwhelmed by AI?</h1>
+            <p>We solve it for the price of lunch</p>
           </section>
-          <ChevronDown className="section-arrow" aria-hidden="true" />
+        </div>
 
-          {/* 2. 3‑Step Process (flat) */}
-          <section className="py-4">
-            <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="flex flex-col items-center">
-                <ListChecks className="w-5 h-5 text-primary mb-1.5" />
-                <span className="text-[15px] font-semibold text-foreground">Answer 5 Questions</span>
-                <span className="text-[13px] text-muted-foreground">Tell us your goals.</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <LayoutDashboard className="w-5 h-5 text-accent mb-1.5" />
-                <span className="text-[15px] font-semibold text-foreground">Get Your Dashboard</span>
-                <span className="text-[13px] text-muted-foreground">Tools & guides.</span>
-              </div>
-              <div className="flex flex-col items-center">
-                <Zap className="w-5 h-5 text-success mb-1.5" />
-                <span className="text-[15px] font-semibold text-foreground">Start in Minutes</span>
-                <span className="text-[13px] text-muted-foreground">Skip the overwhelm.</span>
-              </div>
+        {/* Row 3: Arrow #1 */}
+        <div className="m-container">
+          <div className="arrow" aria-hidden>⌄</div>
+        </div>
+
+        {/* Row 4: 3-Step */}
+        <div className="m-container">
+          <section className="steps" aria-label="Three step quickstart">
+            <div>
+              <ListChecks className="ic" aria-hidden />
+              <h4>Answer 5 Questions</h4>
+              <p>Tell us your goals.</p>
+            </div>
+            <div>
+              <LayoutDashboard className="ic" aria-hidden />
+              <h4>Get Your Dashboard</h4>
+              <p>Tools & guides.</p>
+            </div>
+            <div>
+              <Zap className="ic" aria-hidden />
+              <h4>Start in Minutes</h4>
+              <p>Skip the overwhelm.</p>
             </div>
           </section>
-          <ChevronDown className="section-arrow" aria-hidden="true" />
+        </div>
 
-          {/* 3. Video/Mockup */}
-          <section className="py-4">
-            <div className="rounded-2xl overflow-hidden border border-[#E9ECF2] bg-card aspect-video">
+        {/* Row 5: Arrow #2 */}
+        <div className="m-container">
+          <div className="arrow" aria-hidden>⌄</div>
+        </div>
+
+        {/* Row 6: Video + Caption */}
+        <div className="m-container">
+          <section aria-label="Product teaser">
+            <div className="video">
               <iframe
-                src="https://www.youtube.com/embed/1NnXmp1M0KM?rel=0&modestbranding=1"
+                src="https://www.youtube.com/embed/1NnXmp1M0KM?rel=0&modestbranding=1&controls=0"
                 width="100%"
                 height="100%"
-                frameBorder="0"
+                frameBorder={0}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 className="w-full h-full"
                 title="Brain Bytes Demo"
               />
             </div>
-            <p className="mt-2 text-center text-[13px] text-[#7A8191]">See what you’ll get.</p>
-          </section>
-          <ChevronDown className="section-arrow" aria-hidden="true" />
-
-          {/* 4. Features */}
-          <section className="py-8">
-            <div className="grid grid-cols-3 gap-3">
-              <div className="flex flex-col items-center bg-white rounded-2xl p-4 text-center shadow-[0_2px_8px_rgba(16,24,40,0.06)] transition-transform duration-150 active:-translate-y-1 active:shadow-lg">
-                <CheckCircle2 className="w-[22px] h-[22px] text-primary" />
-                <h4 className="mt-1.5 text-[16px] font-semibold text-foreground">Curated Picks</h4>
-                <p className="mt-0.5 text-[13px] text-[#6B7280] leading-snug">Only what matters.</p>
-              </div>
-              <div className="flex flex-col items-center bg-white rounded-2xl p-4 text-center shadow-[0_2px_8px_rgba(16,24,40,0.06)] transition-transform duration-150 active:-translate-y-1 active:shadow-lg">
-                <BookOpen className="w-[22px] h-[22px] text-accent" />
-                <h4 className="mt-1.5 text-[16px] font-semibold text-foreground">How‑To Guides</h4>
-                <p className="mt-0.5 text-[13px] text-[#6B7280] leading-snug">Bite-size steps.</p>
-              </div>
-              <div className="flex flex-col items-center bg-white rounded-2xl p-4 text-center shadow-[0_2px_8px_rgba(16,24,40,0.06)] transition-transform duration-150 active:-translate-y-1 active:shadow-lg">
-                <Bot className="w-[22px] h-[22px] text-success" />
-                <h4 className="mt-1.5 text-[16px] font-semibold text-foreground">Assistant</h4>
-                <p className="mt-0.5 text-[13px] text-[#6B7280] leading-snug">Personal to you.</p>
-              </div>
-            </div>
-          </section>
-          <ChevronDown className="section-arrow" aria-hidden="true" />
-
-          {/* 5. Why This Works */}
-          <section className="py-8">
-            <div className="why-strip">
-              <div className="why-strip-item"><div>🏁</div><div>No experience needed</div></div>
-              <div className="why-strip-item"><div>🎯</div><div>Only relevant tools</div></div>
-              <div className="why-strip-item"><div>📈</div><div>Learn while you work</div></div>
-            </div>
-          </section>
-          <ChevronDown className="section-arrow" aria-hidden="true" />
-
-          {/* 6. CTA (sticky) + 7. Footer */}
-          <section className="pt-2 pb-4">
-            <div className="sticky bottom-0 z-20 pt-3 pb-[calc(env(safe-area-inset-bottom)+8px)] bg-gradient-to-b from-transparent to-[hsl(210_20%_98%)]">
-              <Button onClick={() => setIsWaitlistOpen(true)} className="w-full h-[54px] text-[17px] rounded-[18px] bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-[0_-4px_12px_rgba(16,24,40,0.05)]">
-                Join the Waitlist
-              </Button>
-              <p className="mt-2 text-center text-[12px] text-[#7A8191]">Launching soon. Early members get perks.</p>
-            </div>
-            <footer className="pt-4 pb-6">
-              <div className="text-center text-[12px] text-[#7A8191]">
-                © 2025 Brain Bytes | 
-                <Link to="/privacy-policy" className="hover:text-primary transition-colors duration-200 mx-1">Privacy Policy</Link> | 
-                <Link to="/terms-of-service" className="hover:text-primary transition-colors duration-200 mx-1">Terms of Service</Link> | 
-                <Link to="/refund-policy" className="hover:text-primary transition-colors duration-200 mx-1">Refund Policy</Link> | 
-                <Link to="/cookie-policy" className="hover:text-primary transition-colors duration-200 mx-1">Cookie Policy</Link> | 
-                <Link to="/contact" className="hover:text-primary transition-colors duration-200 mx-1">Contact</Link>
-              </div>
-            </footer>
+            <div className="video-cap">See what you’ll get.</div>
           </section>
         </div>
-      </main>
+
+        {/* Row 7: Feature chips */}
+        <div className="m-container">
+          <div className="chips" aria-label="Feature highlights">
+            <div className="chip"><CheckCircle2 className="ic" aria-hidden /><span>Curated Picks</span></div>
+            <div className="chip"><BookOpen className="ic" aria-hidden /><span>How‑To Guides</span></div>
+            <div className="chip"><Bot className="ic" aria-hidden /><span>Assistant</span></div>
+          </div>
+        </div>
+
+        {/* Row 8: Why strip */}
+        <div className="m-container">
+          <div className="why" aria-label="Why this works">
+            <div>🏁&nbsp;No experience needed</div>
+            <div>🎯&nbsp;Only relevant tools</div>
+            <div>📈&nbsp;Learn while you work</div>
+          </div>
+        </div>
+
+        {/* Row 9: CTA */}
+        <div className="m-container">
+          <button
+            className="cta w-full h-full"
+            onClick={() => setIsWaitlistOpen(true)}
+            aria-label="Join the Waitlist"
+          >
+            Join the Waitlist
+          </button>
+        </div>
+
+        {/* Row 10: Footer */}
+        <div className="m-container">
+          <div className="foot">
+            <span>© 2025 Brain Bytes ·</span>
+            <Link to="/privacy-policy" className="hover:text-primary transition-colors">&nbsp;Privacy</Link>
+            <span>&nbsp;·</span>
+            <Link to="/terms-of-service" className="hover:text-primary transition-colors">&nbsp;Terms</Link>
+            <span>&nbsp;·</span>
+            <Link to="/refund-policy" className="hover:text-primary transition-colors">&nbsp;Refund</Link>
+            <span>&nbsp;·</span>
+            <Link to="/cookie-policy" className="hover:text-primary transition-colors">&nbsp;Cookies</Link>
+            <span>&nbsp;·</span>
+            <Link to="/contact" className="hover:text-primary transition-colors">&nbsp;Contact</Link>
+          </div>
+        </div>
+      </div>
 
       {/* Desktop Layout */}
       <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#F6F0FF] to-[#EAF7FF]">
