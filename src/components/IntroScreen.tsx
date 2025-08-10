@@ -195,42 +195,70 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile & Tablet Header */}
-      <header className="lg:hidden h-14 bg-gradient-to-r from-gradient-start to-gradient-mid backdrop-blur-sm border-b border-border px-4 shadow-md">
+      <header className="lg:hidden h-12 bg-card/70 backdrop-blur-md border-b border-border px-4 shadow-sm">
         <div className="flex items-center justify-between h-full">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <img src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" alt="Brain Bytes logo icon" className="w-4 h-4" />
-            </div>
-            <span className="text-base font-semibold text-primary-foreground">Brain Bytes</span>
+          <div className="flex items-center">
+            <span className="text-base font-bold bg-gradient-to-r from-gradient-start via-gradient-mid to-gradient-start bg-clip-text text-transparent">
+              Brain Bytes
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={onAuth} className="h-8 px-3 text-xs">
+            <Button
+              variant="secondary"
+              onClick={onAuth}
+              className="h-8 px-3 text-xs bg-card border border-border hover:bg-secondary/80 active:scale-[0.98] transition"
+            >
               Sign In
             </Button>
-            <Button onClick={() => setIsWaitlistOpen(true)} className="h-8 px-3 text-xs bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button
+              onClick={() => setIsWaitlistOpen(true)}
+              className="h-9 px-3 text-xs bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90 rounded-lg shadow-sm hover:shadow-md"
+            >
               Join the Waitlist
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="lg:hidden h-[calc(100dvh-56px)] overflow-hidden bg-primary-light/60">
-        <div className="grid grid-rows-[1.2fr_1.1fr_.9fr_.9fr_.7fr] h-full">
+      <main className="lg:hidden h-[calc(100dvh-48px)] overflow-hidden bg-primary-light/60">
+        <div className="grid grid-rows-[1.15fr_.85fr_1.05fr_.9fr_.65fr] h-full">
           {/* 1. Hero block */}
-          <section className="px-6 pt-6 pb-1 text-center flex flex-col justify-between">
+          <section className="px-6 pt-5 pb-1 text-center flex flex-col justify-between">
             <div>
               <h1 className="text-[clamp(22px,5vw,28px)] font-bold leading-tight">
                 <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                   Overwhelmed by AI?
                 </span>
               </h1>
-              <p className="mt-2 text-[13px] text-muted-foreground">We solve it for the price of lunch</p>
+              <p className="mt-1.5 text-[13px] text-muted-foreground">We solve it for the price of lunch</p>
             </div>
-            <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mb-1" aria-hidden="true" />
+            <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/80 animate-float mx-auto mb-0.5" aria-hidden="true" />
           </section>
 
-          {/* 2. Demo block */}
-          <section className="px-6 flex flex-col justify-between">
+          {/* 2. 3‑Step Process (minimal) */}
+          <section className="px-5 flex flex-col justify-between">
+            <div className="grid grid-cols-3 gap-2.5">
+              <div className="flex flex-col items-center gap-1.5">
+                <ListChecks className="w-4 h-4 text-primary" />
+                <span className="text-[11px] font-medium text-foreground text-center">Answer 5 Questions</span>
+                <span className="text-[10px] text-muted-foreground text-center">Tell us your goals.</span>
+              </div>
+              <div className="flex flex-col items-center gap-1.5">
+                <LayoutDashboard className="w-4 h-4 text-accent" />
+                <span className="text-[11px] font-medium text-foreground text-center">Get Your Dashboard</span>
+                <span className="text-[10px] text-muted-foreground text-center">Your tools & guides.</span>
+              </div>
+              <div className="flex flex-col items-center gap-1.5">
+                <Zap className="w-4 h-4 text-success" />
+                <span className="text-[11px] font-medium text-foreground text-center">Start in Minutes</span>
+                <span className="text-[10px] text-muted-foreground text-center">Skip the overwhelm.</span>
+              </div>
+            </div>
+            <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/80 animate-float mx-auto" aria-hidden="true" />
+          </section>
+
+          {/* 3. Product Teaser (video) */}
+          <section className="px-5 flex flex-col justify-between">
             <div className="rounded-xl overflow-hidden border border-border shadow-sm bg-card">
               <iframe
                 src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ"
@@ -243,53 +271,35 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 title="Brain Bytes Demo"
               />
             </div>
-            <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
+            <p className="mt-1 text-center text-[11px] text-muted-foreground">See what you’ll get.</p>
+            <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/80 animate-float mx-auto mt-0.5" aria-hidden="true" />
           </section>
 
-          {/* 3. 3-Step strip */}
-          <section className="px-6 flex flex-col justify-between">
-            <div className="grid grid-cols-3 gap-3">
-              <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm transition-transform duration-200 hover:-translate-y-0.5">
-                <ListChecks className="w-4 h-4 text-primary" />
-                <span className="text-[11px] font-medium text-foreground text-center">Answer 5 Questions</span>
-              </div>
-              <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm transition-transform duration-200 hover:-translate-y-0.5">
-                <LayoutDashboard className="w-4 h-4 text-accent" />
-                <span className="text-[11px] font-medium text-foreground text-center">Get Your Dashboard</span>
-              </div>
-              <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm transition-transform duration-200 hover:-translate-y-0.5">
-                <Zap className="w-4 h-4 text-success" />
-                <span className="text-[11px] font-medium text-foreground text-center">Start in Minutes</span>
-              </div>
-            </div>
-            <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto" aria-hidden="true" />
-          </section>
-
-          {/* 4. Features (3 cards) */}
-          <section className="px-6 flex flex-col justify-between">
-            <div className="grid grid-cols-3 gap-3">
-              <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm hover:shadow-md transition-all">
+          {/* 4. Features (3 small cards) */}
+          <section className="px-5 flex flex-col justify-between">
+            <div className="grid grid-cols-3 gap-2.5">
+              <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-2.5 shadow-sm hover:shadow-md transition-all">
                 <CheckCircle2 className="w-4 h-4 text-primary" />
                 <span className="text-[11px] font-semibold text-foreground text-center">Curated Picks</span>
                 <span className="text-[10px] text-muted-foreground text-center">Only what matters.</span>
               </div>
-              <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm hover:shadow-md transition-all">
+              <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-2.5 shadow-sm hover:shadow-md transition-all">
                 <BookOpen className="w-4 h-4 text-accent" />
                 <span className="text-[11px] font-semibold text-foreground text-center">How‑To Guides</span>
                 <span className="text-[10px] text-muted-foreground text-center">Bite-size steps.</span>
               </div>
-              <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm hover:shadow-md transition-all">
+              <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-2.5 shadow-sm hover:shadow-md transition-all">
                 <Bot className="w-4 h-4 text-success" />
                 <span className="text-[11px] font-semibold text-foreground text-center">Assistant</span>
                 <span className="text-[10px] text-muted-foreground text-center">Personal to you.</span>
               </div>
             </div>
-            <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto" aria-hidden="true" />
+            <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/80 animate-float mx-auto" aria-hidden="true" />
           </section>
 
           {/* 5. CTA block */}
-          <section className="px-6 flex flex-col justify-center">
-            <Button onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-base px-6 py-3 rounded-2xl shadow-md hover:shadow-lg transition-all">
+          <section className="px-5 flex flex-col justify-center">
+            <Button onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-base px-6 py-3.5 rounded-2xl shadow-md hover:shadow-lg transition-all">
               Join the Waitlist
             </Button>
             <p className="mt-2 text-center text-[11px] text-muted-foreground">Launching soon. Early members get perks.</p>
