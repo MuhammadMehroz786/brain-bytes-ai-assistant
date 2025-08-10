@@ -5,7 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { WaitlistSignup } from "./WaitlistSignup";
-import { ChevronDown, CheckCircle2, BookOpen, Bot, LayoutDashboard, ListChecks, Zap } from "lucide-react";
+import { ArrowDown, CheckCircle2, BookOpen, Bot, LayoutDashboard, ListChecks, Zap } from "lucide-react";
 
 interface IntroScreenProps {
   onStart: () => void;
@@ -194,132 +194,108 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </div>
 
-      {/* Mobile-only compact grid (non-scroll) */}
-      <div className="lg:hidden m-wrap">
-        {/* Row 1: Header */}
-        <div className="m-container">
-          <div className="m-header">
-            <div className="m-logo">Brain Bytes</div>
-            <div className="m-actions">
-              <button
-                className="btn primary"
-                onClick={() => setIsWaitlistOpen(true)}
-              >
-                Join the Waitlist
-              </button>
-              <button
-                className="btn"
-                onClick={onAuth}
-              >
-                Sign In
-              </button>
+      {/* Mobile & Tablet Header */}
+      <header className="lg:hidden h-14 bg-gradient-to-r from-gradient-start to-gradient-mid backdrop-blur-sm border-b border-border px-4 shadow-md">
+        <div className="flex items-center justify-between h-full">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+              <img src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" alt="Brain Bytes logo icon" className="w-4 h-4" />
             </div>
+            <span className="text-base font-semibold text-primary-foreground">Brain Bytes</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={onAuth} className="h-8 px-3 text-xs">
+              Sign In
+            </Button>
+            <Button onClick={() => setIsWaitlistOpen(true)} className="h-8 px-3 text-xs bg-primary text-primary-foreground hover:bg-primary/90">
+              Join the Waitlist
+            </Button>
           </div>
         </div>
+      </header>
 
-        {/* Row 2: Hero */}
-        <div className="m-container">
-          <section className="hero" aria-labelledby="mobile-hero-title">
-            <h1 id="mobile-hero-title">Overwhelmed by AI?</h1>
-            <p>We solve it for the price of lunch</p>
+      <main className="lg:hidden h-[calc(100dvh-56px)] overflow-hidden bg-primary-light/60">
+        <div className="grid grid-rows-[1.2fr_1.1fr_.9fr_.9fr_.7fr] h-full">
+          {/* 1. Hero block */}
+          <section className="px-6 pt-6 pb-1 text-center flex flex-col justify-between">
+            <div>
+              <h1 className="text-[clamp(22px,5vw,28px)] font-bold leading-tight">
+                <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                  Overwhelmed by AI?
+                </span>
+              </h1>
+              <p className="mt-2 text-[13px] text-muted-foreground">We solve it for the price of lunch</p>
+            </div>
+            <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mb-1" aria-hidden="true" />
           </section>
-        </div>
 
-        {/* Row 3: Arrow #1 */}
-        <div className="m-container">
-          <div className="arrow" aria-hidden>⌄</div>
-        </div>
-
-        {/* Row 4: 3-Step */}
-        <div className="m-container">
-          <section className="steps" aria-label="Three step quickstart">
-            <div>
-              <ListChecks className="ic" aria-hidden />
-              <h4>Answer 5 Questions</h4>
-              <p>Tell us your goals.</p>
+          {/* 2. Demo block */}
+          <section className="px-6 flex flex-col justify-between">
+            <div className="rounded-xl overflow-hidden border border-border shadow-sm bg-card">
+              <iframe
+                src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ"
+                width="100%"
+                height="180"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full aspect-video"
+                title="Brain Bytes Demo"
+              />
             </div>
-            <div>
-              <LayoutDashboard className="ic" aria-hidden />
-              <h4>Get Your Dashboard</h4>
-              <p>Tools & guides.</p>
-            </div>
-            <div>
-              <Zap className="ic" aria-hidden />
-              <h4>Start in Minutes</h4>
-              <p>Skip the overwhelm.</p>
-            </div>
+            <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
           </section>
-        </div>
 
-        {/* Row 5: Arrow #2 */}
-        <div className="m-container">
-          <div className="arrow" aria-hidden>⌄</div>
-        </div>
-
-        {/* Row 6: Video + Caption */}
-        <div className="m-container">
-          <section aria-label="Product teaser">
-            <div className="video">
-              <div className="video-wrap">
-                <iframe
-                  src="https://www.youtube.com/embed/1NnXmp1M0KM?rel=0&modestbranding=1&controls=0"
-                  frameBorder={0}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                  title="Brain Bytes Demo"
-                />
+          {/* 3. 3-Step strip */}
+          <section className="px-6 flex flex-col justify-between">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm transition-transform duration-200 hover:-translate-y-0.5">
+                <ListChecks className="w-4 h-4 text-primary" />
+                <span className="text-[11px] font-medium text-foreground text-center">Answer 5 Questions</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm transition-transform duration-200 hover:-translate-y-0.5">
+                <LayoutDashboard className="w-4 h-4 text-accent" />
+                <span className="text-[11px] font-medium text-foreground text-center">Get Your Dashboard</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm transition-transform duration-200 hover:-translate-y-0.5">
+                <Zap className="w-4 h-4 text-success" />
+                <span className="text-[11px] font-medium text-foreground text-center">Start in Minutes</span>
               </div>
             </div>
-            <div className="video-cap">See what you’ll get.</div>
+            <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto" aria-hidden="true" />
+          </section>
+
+          {/* 4. Features (3 cards) */}
+          <section className="px-6 flex flex-col justify-between">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm hover:shadow-md transition-all">
+                <CheckCircle2 className="w-4 h-4 text-primary" />
+                <span className="text-[11px] font-semibold text-foreground text-center">Curated Picks</span>
+                <span className="text-[10px] text-muted-foreground text-center">Only what matters.</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm hover:shadow-md transition-all">
+                <BookOpen className="w-4 h-4 text-accent" />
+                <span className="text-[11px] font-semibold text-foreground text-center">How‑To Guides</span>
+                <span className="text-[10px] text-muted-foreground text-center">Bite-size steps.</span>
+              </div>
+              <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm hover:shadow-md transition-all">
+                <Bot className="w-4 h-4 text-success" />
+                <span className="text-[11px] font-semibold text-foreground text-center">Assistant</span>
+                <span className="text-[10px] text-muted-foreground text-center">Personal to you.</span>
+              </div>
+            </div>
+            <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto" aria-hidden="true" />
+          </section>
+
+          {/* 5. CTA block */}
+          <section className="px-6 flex flex-col justify-center">
+            <Button onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-base px-6 py-3 rounded-2xl shadow-md hover:shadow-lg transition-all">
+              Join the Waitlist
+            </Button>
+            <p className="mt-2 text-center text-[11px] text-muted-foreground">Launching soon. Early members get perks.</p>
           </section>
         </div>
-
-        {/* Row 7: Feature chips */}
-        <div className="m-container">
-          <div className="chips" aria-label="Feature highlights">
-            <div className="chip"><CheckCircle2 className="ic" aria-hidden /><span>Curated Picks</span></div>
-            <div className="chip"><BookOpen className="ic" aria-hidden /><span>How‑To Guides</span></div>
-            <div className="chip"><Bot className="ic" aria-hidden /><span>Assistant</span></div>
-          </div>
-        </div>
-
-        {/* Row 8: Why strip */}
-        <div className="m-container">
-          <div className="why" aria-label="Why this works">
-            <div>🏁&nbsp;No experience needed</div>
-            <div>🎯&nbsp;Only relevant tools</div>
-            <div>📈&nbsp;Learn while you work</div>
-          </div>
-        </div>
-
-        {/* Row 9: CTA */}
-        <div className="m-container">
-          <button
-            className="cta w-full h-full"
-            onClick={() => setIsWaitlistOpen(true)}
-            aria-label="Join the Waitlist"
-          >
-            Join the Waitlist
-          </button>
-        </div>
-
-        {/* Row 10: Footer */}
-        <div className="m-container">
-          <div className="foot">
-            <span>© 2025 Brain Bytes ·</span>
-            <Link to="/privacy-policy" className="hover:text-primary transition-colors">&nbsp;Privacy</Link>
-            <span>&nbsp;·</span>
-            <Link to="/terms-of-service" className="hover:text-primary transition-colors">&nbsp;Terms</Link>
-            <span>&nbsp;·</span>
-            <Link to="/refund-policy" className="hover:text-primary transition-colors">&nbsp;Refund</Link>
-            <span>&nbsp;·</span>
-            <Link to="/cookie-policy" className="hover:text-primary transition-colors">&nbsp;Cookies</Link>
-            <span>&nbsp;·</span>
-            <Link to="/contact" className="hover:text-primary transition-colors">&nbsp;Contact</Link>
-          </div>
-        </div>
-      </div>
+      </main>
 
       {/* Desktop Layout */}
       <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#F6F0FF] to-[#EAF7FF]">
