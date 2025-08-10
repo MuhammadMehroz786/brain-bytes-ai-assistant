@@ -687,6 +687,76 @@ app.post('/suggest-focus-time-and-task', async (req, res) => {
   }
 });
 
+// Parse natural language calendar command endpoint
+app.post('/parse-calendar-command', async (req, res) => {
+  try {
+    console.log('📥 Received natural language calendar command. Body:', req.body);
+    const { command, email, timezone } = req.body;
+
+    if (!command || !email) {
+      return res.status(400).json({ error: 'Command and email are required' });
+    }
+
+    if (!openai) {
+      return res.status(503).json({ error: 'AI features are disabled - OpenAI API key not configured' });
+    }
+
+    // Get current time in user's timezone
+    const now = new Date();
+    const userTime = timezone ? now.toLocaleString('en-US', { timeZone: timezone }) : now.toLocaleString();
+
+    const prompt = `Parse this natural language calendar command and extract the event details.
+Current time: ${userTime} (timezone: ${timezone || 'local'})
+
+Command: "${command}"
+
+Extract and return a JSON object with:
+- summary: The event title/description
+- startTime: ISO datetime string for when the event starts
+- endTime: ISO datetime string for when the event ends (default to 1 hour duration if not specified)
+- isValid: boolean indicating if this is a valid calendar command
+
+Rules:
+- If time is specified as just a number like "10" or "10am", assume today unless date is mentioned
+- If "tomorrow" is mentioned, use tomorrow's date
+- If no date is mentioned, assume today
+- If no duration is specified, default to 1 hour
+- Focus blocks should be 30 minutes unless specified otherwise
+- If the command doesn't seem like a calendar request, set isValid to false
+
+Examples:
+"set a focus block for 10 am about doing homework" -> start at 10:00 AM today for 30 minutes, summary "doing homework"
+"schedule meeting with John tomorrow at 2pm" -> start at 2:00 PM tomorrow for 1 hour, summary "meeting with John"
+"lunch at 12:30" -> start at 12:30 PM today for 1 hour, summary "lunch"`;
+
+    console.log('Sending natural language parsing prompt to OpenAI');
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" },
+    });
+
+    const aiResponse = JSON.parse(completion.choices[0].message.content);
+    console.log('OpenAI parsing response:', aiResponse);
+
+    if (!aiResponse.isValid) {
+      return res.status(400).json({ error: 'Invalid calendar command', details: aiResponse });
+    }
+
+    res.json({ 
+      success: true, 
+      summary: aiResponse.summary,
+      startTime: aiResponse.startTime,
+      endTime: aiResponse.endTime
+    });
+
+  } catch (error) {
+    console.error('❌ Error parsing calendar command:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Schedule focus time endpoint
 app.post('/schedule-focus', async (req, res) => {
   try {

@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Calendar, CheckCircle, XCircle, Loader } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
+import { NaturalLanguageCalendar } from '../NaturalLanguageCalendar';
 
 export const GoogleCalendarSection = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -145,6 +146,22 @@ export const GoogleCalendarSection = () => {
         localStorage.setItem('google_calendar_access_token', tokenResponse.access_token);
         localStorage.setItem('google_calendar_connected', 'true');
         
+        // Get user info to store email for natural language calendar
+        try {
+          const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: {
+              'Authorization': `Bearer ${tokenResponse.access_token}`,
+            },
+          });
+          if (userInfoResponse.ok) {
+            const userInfo = await userInfoResponse.json();
+            localStorage.setItem('user_email', userInfo.email);
+            console.log('Stored user email:', userInfo.email);
+          }
+        } catch (userInfoError) {
+          console.warn('Could not fetch user info:', userInfoError);
+        }
+        
         const now = new Date();
         setLastSyncTime(now.toLocaleString());
         localStorage.setItem('google_calendar_last_sync', now.toISOString());
@@ -229,6 +246,7 @@ export const GoogleCalendarSection = () => {
     localStorage.removeItem('google_calendar_connected');
     localStorage.removeItem('google_calendar_last_sync');
     localStorage.removeItem('google_calendar_access_token');
+    localStorage.removeItem('user_email');
     setIsConnected(false);
     setLastSyncTime(null);
     setCalendarEvents([]);
@@ -245,8 +263,13 @@ export const GoogleCalendarSection = () => {
   };
 
   return (
-    <Card className="p-6">
-      <h3 className="text-lg font-medium">Your Smart Calendar</h3>
+    <div className="space-y-6">
+      {/* Natural Language Calendar Component */}
+      <NaturalLanguageCalendar isCalendarConnected={isConnected} />
+      
+      {/* Original Calendar Component */}
+      <Card className="p-6">
+        <h3 className="text-lg font-medium">Your Smart Calendar</h3>
       {isConnected ? (
         <div className="mt-4">
           <div className="flex items-center text-green-600">
@@ -366,6 +389,7 @@ export const GoogleCalendarSection = () => {
           </div>
         </div>
       )}
-    </Card>
+      </Card>
+    </div>
   );
 };
