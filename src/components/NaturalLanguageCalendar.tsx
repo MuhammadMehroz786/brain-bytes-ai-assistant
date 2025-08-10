@@ -9,6 +9,128 @@ interface NaturalLanguageCalendarProps {
   isCalendarConnected: boolean;
 }
 
+interface ParsedEvent {
+  summary: string;
+  startTime: string;
+  endTime: string;
+}
+
+// Simple client-side natural language parser
+const parseNaturalLanguageCommand = (command: string, timezone: string): ParsedEvent | null => {
+  const lowerCommand = command.toLowerCase();
+  
+  // Extract time patterns
+  const timePatterns = [
+    /(\d{1,2})\s*(am|pm)/gi,
+    /(\d{1,2}):(\d{2})\s*(am|pm)/gi,
+    /(\d{1,2}):(\d{2})/gi,
+    /(\d{1,2})\s*o'?clock/gi
+  ];
+  
+  let timeMatch = null;
+  let timeStr = '';
+  
+  for (const pattern of timePatterns) {
+    const match = pattern.exec(lowerCommand);
+    if (match) {
+      timeMatch = match;
+      timeStr = match[0];
+      break;
+    }
+  }
+  
+  if (!timeMatch) {
+    return null;
+  }
+  
+  // Parse the time
+  let hour = parseInt(timeMatch[1]);
+  let minute = parseInt(timeMatch[2]) || 0;
+  const ampm = timeMatch[2] || timeMatch[3];
+  
+  if (ampm && ampm.toLowerCase() === 'pm' && hour < 12) {
+    hour += 12;
+  } else if (ampm && ampm.toLowerCase() === 'am' && hour === 12) {
+    hour = 0;
+  }
+  
+  // Determine the date
+  const today = new Date();
+  let targetDate = new Date(today);
+  
+  if (lowerCommand.includes('tomorrow')) {
+    targetDate.setDate(today.getDate() + 1);
+  } else if (lowerCommand.includes('monday')) {
+    const daysToAdd = (1 + 7 - today.getDay()) % 7;
+    targetDate.setDate(today.getDate() + daysToAdd);
+  } else if (lowerCommand.includes('tuesday')) {
+    const daysToAdd = (2 + 7 - today.getDay()) % 7;
+    targetDate.setDate(today.getDate() + daysToAdd);
+  } else if (lowerCommand.includes('wednesday')) {
+    const daysToAdd = (3 + 7 - today.getDay()) % 7;
+    targetDate.setDate(today.getDate() + daysToAdd);
+  } else if (lowerCommand.includes('thursday')) {
+    const daysToAdd = (4 + 7 - today.getDay()) % 7;
+    targetDate.setDate(today.getDate() + daysToAdd);
+  } else if (lowerCommand.includes('friday')) {
+    const daysToAdd = (5 + 7 - today.getDay()) % 7;
+    targetDate.setDate(today.getDate() + daysToAdd);
+  }
+  
+  // Set the time
+  targetDate.setHours(hour, minute, 0, 0);
+  
+  // If the time has passed today, move to tomorrow
+  if (targetDate <= today && !lowerCommand.includes('tomorrow') && !lowerCommand.match(/(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/)) {
+    targetDate.setDate(targetDate.getDate() + 1);
+  }
+  
+  // Extract the task/summary
+  let summary = command;
+  
+  // Remove common scheduling words
+  summary = summary.replace(/set a focus block for|schedule|at|about|for|on (today|tomorrow)/gi, '');
+  summary = summary.replace(timeStr, '');
+  summary = summary.replace(/(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/gi, '');
+  summary = summary.trim();
+  
+  // If the summary starts with "about", remove it
+  if (summary.toLowerCase().startsWith('about ')) {
+    summary = summary.substring(6);
+  }
+  
+  if (!summary) {
+    summary = 'Focus time';
+  }
+  
+  // Determine duration
+  let duration = 60; // default 1 hour in minutes
+  if (lowerCommand.includes('focus block') || lowerCommand.includes('focus time')) {
+    duration = 30; // focus blocks are 30 minutes
+  }
+  
+  // Check for explicit duration
+  const durationMatch = lowerCommand.match(/for (\d+) (hour|hours|minute|minutes)/);
+  if (durationMatch) {
+    const num = parseInt(durationMatch[1]);
+    const unit = durationMatch[2];
+    if (unit.startsWith('hour')) {
+      duration = num * 60;
+    } else {
+      duration = num;
+    }
+  }
+  
+  const startTime = targetDate.toISOString();
+  const endTime = new Date(targetDate.getTime() + duration * 60 * 1000).toISOString();
+  
+  return {
+    summary: summary.charAt(0).toUpperCase() + summary.slice(1),
+    startTime,
+    endTime
+  };
+};
+
 export const NaturalLanguageCalendar: React.FC<NaturalLanguageCalendarProps> = ({ 
   isCalendarConnected 
 }) => {
@@ -30,53 +152,47 @@ export const NaturalLanguageCalendar: React.FC<NaturalLanguageCalendarProps> = (
     setIsProcessing(true);
 
     try {
-      // Get user's email from localStorage (should be stored when calendar is connected)
-      const userEmail = localStorage.getItem('user_email') || 'user@example.com';
+      // Get access token for direct Google Calendar API calls
+      const accessToken = localStorage.getItem('google_calendar_access_token');
+      if (!accessToken) {
+        throw new Error('Calendar not connected. Please connect your Google Calendar first.');
+      }
+      
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-      // First, parse the natural language command
-      const parseResponse = await fetch('http://localhost:8082/parse-calendar-command', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          command: command.trim(),
-          email: userEmail,
-          timezone: timezone,
-        }),
-      });
-
-      const parseData = await parseResponse.json();
-
-      if (!parseResponse.ok) {
-        throw new Error(parseData.error || 'Failed to parse command');
+      // Use a simple client-side parser for now (can be enhanced with OpenAI later)
+      const parsedEvent = parseNaturalLanguageCommand(command.trim(), timezone);
+      
+      if (!parsedEvent) {
+        throw new Error('Could not understand the command. Try: "set a focus block for 10 am about doing homework"');
       }
 
-      console.log('Parsed command:', parseData);
+      console.log('Parsed command:', parsedEvent);
 
-      // Now schedule the event using the parsed data
-      const scheduleResponse = await fetch('http://localhost:8082/schedule-focus', {
+      // Create the event directly with Google Calendar API
+      const event = {
+        summary: parsedEvent.summary,
+        start: { dateTime: parsedEvent.startTime },
+        end: { dateTime: parsedEvent.endTime },
+      };
+
+      const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          summary: parseData.summary,
-          email: userEmail,
-          startTime: parseData.startTime,
-          endTime: parseData.endTime,
-        }),
+        body: JSON.stringify(event)
       });
 
-      const scheduleData = await scheduleResponse.json();
-
-      if (!scheduleResponse.ok) {
-        throw new Error(scheduleData.error || 'Failed to create calendar event');
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Google Calendar API error:', errorData);
+        throw new Error('Failed to create calendar event. Please reconnect your calendar.');
       }
 
-      const startTime = new Date(parseData.startTime);
-      const successMessage = `✅ Scheduled "${parseData.summary}" for ${startTime.toLocaleDateString()} at ${startTime.toLocaleTimeString()}`;
+      const startTime = new Date(parsedEvent.startTime);
+      const successMessage = `✅ Scheduled "${parsedEvent.summary}" for ${startTime.toLocaleDateString()} at ${startTime.toLocaleTimeString()}`;
       
       toast.success(successMessage);
       setLastScheduledEvent(successMessage);
