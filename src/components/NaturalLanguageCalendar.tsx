@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { MessageSquare, Calendar, Loader2, Send, Clock, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
+import { MessageSquare, Calendar, Loader2, Send } from 'lucide-react';
 
 interface NaturalLanguageCalendarProps {
   isCalendarConnected: boolean;
@@ -80,9 +80,8 @@ const parseNaturalLanguageCommand = (command: string, timezone: string): ParsedE
   // Set the time
   targetDate.setHours(hour, minute, 0, 0);
   
-  // Only move to tomorrow if the time has already passed today AND it's not explicitly for tomorrow or a specific day
-  // Allow booking for later times on the same day (like 11pm)
-  if (targetDate < today && !lowerCommand.includes('tomorrow') && !lowerCommand.match(/(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/)) {
+  // If the time has passed today, move to tomorrow
+  if (targetDate <= today && !lowerCommand.includes('tomorrow') && !lowerCommand.match(/(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/)) {
     targetDate.setDate(targetDate.getDate() + 1);
   }
   
@@ -132,67 +131,6 @@ const parseNaturalLanguageCommand = (command: string, timezone: string): ParsedE
   };
 };
 
-// Check if a time slot is available
-const checkTimeSlotAvailability = async (
-  accessToken: string, 
-  startTime: string, 
-  endTime: string
-): Promise<{
-  available: boolean;
-  conflictStart?: string;
-  conflictEnd?: string;
-  conflictSummary?: string;
-}> => {
-  try {
-    const startDate = new Date(startTime);
-    const endDate = new Date(endTime);
-    
-    // Fetch events for the day to check conflicts
-    const dayStart = new Date(startDate);
-    dayStart.setHours(0, 0, 0, 0);
-    const dayEnd = new Date(startDate);
-    dayEnd.setHours(23, 59, 59, 999);
-
-    const response = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${dayStart.toISOString()}&timeMax=${dayEnd.toISOString()}&singleEvents=true&orderBy=startTime`,
-      {
-        headers: { 'Authorization': `Bearer ${accessToken}` },
-      }
-    );
-
-    if (!response.ok) {
-      console.warn('Could not check availability, proceeding with booking');
-      return { available: true };
-    }
-
-    const data = await response.json();
-    const events = data.items || [];
-
-    // Check for conflicts
-    for (const event of events) {
-      if (!event.start?.dateTime || !event.end?.dateTime) continue;
-      
-      const eventStart = new Date(event.start.dateTime);
-      const eventEnd = new Date(event.end.dateTime);
-      
-      // Check if there's an overlap
-      if (startDate < eventEnd && endDate > eventStart) {
-        return {
-          available: false,
-          conflictStart: event.start.dateTime,
-          conflictEnd: event.end.dateTime,
-          conflictSummary: event.summary || 'Busy'
-        };
-      }
-    }
-
-    return { available: true };
-  } catch (error) {
-    console.warn('Error checking availability:', error);
-    return { available: true }; // Default to available if check fails
-  }
-};
-
 export const NaturalLanguageCalendar: React.FC<NaturalLanguageCalendarProps> = ({ 
   isCalendarConnected 
 }) => {
@@ -230,20 +168,6 @@ export const NaturalLanguageCalendar: React.FC<NaturalLanguageCalendarProps> = (
       }
 
       console.log('Parsed command:', parsedEvent);
-
-      // Check availability first
-      const isAvailable = await checkTimeSlotAvailability(
-        accessToken, 
-        parsedEvent.startTime, 
-        parsedEvent.endTime
-      );
-
-      if (!isAvailable.available) {
-        const conflictTime = new Date(isAvailable.conflictStart!).toLocaleTimeString();
-        throw new Error(
-          `⚠️ Time slot conflicts with existing event "${isAvailable.conflictSummary}" at ${conflictTime}. Please choose a different time.`
-        );
-      }
 
       // Create the event directly with Google Calendar API
       const event = {
@@ -290,131 +214,76 @@ export const NaturalLanguageCalendar: React.FC<NaturalLanguageCalendarProps> = (
   };
 
   const exampleCommands = [
-    "book a block for 30 minutes for 11pm",
     "set a focus block for 10 am about doing homework",
     "schedule meeting with John tomorrow at 2pm", 
     "lunch at 12:30",
     "dentist appointment on Friday at 3pm",
-    "gym workout today at 6pm for 2 hours"
+    "gym workout today at 6pm for 2 hours",
+    "focus time for 9am about writing reports"
   ];
 
   return (
-    <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 shadow-lg">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+    <Card className="p-6">
+      <div className="flex items-center mb-4">
+        <MessageSquare className="w-6 h-6 mr-2 text-blue-600" />
+        <h3 className="text-lg font-medium">Natural Language Calendar</h3>
+      </div>
       
-      <div className="relative p-8">
-        {/* Header with enhanced styling */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center">
-            <div className="p-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg">
-              <Sparkles className="w-6 h-6 text-white" />
-            </div>
-            <div className="ml-4">
-              <h3 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-                AI Calendar Assistant
-              </h3>
-              <p className="text-sm text-gray-500 mt-1">Smart scheduling with natural language</p>
-            </div>
-          </div>
-          {isCalendarConnected && (
-            <div className="flex items-center px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-              <CheckCircle2 className="w-4 h-4 mr-1.5" />
-              Connected
-            </div>
-          )}
+      <p className="text-sm text-gray-600 mb-4">
+        Tell me what you want to schedule, and I'll create the calendar event for you!
+      </p>
+
+      <div className="space-y-4">
+        <div className="flex gap-2">
+          <Input
+            value={command}
+            onChange={(e) => setCommand(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="e.g., set a focus block for 10 am about doing homework"
+            className="flex-1"
+            disabled={isProcessing || !isCalendarConnected}
+          />
+          <Button 
+            onClick={handleNaturalLanguageInput}
+            disabled={isProcessing || !isCalendarConnected || !command.trim()}
+            size="icon"
+          >
+            {isProcessing ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
+          </Button>
         </div>
 
-        <div className="space-y-6">
-          {/* Enhanced input section */}
-          <div className="relative">
-            <div className="flex gap-3">
-              <div className="relative flex-1">
-                <Input
-                  value={command}
-                  onChange={(e) => setCommand(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Tell me what to schedule... e.g., book a block for 30 minutes for 11pm"
-                  className="pl-12 pr-4 py-4 text-base border-2 border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200"
-                  disabled={isProcessing || !isCalendarConnected}
-                />
-                <MessageSquare className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              </div>
-              <Button 
-                onClick={handleNaturalLanguageInput}
-                disabled={isProcessing || !isCalendarConnected || !command.trim()}
-                className="px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-              >
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                    Scheduling...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5 mr-2" />
-                    Schedule
-                  </>
-                )}
-              </Button>
-            </div>
-            
-            {isProcessing && (
-              <div className="mt-3 flex items-center text-blue-600">
-                <Clock className="w-4 h-4 mr-2 animate-pulse" />
-                <span className="text-sm">Checking availability and creating your event...</span>
-              </div>
-            )}
+        {!isCalendarConnected && (
+          <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-yellow-800 text-sm">
+              <Calendar className="w-4 h-4 inline mr-1" />
+              Connect your Google Calendar first to use natural language scheduling
+            </p>
           </div>
+        )}
 
-          {/* Connection status */}
-          {!isCalendarConnected && (
-            <div className="flex items-start p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r-xl shadow-sm">
-              <AlertCircle className="w-5 h-5 text-amber-600 mr-3 mt-0.5" />
-              <div>
-                <h4 className="text-amber-800 font-medium">Calendar Connection Required</h4>
-                <p className="text-amber-700 text-sm mt-1">
-                  Connect your Google Calendar below to start using AI-powered scheduling
-                </p>
-              </div>
-            </div>
-          )}
+        {lastScheduledEvent && (
+          <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-green-800 text-sm">{lastScheduledEvent}</p>
+          </div>
+        )}
 
-          {/* Success message with enhanced styling */}
-          {lastScheduledEvent && (
-            <div className="flex items-start p-4 bg-green-50 border-l-4 border-green-400 rounded-r-xl shadow-sm animate-in slide-in-from-left duration-300">
-              <CheckCircle2 className="w-5 h-5 text-green-600 mr-3 mt-0.5" />
-              <div>
-                <h4 className="text-green-800 font-medium">Event Created Successfully!</h4>
-                <p className="text-green-700 text-sm mt-1">{lastScheduledEvent.replace('✅', '')}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Enhanced examples section */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-100 shadow-sm">
-            <div className="flex items-center mb-4">
-              <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mr-3"></div>
-              <h4 className="font-semibold text-gray-800">Try these smart commands:</h4>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {exampleCommands.map((example, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCommand(example)}
-                  className="group text-left p-4 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all duration-200 transform hover:scale-[1.02] disabled:hover:scale-100 disabled:hover:bg-transparent"
-                  disabled={isProcessing || !isCalendarConnected}
-                >
-                  <div className="flex items-start">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full mr-3 mt-2 group-hover:bg-blue-600 transition-colors"></div>
-                    <span className="text-sm text-gray-700 group-hover:text-blue-800 font-medium">
-                      "{example}"
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
+        <div className="mt-6">
+          <h4 className="text-sm font-medium text-gray-700 mb-2">Example commands:</h4>
+          <div className="grid grid-cols-1 gap-2">
+            {exampleCommands.map((example, index) => (
+              <button
+                key={index}
+                onClick={() => setCommand(example)}
+                className="text-left text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 p-2 rounded transition-colors"
+                disabled={isProcessing || !isCalendarConnected}
+              >
+                "{example}"
+              </button>
+            ))}
           </div>
         </div>
       </div>
