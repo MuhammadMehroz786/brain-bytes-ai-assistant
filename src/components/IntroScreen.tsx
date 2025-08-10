@@ -5,7 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { WaitlistSignup } from "./WaitlistSignup";
-import { ArrowDown, CheckCircle2, BookOpen, Bot, LayoutDashboard, ListChecks, Zap } from "lucide-react";
+import { CheckCircle2, BookOpen, Bot, LayoutDashboard, ListChecks, Zap } from "lucide-react";
 
 interface IntroScreenProps {
   onStart: () => void;
@@ -201,17 +201,19 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             <span className="text-lg font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
               Brain Bytes
             </span>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-muted text-muted-foreground/80 border border-border">
-              Beta
-            </span>
           </div>
           <div className="flex items-center gap-2">
             <Button onClick={onAuth} className="h-8 px-3 text-xs rounded-xl bg-card text-foreground shadow-sm hover:bg-secondary">
               Sign In
             </Button>
-            <Button onClick={() => setIsWaitlistOpen(true)} className="h-8 px-3 text-xs rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90">
-              Join the Waitlist
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button onClick={() => setIsWaitlistOpen(true)} className="h-8 px-3 text-xs rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90">
+                Join the Waitlist
+              </Button>
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-muted text-muted-foreground/80 border border-border">
+                Beta
+              </span>
+            </div>
           </div>
         </div>
       </header>
@@ -221,7 +223,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <section className="px-6 pt-5 pb-3 text-center">
           <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
           <p className="mt-2 text-sm text-muted-foreground">We solve it for the price of lunch.</p>
-          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
+          <div className="h-4 mt-1" aria-hidden="true" />
           <p className="mt-1 text-[11px] text-muted-foreground">Hand-picked tools and steps, tested by the Brain Bytes team.</p>
         </section>
         {/* 1) First Section: Three-step row */}
@@ -240,7 +242,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               <span className="text-[11px] font-medium text-foreground text-center">Start in Minutes</span>
             </div>
           </div>
-          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
+          <div className="h-4 mt-1" aria-hidden="true" />
         </section>
 
         {/* 2) Second Section: Video + caption */}
@@ -258,8 +260,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             />
           </figure>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">See what you’ll get</p>
-          <a href="#join-cta" className="mt-1 inline-block text-center text-[11px] text-muted-foreground hover:text-primary underline underline-offset-2">Get early access →</a>
-          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
+          <a href="#join-cta" className="mt-1 inline-block text-center text-[11px] text-muted-foreground hover:text-primary underline underline-offset-2 px-2 py-1 rounded-md">Get early access →</a>
+          <div className="h-4 mt-1" aria-hidden="true" />
         </section>
 
         {/* 3) Third Section: Feature row */}
@@ -281,13 +283,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               
             </div>
           </div>
-          <ArrowDown className="h-4 w-4 text-muted-foreground animate-float mx-auto mt-1" aria-hidden="true" />
+          <div className="h-4 mt-1" aria-hidden="true" />
         </section>
 
         {/* 4) Fourth Section: CTA */}
         <section className="px-6 pb-4 flex flex-col justify-center">
           <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-lg px-6 py-4 rounded-2xl shadow-md hover:shadow-lg transition-all">
-            Join the Waitlist
+            Join the Waitlist – Limited early access spots
           </Button>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">Launch price: $29 (less than lunch).</p>
           <p className="mt-1 text-center text-[10px] text-muted-foreground">No spam. Unsubscribe anytime.</p>
@@ -295,7 +297,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </main>
 
       {/* Mobile Footer */}
-      <footer className="lg:hidden px-4 pb-4 bg-primary-light/60">
+      <footer className="lg:hidden px-4 pb-4 bg-transparent">
         <div className="text-[10px] text-muted-foreground text-center">
           © 2025 Brain Bytes · <Link to="/privacy-policy" className="hover:text-primary">Privacy</Link> · <Link to="/terms-of-service" className="hover:text-primary">Terms</Link> · <Link to="/refund-policy" className="hover:text-primary">Refund</Link> · <Link to="/cookie-policy" className="hover:text-primary">Cookies</Link> · <Link to="/contact" className="hover:text-primary">Contact</Link>
         </div>
