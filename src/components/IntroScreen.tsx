@@ -294,7 +294,26 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 <span className="text-[10px] text-muted-foreground text-center">Personal to you.</span>
               </div>
             </div>
-            <ArrowDown className="h-3.5 w-3.5 text-muted-foreground/80 animate-float mx-auto" aria-hidden="true" />
+
+            {/* Why This Works strip */}
+            <div className="mt-2 grid grid-cols-3 gap-2.5">
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-base leading-none">🏁</span>
+                <span className="text-[11px] font-medium text-foreground text-center">No AI Experience Required</span>
+                <span className="text-[10px] text-muted-foreground text-center">Start from zero, get results fast.</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-base leading-none">🎯</span>
+                <span className="text-[11px] font-medium text-foreground text-center">Skip the Noise</span>
+                <span className="text-[10px] text-muted-foreground text-center">Only see tools relevant to you.</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-base leading-none">📈</span>
+                <span className="text-[11px] font-medium text-foreground text-center">Learn While You Work</span>
+                <span className="text-[10px] text-muted-foreground text-center">Grow skills as you use AI daily.</span>
+              </div>
+            </div>
+            {/* No arrow here – replaced by the strip per spec */}
           </section>
 
           {/* 5. CTA block */}
