@@ -195,9 +195,9 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       </div>
 
       {/* Mobile & Tablet Header */}
-      <header className="lg:hidden h-[58px] bg-white/85 backdrop-blur-md border-b border-[#E9ECF2]">
+      <header className="lg:hidden h-[60px] bg-white/90 border-b border-[#E9ECF2]">
         <div className="h-full">
-          <div className="mx-auto max-w-[640px] px-6 flex items-center justify-between h-full">
+          <div className="mx-auto max-w-[640px] px-3 flex items-center justify-between h-full">
             <div className="flex items-center">
               <span className="text-[20px] font-extrabold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Brain Bytes
@@ -206,14 +206,14 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             <div className="flex items-center gap-2">
               <Button
                 onClick={() => setIsWaitlistOpen(true)}
-                className="h-10 px-3 text-sm rounded-[12px] bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90"
+                className="h-[42px] px-3 text-[14px] rounded-[12px] bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90"
               >
                 Join the Waitlist
               </Button>
               <Button
                 variant="secondary"
                 onClick={onAuth}
-                className="h-10 px-3 text-sm rounded-[12px] bg-card border border-border hover:bg-secondary/80"
+                className="h-[42px] px-3 text-[14px] rounded-[12px] bg-white border border-border hover:bg-secondary/80"
               >
                 Sign In
               </Button>
@@ -222,16 +222,16 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </header>
 
-      <main className="lg:hidden h-[calc(100dvh-58px)] overflow-y-auto bg-primary-light/60">
-        <div className="mx-auto max-w-[640px] px-6">
+      <main className="lg:hidden h-[calc(100dvh-60px)] overflow-y-auto bg-[hsl(210_20%_98%)] font-sans">
+        <div className="mx-auto max-w-[640px] px-3">
           {/* 1. Hero */}
-          <section className="py-4 text-center">
-            <h1 className="text-[clamp(22px,5vw,28px)] font-bold leading-tight">
-              <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+          <section className="py-8 text-center">
+            <h1 className="text-[28px] font-bold leading-tight">
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 Overwhelmed by AI?
               </span>
             </h1>
-            <p className="mt-2 text-[13px] text-muted-foreground">We solve it for the price of lunch</p>
+            <p className="mt-2 text-[16px] text-[hsl(220_9%_46%)]">We solve it for the price of lunch</p>
           </section>
           <ChevronDown className="section-arrow" aria-hidden="true" />
 
@@ -276,7 +276,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           <ChevronDown className="section-arrow" aria-hidden="true" />
 
           {/* 4. Features */}
-          <section className="py-4">
+          <section className="py-8">
             <div className="grid grid-cols-3 gap-3">
               <div className="flex flex-col items-center bg-white rounded-2xl p-4 text-center shadow-[0_2px_8px_rgba(16,24,40,0.06)] transition-transform duration-150 active:-translate-y-1 active:shadow-lg">
                 <CheckCircle2 className="w-[22px] h-[22px] text-primary" />
@@ -298,7 +298,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           <ChevronDown className="section-arrow" aria-hidden="true" />
 
           {/* 5. Why This Works */}
-          <section className="py-4">
+          <section className="py-8">
             <div className="why-strip">
               <div className="why-strip-item"><div>🏁</div><div>No experience needed</div></div>
               <div className="why-strip-item"><div>🎯</div><div>Only relevant tools</div></div>
@@ -309,11 +309,11 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
           {/* 6. CTA (sticky) + 7. Footer */}
           <section className="pt-2 pb-4">
-            <div className="sticky bottom-0 z-20 pt-3 pb-[calc(env(safe-area-inset-bottom)+8px)] bg-gradient-to-b from-transparent to-[#F6F8FB]">
-              <Button onClick={() => setIsWaitlistOpen(true)} className="w-full h-14 text-[17px] rounded-2xl bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-[0_-4px_12px_rgba(16,24,40,0.05)]">
+            <div className="sticky bottom-0 z-20 pt-3 pb-[calc(env(safe-area-inset-bottom)+8px)] bg-gradient-to-b from-transparent to-[hsl(210_20%_98%)]">
+              <Button onClick={() => setIsWaitlistOpen(true)} className="w-full h-[54px] text-[17px] rounded-[18px] bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-[0_-4px_12px_rgba(16,24,40,0.05)]">
                 Join the Waitlist
               </Button>
-              <p className="mt-2 text-center text-[12.5px] text-[#7A8191]">Launching soon. Early members get perks.</p>
+              <p className="mt-2 text-center text-[12px] text-[#7A8191]">Launching soon. Early members get perks.</p>
             </div>
             <footer className="pt-4 pb-6">
               <div className="text-center text-[12px] text-[#7A8191]">

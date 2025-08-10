@@ -148,7 +148,7 @@ All colors MUST be HSL.
 /* Mobile helpers: arrows, sticky CTA, why strip */
 .section-arrow {
   display: block;
-  margin: 10px auto;
+  margin: 8px auto;
   color: hsl(215 12% 64%);
   font-size: 16px;
   animation: arrow-bounce 3s infinite;
@@ -167,7 +167,7 @@ All colors MUST be HSL.
   background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--accent)));
   box-shadow: 0 -4px 12px rgba(16,24,40,0.05);
   padding: 14px 0;
-  border-radius: 16px;
+  border-radius: 18px;
   color: #fff;
   font-size: 17px;
   text-align: center;
