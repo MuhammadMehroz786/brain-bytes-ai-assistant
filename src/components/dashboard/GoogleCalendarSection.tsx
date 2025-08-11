@@ -3,12 +3,13 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { Calendar, CheckCircle, XCircle, Loader, MoreHorizontal } from 'lucide-react';
+import { Calendar, CheckCircle, XCircle, Loader, MoreHorizontal, Lightbulb } from 'lucide-react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { NaturalLanguageCalendar } from '../NaturalLanguageCalendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 export const GoogleCalendarSection = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -36,7 +37,8 @@ export const GoogleCalendarSection = () => {
   // View state
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [now, setNow] = useState<Date>(new Date());
-  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
+const [suggestionsOpen, setSuggestionsOpen] = useState(false);
+const [viewMode, setViewMode] = useState<'day'|'week'|'agenda'|'compact'>('day');
   const [workingHours, setWorkingHours] = useState<{ start: string; end: string }>(() => {
     try { return JSON.parse(localStorage.getItem('bb_calendar_working_hours') || '{"start":"08:00","end":"20:00"}'); } catch { return { start: '08:00', end: '20:00' }; }
   });
@@ -311,7 +313,29 @@ export const GoogleCalendarSection = () => {
     const end = parseHHMM(quietHours.end);
     return start <= end ? (mins >= start && mins < end) : (mins >= start || mins < end);
   };
-  const canShowHint = (hour: number) => aiSuggestions && inWorkingHours(hour) && !inQuietHours(hour);
+const canShowHint = (hour: number) => aiSuggestions && inWorkingHours(hour) && !inQuietHours(hour);
+
+// Derived summary data
+const nowTs = new Date();
+const nextEvent = calendarEvents
+  .map((e) => ({ e, start: new Date(e.start.dateTime || e.start.date) }))
+  .filter(({ start }) => start > nowTs)
+  .sort((a, b) => a.start.getTime() - b.start.getTime())[0]?.e;
+
+const dayStart = new Date(selectedDate); dayStart.setHours(0,0,0,0);
+const dayEnd = new Date(dayStart.getTime() + 24*60*60*1000);
+const dayBusy = busySlots
+  .map((s:any)=>({ start: new Date(s.start), end: new Date(s.end) }))
+  .filter(({start,end}) => start < dayEnd && end > dayStart);
+const workStartM = parseHHMM(workingHours.start);
+const workEndM = parseHHMM(workingHours.end);
+const totalWorkM = workStartM <= workEndM ? (workEndM - workStartM) : ((24*60 - workStartM) + workEndM);
+const busyMinutes = dayBusy.reduce((acc:number,{start,end}:{start:Date,end:Date})=>{
+  const s = Math.max(start.getTime(), dayStart.getTime());
+  const e = Math.min(end.getTime(), dayEnd.getTime());
+  return acc + Math.max(0, Math.round((e - s)/60000));
+},0);
+const freeHoursToday = Math.max(0, Math.round((totalWorkM - busyMinutes)/60));
 
   return (
     <div className="space-y-6">
@@ -333,6 +357,40 @@ export const GoogleCalendarSection = () => {
             <Button onClick={handleSetFocusClick} className="mt-4">Set Today's Focus</Button>
             <Button onClick={handleDisconnectCalendar} variant="outline" className="mt-4 ml-2">Disconnect Calendar</Button>
             <Button onClick={fetchCalendarEvents} variant="outline" className="mt-4 ml-2">Refresh Calendar</Button>
+
+            {/* Summary strip */}
+            <div className="mt-6 flex flex-wrap gap-2">
+              {/* helper chip builder via gradient stroke */}
+              <div className="bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--cal-focus-accent))] p-[1px] rounded-full">
+                <div className="rounded-full bg-background/60 backdrop-blur px-3 py-1 text-xs flex items-center gap-2">
+                  <span className="font-medium">Next</span>
+                  <span className="text-muted-foreground truncate max-w-[180px]">{nextEvent ? `${nextEvent.summary}` : 'None'}</span>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--cal-focus-accent))] p-[1px] rounded-full">
+                <div className="rounded-full bg-background/60 backdrop-blur px-3 py-1 text-xs flex items-center gap-2">
+                  <span className="font-medium">Free today</span>
+                  <span className="text-muted-foreground">{freeHoursToday}h</span>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--cal-focus-accent))] p-[1px] rounded-full">
+                <div className="rounded-full bg-background/60 backdrop-blur px-3 py-1 text-xs flex items-center gap-2">
+                  <span className="font-medium">Focus goal</span>
+                  <span className="text-muted-foreground truncate max-w-[140px]">{focusText || 'Unset'}</span>
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--cal-focus-accent))] p-[1px] rounded-full">
+                <div className="rounded-full bg-background/60 backdrop-blur px-3 py-1 text-xs flex items-center gap-2">
+                  <span className="font-medium">Last sync</span>
+                  <span className="text-muted-foreground">{lastSyncTime || '—'}</span>
+                </div>
+              </div>
+
+              <Button onClick={()=>setSuggestionsOpen(true)} className="ml-auto bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--cal-focus-accent))] text-primary-foreground rounded-full h-7 px-3 text-xs">Plan with AI</Button>
+            </div>
 
             <h4 className="text-md font-medium mt-6">Upcoming Events:</h4>
             {calendarEvents.length > 0 ? (
@@ -391,9 +449,30 @@ export const GoogleCalendarSection = () => {
                     <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-busy))' }} /> Busy</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant={aiSuggestions ? 'secondary' : 'outline'} size="sm" aria-pressed={aiSuggestions} onClick={() => setAiSuggestions((v)=>!v)} className="rounded-full px-2.5 py-1 text-xs">
-                      Hints
-                    </Button>
+                    {/* Hints popover icon */}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant={aiSuggestions ? 'secondary' : 'outline'} size="sm" aria-label="Hints" className="rounded-full px-2.5 py-1 text-xs">
+                          <Lightbulb className="h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent align="end" className="w-56">
+                        <div className="text-sm mb-2 font-medium">Hints</div>
+                        <Button variant={aiSuggestions ? 'secondary' : 'outline'} size="sm" onClick={()=>setAiSuggestions(v=>!v)}>
+                          {aiSuggestions ? 'Turn off hints' : 'Turn on hints'}
+                        </Button>
+                      </PopoverContent>
+                    </Popover>
+
+                    {/* View segmented control */}
+                    <ToggleGroup type="single" value={viewMode} onValueChange={(v)=>{ if(!v) return; setViewMode(v as any); if(v==='compact') setCompact(true); else setCompact(false); }} className="hidden sm:flex">
+                      <ToggleGroupItem value="day" className="text-xs">Day</ToggleGroupItem>
+                      <ToggleGroupItem value="week" className="text-xs">Week</ToggleGroupItem>
+                      <ToggleGroupItem value="agenda" className="text-xs">Agenda</ToggleGroupItem>
+                      <ToggleGroupItem value="compact" className="text-xs">Compact</ToggleGroupItem>
+                    </ToggleGroup>
+
+                    {/* Preferences */}
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="outline" size="sm" aria-label="Preferences" className="rounded-full px-2.5 py-1 text-xs">Preferences</Button>
@@ -415,10 +494,8 @@ export const GoogleCalendarSection = () => {
                         </div>
                       </PopoverContent>
                     </Popover>
+
                     <Button variant="outline" size="sm" onClick={()=>setSuggestionsOpen(true)} aria-label="Open AI Suggestions" className="rounded-full px-2.5 py-1 text-xs">AI Suggestions</Button>
-                    <Button variant={compact ? 'secondary' : 'outline'} size="sm" aria-pressed={compact} onClick={() => setCompact((v)=>!v)} className="rounded-full px-2.5 py-1 text-xs">
-                      Compact
-                    </Button>
                   </div>
                 </div>
                 {Array.from({ length: 24 }).map((_, hour) => {
@@ -457,13 +534,13 @@ export const GoogleCalendarSection = () => {
                   return (
                     <div key={hour} id={showSectionHeader ? sectionTitle.toLowerCase() : undefined} style={{ backgroundColor: sectionBg }} className="relative">
                       {showSectionHeader && (
-                        <div className="sticky top-[40px] z-10 px-4 py-1.5 text-xs font-semibold text-slate-700 bg-white/70 backdrop-blur border-b">
-                          {sectionTitle}
+                        <div className="sticky top-[40px] z-10 px-2 py-1 text-xs font-semibold bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--cal-focus-accent))] p-[1px] rounded-full w-fit ml-4">
+                          <div className="rounded-full bg-white/70 dark:bg-background/70 backdrop-blur px-2.5 py-0.5 text-slate-700">{sectionTitle}</div>
                         </div>
                       )}
 
                       <div 
-                        className={`group flex items-stretch ${rowClasses} px-4 odd:bg-muted/20 hover:bg-muted/30`}
+                        className={`group flex items-stretch ${rowClasses} px-4 odd:bg-muted/20 hover:bg-muted/30 border-t border-border/60`}
                         onMouseDown={(e) => {
                           if (eventsInHour.length === 0 && !isBusy) {
                             setDragStartHour(hour);
@@ -500,9 +577,10 @@ export const GoogleCalendarSection = () => {
                                   <TooltipProvider key={event.id}>
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <div className={`relative rounded-lg border ${compact ? 'px-2 py-1.5' : 'px-3 py-2'} shadow-sm hover:shadow-lg transition`}
-                                          style={{ backgroundColor: `hsl(var(${colorVar}) / 0.12)`, borderColor: `hsl(var(${colorVar}) / 0.2)` }}
+                                        <div className={`relative rounded-xl ${compact ? 'px-2 py-1.5' : 'px-3 py-2'} shadow-sm hover:shadow-lg transition duration-200`} 
+                                          style={{ backgroundColor: `hsl(var(${colorVar}) / 0.10)` }}
                                         >
+                                          <div className="absolute inset-y-0 left-0 w-1 rounded-l-xl" style={{ backgroundColor: `hsl(var(${colorVar}))` }} />
                                           <div className="flex items-center justify-between gap-2">
                                             <div className="min-w-0">
                                               <div className="text-sm font-medium truncate"><span className="mr-1">{type==='focus'?'🧠':type==='meeting'?'👥':'✅'}</span>{title}</div>
@@ -585,7 +663,7 @@ export const GoogleCalendarSection = () => {
                             </div>
                           )}
                           {isSameDay(selectedDate, now) && hour === now.getHours() && (
-                            <div className="absolute left-0 right-0 h-px bg-primary/50" style={{ top: `${(now.getMinutes() / 60) * 100}%` }} />
+                            <div className="absolute left-0 right-0 h-px" style={{ top: `${(now.getMinutes() / 60) * 100}%`, background: `linear-gradient(to right, hsl(var(--primary)), hsl(var(--cal-focus-accent)))` }} />
                           )}
                         </div>
 
@@ -648,8 +726,34 @@ export const GoogleCalendarSection = () => {
       <Sheet open={suggestionsOpen} onOpenChange={setSuggestionsOpen}>
         <SheetContent side="right" className="w-[360px] sm:w-[420px]">
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold">AI Suggestions</h3>
-            <div className="text-sm text-muted-foreground">Nothing for now</div>
+            {(() => {
+              const suggestions = [
+                { id: 's1', title: 'Deep work focus', start: '09:00', end: '09:30', type: 'focus' as const },
+                { id: 's2', title: 'Plan weekly review', start: '16:00', end: '16:30', type: 'meeting' as const },
+                { id: 's3', title: 'Walk outside', start: '12:30', end: '13:00', type: 'personal' as const },
+              ];
+              const typeToVar: Record<string,string> = { focus: '--cal-focus', meeting: '--cal-meeting', personal: '--cal-personal' };
+              return (
+                <div className="space-y-3">
+                  {suggestions.map(s => (
+                    <div key={s.id} className="relative rounded-xl px-3 py-2 shadow-sm hover:shadow-lg transition duration-200" style={{ backgroundColor: `hsl(var(${typeToVar[s.type]}) / 0.10)` }}>
+                      <div className="absolute inset-y-0 left-0 w-1 rounded-l-xl" style={{ backgroundColor: `hsl(var(${typeToVar[s.type]}))` }} />
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium truncate">{s.title}</div>
+                          <div className="text-xs text-muted-foreground truncate">{s.start} - {s.end}</div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Button size="sm" variant="secondary" onClick={()=>toast.message('TODO: Accept handler')}>Accept</Button>
+                          <Button size="sm" variant="outline" onClick={()=>toast.message('TODO: Snooze handler')}>Snooze</Button>
+                          <Button size="sm" variant="ghost" onClick={()=>toast.message('TODO: Dismiss handler')}>Dismiss</Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
           </div>
         </SheetContent>
       </Sheet>

@@ -3,7 +3,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { MessageSquare, Calendar, Loader2, Send } from 'lucide-react';
+import { HelpCircle, Calendar, Loader2, Send } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface NaturalLanguageCalendarProps {
   isCalendarConnected: boolean;
@@ -137,7 +138,7 @@ export const NaturalLanguageCalendar: React.FC<NaturalLanguageCalendarProps> = (
   const [command, setCommand] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [lastScheduledEvent, setLastScheduledEvent] = useState<string | null>(null);
-  const [showExamples, setShowExamples] = useState(false);
+  
 
   const handleNaturalLanguageInput = async () => {
     if (!command.trim()) {
@@ -230,14 +231,14 @@ export const NaturalLanguageCalendar: React.FC<NaturalLanguageCalendarProps> = (
       </div>
 
       <div className="space-y-4">
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <Input
             id="nlc-input"
             value={command}
             onChange={(e) => setCommand(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="e.g., set a focus block for 10 am about doing homework"
-            className="flex-1"
+            className="flex-1 h-10 rounded-full bg-background placeholder:text-muted-foreground"
             disabled={isProcessing || !isCalendarConnected}
             aria-label="Natural language quick add"
           />
@@ -253,6 +254,29 @@ export const NaturalLanguageCalendar: React.FC<NaturalLanguageCalendarProps> = (
               <Send className="w-4 h-4" />
             )}
           </Button>
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="icon" aria-label="Show examples" className="rounded-full">
+                <HelpCircle className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-80">
+              <div className="text-xs text-muted-foreground mb-2">Try one of these:</div>
+              <div className="grid grid-cols-1 gap-2">
+                {exampleCommands.map((example, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCommand(example)}
+                    className="text-left text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 p-2 rounded transition-colors"
+                    disabled={isProcessing || !isCalendarConnected}
+                  >
+                    "{example}"
+                  </button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
         {!isCalendarConnected && (
@@ -270,25 +294,6 @@ export const NaturalLanguageCalendar: React.FC<NaturalLanguageCalendarProps> = (
           </div>
         )}
 
-        <div className="mt-3">
-          <button type="button" className="text-xs text-muted-foreground hover:text-foreground underline" onClick={()=>setShowExamples(v=>!v)}>
-            {showExamples ? 'Hide examples' : 'Show examples'}
-          </button>
-          {showExamples && (
-            <div className="mt-2 grid grid-cols-1 gap-2">
-              {exampleCommands.map((example, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCommand(example)}
-                  className="text-left text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 p-2 rounded transition-colors"
-                  disabled={isProcessing || !isCalendarConnected}
-                >
-                  "{example}"
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
     </Card>
   );
