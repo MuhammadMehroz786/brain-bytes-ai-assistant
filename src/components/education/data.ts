@@ -14,6 +14,7 @@ export const EDUCATION_DATA: {
       recommended: true,
       nextLabel: "Draft a page in your voice",
       openUrl: "https://www.notion.so",
+      shortcuts: ["Cmd/Ctrl+J: Ask AI", "Enter: Run", "Esc: Cancel"],
       cards: [
         {
           id: "notion-draft-voice",
@@ -54,6 +55,7 @@ export const EDUCATION_DATA: {
       recommended: true,
       nextLabel: "Polish and fact-check",
       openUrl: "https://chat.openai.com",
+      shortcuts: ["Shift+Enter: New line", "/: Commands", "Tab: Indent"] ,
       cards: [
         {
           id: "gpt-polish-check",
@@ -86,6 +88,7 @@ export const EDUCATION_DATA: {
       recommended: true,
       nextLabel: "Turn meeting notes into tasks",
       openUrl: "https://www.notion.so",
+      shortcuts: ["Cmd/Ctrl+J: Ask AI", "Cmd/Ctrl+/ : Quick Find"],
       cards: [
         {
           id: "notion-notes-to-tasks",

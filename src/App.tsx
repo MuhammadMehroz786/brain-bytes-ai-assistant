@@ -15,6 +15,7 @@ import Contact from "./pages/Contact";
 import RefundPolicy from "./pages/RefundPolicy";
 import CookiePolicy from "./pages/CookiePolicy";
 import CookieConsent from "./components/CookieConsent";
+import AIEducationHub from "./pages/AIEducationHub";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
             <Route path="/cookie-policy" element={<CookiePolicy />} />
+            <Route path="/education" element={<AIEducationHub />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

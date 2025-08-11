@@ -26,12 +26,18 @@ const LearningCard = ({ prefs, setPrefs, tool, card, onCopy, onOpenTool, onMarkM
 
   const prompt = useMemo(() => {
     const body = (level === 'beginner' ? card.prompt.beginner : card.prompt.advanced) || card.prompt.beginner;
-    return body
-      .replaceAll("[[Topic]]", vars.Topic || "your topic")
-      .replaceAll("[[Audience]]", vars.Audience || "your audience")
-      .replaceAll("[[Tone]]", vars.Tone || "Friendly")
-      .replaceAll("[[Length]]", vars.Length || "Medium")
-      .replaceAll("[[Must-include bullets]]", vars["Must-include bullets"] || "• point 1\n• point 2");
+    const map: Record<string, string> = {
+      "[[Topic]]": vars.Topic || "your topic",
+      "[[Audience]]": vars.Audience || "your audience",
+      "[[Tone]]": vars.Tone || "Friendly",
+      "[[Length]]": vars.Length || "Medium",
+      "[[Must-include bullets]]": vars["Must-include bullets"] || "• point 1\n• point 2",
+    };
+    let out = body;
+    for (const [token, value] of Object.entries(map)) {
+      out = out.split(token).join(value);
+    }
+    return out;
   }, [vars, level, card]);
 
   const copyPrompt = async () => {

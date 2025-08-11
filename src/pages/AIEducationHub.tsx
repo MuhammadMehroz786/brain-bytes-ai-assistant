@@ -62,8 +62,8 @@ const AIEducationHub = () => {
     const tool = tools.find(t => t.id === toolId);
     if (!tool) return;
     setActiveToolId(toolId);
-    // Load next unfinished card
-    const next = tool.cards.find(c => !c.completedKey || getToolProgress(toolId).completedCards?.includes(c.id) === false);
+    const completed = getToolProgress(toolId).completedCards || [];
+    const next = tool.cards.find(c => !completed.includes(c.id));
     setActiveCardId(next?.id || tool.cards[0].id);
     analytics.track('card_opened', { toolId: toolId, cardId: next?.id || tool.cards[0].id });
   };

@@ -33,6 +33,7 @@ export interface EducationTool {
   recommended: boolean;
   nextLabel: string;
   openUrl?: string;
+  shortcuts: string[];
   cards: EducationCard[];
 }
 
