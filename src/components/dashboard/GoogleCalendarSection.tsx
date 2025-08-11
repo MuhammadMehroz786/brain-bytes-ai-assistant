@@ -354,13 +354,14 @@ const freeHoursToday = Math.max(0, Math.round((totalWorkM - busyMinutes)/60));
             {lastSyncTime && (
               <p className="text-sm text-gray-500 mt-1">Last sync: {lastSyncTime}</p>
             )}
-            <Button onClick={handleSetFocusClick} className="mt-4">Set Today's Focus</Button>
-            <Button onClick={handleDisconnectCalendar} variant="outline" className="mt-4 ml-2">Disconnect Calendar</Button>
-            <Button onClick={fetchCalendarEvents} variant="outline" className="mt-4 ml-2">Refresh Calendar</Button>
+            <div className="flex gap-2 mt-4">
+              <Button onClick={handleSetFocusClick}>Set Today's Focus</Button>
+              <Button onClick={handleDisconnectCalendar} variant="outline">Disconnect Calendar</Button>
+              <Button onClick={fetchCalendarEvents} variant="outline">Refresh Calendar</Button>
+            </div>
 
             {/* Summary strip */}
             <div className="mt-6 flex flex-wrap gap-2">
-              {/* helper chip builder via gradient stroke */}
               <div className="bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--cal-focus-accent))] p-[1px] rounded-full">
                 <div className="rounded-full bg-background/60 backdrop-blur px-3 py-1 text-xs flex items-center gap-2">
                   <span className="font-medium">Next</span>
@@ -391,32 +392,6 @@ const freeHoursToday = Math.max(0, Math.round((totalWorkM - busyMinutes)/60));
 
               <Button onClick={()=>setSuggestionsOpen(true)} className="ml-auto bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--cal-focus-accent))] text-primary-foreground rounded-full h-7 px-3 text-xs">Plan with AI</Button>
             </div>
-
-            <h4 className="text-md font-medium mt-6">Upcoming Events:</h4>
-            {calendarEvents.length > 0 ? (
-              <ul className="list-disc pl-5 mt-2">
-                {calendarEvents.map(event => (
-                  <li key={event.id} className="text-sm text-gray-700">
-                    {event.summary} ({formatDate(event.start.dateTime || event.start.date)} {formatTime(event.start.dateTime || event.start.date)} - {formatTime(event.end.dateTime || event.end.date)})
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-gray-500 mt-2">No upcoming events found for the next 3 days.</p>
-            )}
-
-            <h4 className="text-md font-medium mt-6">Busy Slots:</h4>
-            {busySlots.length > 0 ? (
-              <ul className="list-disc pl-5 mt-2">
-                {busySlots.map((slot, index) => (
-                  <li key={index} className="text-sm text-gray-700">
-                    {formatDate(slot.start)} {formatTime(slot.start)} - {formatTime(slot.end)}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-gray-500 mt-2">No busy slots found for the next 3 days.</p>
-            )}
 
             {/* Daily Snapshot - minimal premium view */}
             <div className="mt-6">
@@ -532,7 +507,8 @@ const freeHoursToday = Math.max(0, Math.round((totalWorkM - busyMinutes)/60));
                   );
                 })()}
               </section>
-            </div
+            </div>
+          </div>
         ) : (
           <div>
             <Button onClick={handleSyncCalendar} disabled={isLoading} className="mt-4">
