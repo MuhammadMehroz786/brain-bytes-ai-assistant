@@ -238,8 +238,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               <span className="text-[11px] font-medium text-foreground text-center">Get Your Dashboard</span>
             </div>
             <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm">
-              <Zap className="w-4 h-4 text-primary" />
-              <span className="text-[11px] font-medium text-foreground text-center">Start in Minutes</span>
+              <BookOpen className="w-4 h-4 text-primary" />
+              <span className="text-[11px] font-medium text-foreground text-center">How‑To Guides</span>
             </div>
           </div>
           <div className="h-4 mt-1" aria-hidden="true" />
@@ -256,39 +256,13 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             />
           </figure>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">See what you’ll get</p>
-          <button onClick={() => setIsWaitlistOpen(true)} className="mt-1 inline-block text-center text-[11px] font-semibold bg-gradient-to-r from-primary/90 to-accent/90 bg-clip-text text-transparent hover:opacity-95 px-2 py-1 rounded-md">Get early access →</button>
-          <div className="h-4 mt-1" aria-hidden="true" />
-        </section>
-
-        {/* 3) Third Section: Feature row */}
-        <section className="px-6 pb-2 flex flex-col justify-between">
-          <div className="grid grid-cols-3 gap-3">
-            <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm">
-              <CheckCircle2 className="w-4 h-4 text-primary" />
-              <span className="text-[11px] font-semibold text-foreground text-center">Curated Picks</span>
-              
-            </div>
-            <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm">
-              <BookOpen className="w-4 h-4 text-primary" />
-              <span className="text-[11px] font-semibold text-foreground text-center">How‑To Guides</span>
-              
-            </div>
-            <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm">
-              <Bot className="w-4 h-4 text-primary" />
-              <span className="text-[11px] font-semibold text-foreground text-center">Your AI Assistant</span>
-              
-            </div>
-          </div>
-          <div className="h-4 mt-1" aria-hidden="true" />
-        </section>
-
-        {/* 4) Fourth Section: CTA */}
-        <section className="px-6 pb-4 flex flex-col justify-center">
-          <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-lg px-6 py-4 rounded-2xl shadow-md hover:shadow-lg transition-all">
+          
+          {/* CTA moved directly under "See what you'll get" */}
+          <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="mt-3 w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-lg px-6 py-4 rounded-2xl shadow-md hover:shadow-lg transition-all">
             Get your AI Assistant now.
           </Button>
           <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90">Your personalized AI dashboard in under 5 minutes.</p>
-          <p className="mt-2 text-center text-[11px] text-muted-foreground">Launch price: $29 (less than lunch).</p>
+          <p className="mt-1 text-center text-[11px] text-muted-foreground">Launch price: $29 (less than lunch).</p>
         </section>
       </main>
 

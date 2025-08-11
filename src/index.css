@@ -138,8 +138,15 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html, body {
+    background: #F6F7FB;
+    min-height: 100%;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
