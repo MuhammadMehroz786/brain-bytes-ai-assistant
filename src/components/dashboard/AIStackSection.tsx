@@ -104,8 +104,6 @@ const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
 const [refinePicks, setRefinePicks] = useState<Record<string, string[]>>({});
 
-const toolRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const { toast } = useToast();
 
   // Load user preferences on mount
   useEffect(() => {
