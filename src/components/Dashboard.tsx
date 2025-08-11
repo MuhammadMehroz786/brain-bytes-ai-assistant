@@ -218,12 +218,13 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
               activeToolId={activeToolId}
             />
 
-            {/* Main Flashcard Area */}
-            <div className="flex-1 py-8">
-              <LearningFlashcard
-                tool={activeTool}
-                onBack={() => analytics.track('tool_changed', { from: activeToolId })}
-              />
+            <div className="py-6">
+              <div className="max-w-[1400px] mx-auto flex items-center justify-center min-h-[70vh]">
+                <LearningFlashcard
+                  tool={activeTool}
+                  onBack={() => analytics.track('tool_changed', { from: activeToolId })}
+                />
+              </div>
             </div>
           </div>
         );

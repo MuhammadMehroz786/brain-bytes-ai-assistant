@@ -52,7 +52,7 @@ const LearningFlashcard = ({ tool, onBack }: LearningFlashcardProps) => {
       <Button 
         size="lg" 
         onClick={() => setCurrentStep('skill-level')}
-        className="px-8 py-3 text-lg"
+        className="w-full max-w-xs mx-auto px-8 py-6 text-base md:text-lg rounded-xl ring-1 ring-primary/20 hover:ring-primary/30 shadow-md hover:shadow-lg transition-shadow"
       >
         Learn This Tool
       </Button>
@@ -109,7 +109,7 @@ const LearningFlashcard = ({ tool, onBack }: LearningFlashcardProps) => {
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Quick Steps:</h3>
           <ol className="space-y-2">
-            {firstCard?.quickSteps.map((step, index) => (
+            {firstCard?.quickSteps.slice(0,3).map((step, index) => (
               <li key={index} className="flex items-start gap-3">
                 <span className="flex-shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
                   {index + 1}
@@ -120,16 +120,6 @@ const LearningFlashcard = ({ tool, onBack }: LearningFlashcardProps) => {
           </ol>
         </div>
         
-        {skillLevel === 'beginner' && (
-          <div className="p-4 rounded-lg bg-muted/50 space-y-2">
-            <h4 className="font-medium">💡 Pro Tips:</h4>
-            <ul className="space-y-1 text-sm text-muted-foreground">
-              {firstCard?.pitfalls.map((tip, index) => (
-                <li key={index}>• {tip}</li>
-              ))}
-            </ul>
-          </div>
-        )}
       </div>
       
       <div className="text-center space-y-4">
@@ -216,8 +206,8 @@ const LearningFlashcard = ({ tool, onBack }: LearningFlashcardProps) => {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardContent className="p-8 md:p-12 min-h-[60vh] flex items-center justify-center">
+    <Card className="w-full max-w-6xl mx-auto rounded-3xl border bg-background/80 backdrop-blur shadow-xl">
+      <CardContent className="p-8 md:p-12 min-h-[70vh] md:min-h-[75vh] flex items-center justify-center">
         {getCurrentContent()}
       </CardContent>
     </Card>

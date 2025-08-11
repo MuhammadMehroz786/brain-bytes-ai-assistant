@@ -44,64 +44,57 @@ const ToolBar = ({ tools, onSelectTool, activeToolId }: ToolBarProps) => {
   const suggestedTool = searchQuery.length > 3 ? getSuggestedTool(searchQuery) : null;
 
   return (
-    <div className="w-full space-y-3">
-      {/* Search Bar */}
-      <div className="flex justify-end">
-        <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+    <div className="w-full rounded-xl border bg-gradient-to-r from-primary/5 via-accent/5 to-background p-3 shadow-sm">
+      <div className="flex items-stretch gap-3">
+        {/* Left: Tool cards (horizontal scroll) */}
+        <div className="flex-1 flex gap-3 overflow-x-auto pb-1">
+          {tools.map((tool) => (
+            <Card
+              key={tool.id}
+              className={`group flex-shrink-0 w-56 cursor-pointer rounded-xl transition-all hover:shadow-md hover-scale ${
+                activeToolId === tool.id ? 'ring-2 ring-primary bg-primary/5' : 'bg-background/80 border-muted'
+              }`}
+              onClick={() => onSelectTool(tool.id)}
+            >
+              <div className="p-3 flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10">
+                  <tool.icon className="h-5 w-5 text-primary" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-medium leading-tight truncate">{tool.name}</h3>
+                  <p className="text-xs text-muted-foreground truncate">{getToolDescription(tool)}</p>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        {/* Right: Search */}
+        <div className="relative w-[280px] sm:w-[320px] shrink-0">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="I want to get better at writing..."
+            placeholder="What do you want to improve?"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 bg-background/50 border-muted"
+            className="pl-9 bg-background/70 border-muted rounded-lg"
           />
           {suggestedTool && (
-            <div className="absolute top-full left-0 right-0 mt-1 z-10">
-              <Card 
-                className="p-2 cursor-pointer hover:bg-accent"
+            <div className="absolute top-full right-0 left-0 mt-1 z-20">
+              <Card
+                className="p-2 cursor-pointer hover:bg-accent rounded-lg shadow-md"
                 onClick={() => {
                   onSelectTool(suggestedTool.id);
                   setSearchQuery("");
                 }}
               >
                 <div className="flex items-center gap-2">
-                  <suggestedTool.icon className="h-4 w-4" />
+                  <suggestedTool.icon className="h-4 w-4 text-primary" />
                   <span className="text-sm">Try {suggestedTool.name}</span>
                 </div>
               </Card>
             </div>
           )}
         </div>
-      </div>
-
-      {/* Tool Cards */}
-      <div className="flex gap-4 overflow-x-auto pb-2">
-        {tools.map((tool) => (
-          <Card
-            key={tool.id}
-            className={`flex-shrink-0 w-64 cursor-pointer transition-all hover:shadow-md ${
-              activeToolId === tool.id ? 'ring-2 ring-primary bg-primary/5' : ''
-            }`}
-            onClick={() => onSelectTool(tool.id)}
-          >
-            <div className="p-4 space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-primary/10 to-accent/10">
-                  <tool.icon className="h-5 w-5 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-medium">{tool.name}</h3>
-                  <Badge variant="secondary" className="text-xs mt-1">
-                    {tool.category}
-                  </Badge>
-                </div>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {getToolDescription(tool)}
-              </p>
-            </div>
-          </Card>
-        ))}
       </div>
     </div>
   );
