@@ -1,38 +1,39 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
+import { Sidebar, SidebarContent, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { 
-  Calendar, 
   Sparkles, 
-  MessageSquare, 
-  ArrowUp, 
-  Users, 
   Clock,
-  Zap,
   Brain,
-  Target,
-  Star,
-  LogOut,
+  Mail,
   Music,
   Settings,
   Rocket,
-  Menu
+  Menu,
+  Target,
+  LogOut
 } from "lucide-react";
+import type { ProductivityPlan, UserResponses } from "@/types/productivity";
+import type { UserPrefs } from "./education/types";
+import { supabase } from "@/integrations/supabase/client";
 import { DailyAINavigatorSection } from "./dashboard/DailyAINavigatorSection";
-import { DailyFlowSection } from "./dashboard/DailyFlowSection";
-import { AIStackSection } from "./dashboard/AIStackSection";
-import { FocusPlaylistSection } from "./dashboard/FocusPlaylistSection";
-import { UpgradeAssistantSection } from "./dashboard/UpgradeAssistantSection";
-import { SystemSettingsSection } from "./dashboard/SystemSettingsSection";
 import { EmailSummarySection } from "./dashboard/EmailSummarySection";
 import { GoogleCalendarSection } from "./dashboard/GoogleCalendarSection";
+import { FocusPlaylistSection } from "./dashboard/FocusPlaylistSection";
+import { SystemSettingsSection } from "./dashboard/SystemSettingsSection";
+import { UpgradeAssistantSection } from "./dashboard/UpgradeAssistantSection";
 import { DailyFocusPopup } from "./dashboard/DailyFocusPopup";
-import type { ProductivityPlan, UserResponses } from "@/types/productivity";
+import ToolPicker from "./education/ToolPicker";
+import LearningCard from "./education/LearningCard";
+import CoachRail from "./education/CoachRail";
+import { EDUCATION_DATA } from "./education/data";
+import { useEducationProgress } from "@/hooks/useEducationProgress";
+import { useAnalytics } from "@/hooks/useAnalytics";
+
+type SectionId = 'daily-navigator' | 'email-recap' | 'ai-plan' | 'smart-stack' | 'focus-playlist' | 'system-settings' | 'upgrade-assistant';
 
 interface DashboardProps {
   plan: ProductivityPlan;
@@ -40,14 +41,51 @@ interface DashboardProps {
   onRestart: () => void;
 }
 
-type SectionId = 'daily-navigator' | 'email-recap' | 'ai-plan' | 'smart-stack' | 'focus-playlist' | 'system-settings' | 'upgrade-assistant';
-
 export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
-  const [activeSection, setActiveSection] = useState<SectionId>('daily-navigator');
+  const { toast } = useToast();
+  const analytics = useAnalytics();
+  
+  // AI Education Hub state
+  const [prefs, setPrefs] = useState<UserPrefs>(() => {
+    const raw = localStorage.getItem("aihub:prefs");
+    return raw ? JSON.parse(raw) : { skill: "beginner" };
+  });
+  
+  const { getToolProgress, markCardComplete } = useEducationProgress();
+  
+  const tools = EDUCATION_DATA.tools;
+  const starterPath = EDUCATION_DATA.getStarterPath(prefs);
+  
+  const [activeToolId, setActiveToolId] = useState<string>(starterPath.cards[0]?.toolId || tools[0].id);
+  const [activeCardId, setActiveCardId] = useState<string>(starterPath.cards[0]?.cardId || tools[0].cards[0].id);
+  
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<SectionId>('smart-stack'); // Default to AI Education Hub
   const [showDailyPopup, setShowDailyPopup] = useState(false);
   const [todaysPriority, setTodaysPriority] = useState<string>("");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { toast } = useToast();
+
+  const activeTool = tools.find(t => t.id === activeToolId) || tools[0];
+  const activeCard = activeTool.cards.find(c => c.id === activeCardId) || activeTool.cards[0];
+
+  const handleSelectTool = (toolId: string) => {
+    const tool = tools.find(t => t.id === toolId);
+    if (!tool) return;
+    setActiveToolId(toolId);
+    const completed = getToolProgress(toolId).completedCards || [];
+    const next = tool.cards.find(c => !completed.includes(c.id));
+    setActiveCardId(next?.id || tool.cards[0].id);
+    analytics.track('card_opened', { toolId: toolId, cardId: next?.id || tool.cards[0].id });
+  };
+
+  const handleMarkMastery = () => {
+    markCardComplete(activeToolId, activeCardId);
+    toast({ title: "Nice! +1 step toward your goal.", description: "Saved to My Templates." });
+    analytics.track('mark_mastery', { toolId: activeToolId, cardId: activeCardId });
+    // Suggest next card in same tool or starter path
+    const tool = tools.find(t => t.id === activeToolId)!;
+    const remaining = tool.cards.find(c => !getToolProgress(activeToolId).completedCards?.includes(c.id));
+    if (remaining) setActiveCardId(remaining.id);
+  };
 
   // Check if popup should be shown (once per day)
   useEffect(() => {
@@ -96,20 +134,20 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
     }
   };
 
-  const sidebarItems = [
+  const menuItems = [
     {
       id: 'daily-navigator' as SectionId,
       title: 'Daily AI Navigator',
       icon: Brain,
-      description: 'Your AI coach',
-      iconColor: 'text-purple-600',
+      description: 'Smart task recommendations',
+      iconColor: 'text-purple-500',
       bgColor: 'bg-purple-100'
     },
     {
       id: 'email-recap' as SectionId,
-      title: 'Today\'s Email Recap',
-      icon: MessageSquare,
-      description: 'AI-summarized emails',
+      title: 'Email Summary',
+      icon: Mail,
+      description: 'Important emails only',
       iconColor: 'text-blue-500',
       bgColor: 'bg-blue-100'
     },
@@ -123,9 +161,9 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
     },
     {
       id: 'smart-stack' as SectionId,
-      title: 'Smart Tool Stack',
-      icon: Zap,
-      description: 'AI tools & tutorials',
+      title: 'AI Education Hub',
+      icon: Sparkles,
+      description: 'Learn AI by doing — tiny wins, step by step',
       iconColor: 'text-teal-500',
       bgColor: 'bg-teal-100'
     },
@@ -165,7 +203,53 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
       case 'ai-plan':
         return <GoogleCalendarSection />;
       case 'smart-stack':
-        return <AIStackSection plan={plan} responses={responses} />;
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-[300px_minmax(0,1fr)_280px] gap-6 h-full">
+            {/* Left: Tool Picker */}
+            <div className="hidden md:block">
+              <Card className="h-full">
+                <CardContent className="p-0 h-full">
+                  <ToolPicker
+                    prefs={prefs}
+                    setPrefs={(p) => { setPrefs(p); localStorage.setItem('aihub:prefs', JSON.stringify(p)); }}
+                    tools={tools}
+                    starterPath={starterPath}
+                    onSelect={handleSelectTool}
+                    getProgress={getToolProgress}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Center: Learning Card */}
+            <div className="flex-1">
+              <LearningCard
+                prefs={prefs}
+                setPrefs={(p) => { setPrefs(p); localStorage.setItem('aihub:prefs', JSON.stringify(p)); }}
+                tool={activeTool}
+                card={activeCard}
+                onCopy={() => analytics.track('prompt_copied', { toolId: activeToolId, cardId: activeCardId })}
+                onOpenTool={() => analytics.track('open_in_tool_clicked', { toolId: activeToolId, cardId: activeCardId })}
+                onMarkMastery={handleMarkMastery}
+                onNext={() => handleSelectTool(activeToolId)}
+              />
+            </div>
+
+            {/* Right: Coach Rail */}
+            <div className="hidden md:block">
+              <Card className="h-full">
+                <CardContent className="p-0 h-full">
+                  <CoachRail 
+                    tool={activeTool} 
+                    card={activeCard} 
+                    onAsk={() => analytics.track('ask_assistant', { toolId: activeToolId, cardId: activeCardId })} 
+                    beginner={prefs.skill !== 'advanced'} 
+                  />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        );
       case 'focus-playlist':
         return <FocusPlaylistSection />;
       case 'system-settings':
@@ -218,7 +302,7 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
 
       {/* Navigation */}
       <nav className="flex-1 p-3 sm:p-4 space-y-1 sm:space-y-2">
-        {sidebarItems.map((item) => {
+        {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeSection === item.id;
           
