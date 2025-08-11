@@ -169,7 +169,11 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
   };
 
   return (
-    <div className="min-h-[100dvh] overflow-hidden lg:overflow-visible bg-primary-light/60">
+    <div className="min-h-[100dvh] overflow-hidden lg:overflow-visible bg-transparent"
+         style={{
+           paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 68px)'
+         }}
+    >
       {/* Desktop Header */}
       <div className="hidden lg:flex sticky top-0 z-50 bg-gradient-to-r from-[#F6F0FF] to-[#EAF7FF] backdrop-blur-md border-b border-slate-200/60 px-6 py-2 justify-between items-center">
         <div className="flex items-center space-x-3">
@@ -218,86 +222,117 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </header>
 
-      <main className="lg:hidden h-[calc(100dvh-56px-48px)] bg-primary-light/60 overflow-x-hidden overflow-y-hidden">
+      <main className="lg:hidden h-[calc(100dvh-56px-48px)] bg-transparent overflow-x-hidden overflow-y-hidden">
         {/* Hero Section */}
-        <section className="px-6 pt-5 pb-3 text-center">
+        <section className="px-6 pt-3 pb-1 text-center">
           <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
-          <p className="mt-2 text-sm text-muted-foreground">We solve it for the price of lunch.</p>
-          <div className="h-4 mt-1" aria-hidden="true" />
+          <p className="mt-2 text-sm text-muted-foreground sm:hidden">Your AI, simplified.</p>
+          <p className="mt-2 text-sm text-muted-foreground hidden sm:block">We solve it for the price of lunch.</p>
+          <div className="h-2 mt-1" aria-hidden="true" />
           <p className="mt-1 text-[11px] text-muted-foreground">Hand-picked tools and steps, tested by the Brain Bytes team.</p>
         </section>
         {/* 1) First Section: Three-step row */}
-        <section className="px-6 pt-2 pb-1 flex flex-col justify-between">
+        <section className="px-6 pt-1 pb-1 flex flex-col justify-between">
           <div className="grid grid-cols-3 gap-3">
             <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm">
-              <ListChecks className="w-4 h-4 text-primary" />
+              <ListChecks className="w-6 h-6 text-primary" />
               <span className="text-[11px] font-medium text-foreground text-center">Answer 5 Questions</span>
             </div>
             <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm">
-              <LayoutDashboard className="w-4 h-4 text-primary" />
+              <LayoutDashboard className="w-6 h-6 text-primary" />
               <span className="text-[11px] font-medium text-foreground text-center">Get Your Dashboard</span>
             </div>
             <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm">
-              <Zap className="w-4 h-4 text-primary" />
+              <Zap className="w-6 h-6 text-primary" />
               <span className="text-[11px] font-medium text-foreground text-center">Start in Minutes</span>
             </div>
           </div>
-          <div className="h-4 mt-1" aria-hidden="true" />
+          <div className="h-2 mt-1" aria-hidden="true" />
         </section>
 
         {/* 2) Second Section: Video + caption */}
-        <section className="px-6 pb-2 flex flex-col justify-between">
-          <figure className="rounded-3xl overflow-hidden border border-border shadow-sm bg-card">
-            <img
-              src="/lovable-uploads/563ffcec-1177-4047-8fe4-b2316454c46c.png"
-              alt="Brain Bytes preview"
-              loading="lazy"
-              className="w-full h-auto object-cover"
-            />
-          </figure>
+        <section className="px-6 pb-1 flex flex-col justify-between">
+          <div className="px-2">
+            <figure className="rounded-3xl overflow-hidden border border-border bg-card" 
+                    style={{
+                      boxShadow: '0 8px 24px rgba(16,24,40,0.12)'
+                    }}>
+              <img
+                src="/lovable-uploads/563ffcec-1177-4047-8fe4-b2316454c46c.png"
+                alt="Brain Bytes preview"
+                loading="lazy"
+                className="w-full h-auto object-cover"
+                style={{
+                  maxWidth: '90vw',
+                  width: '90%',
+                  maxHeight: '38vh',
+                  borderRadius: '22px'
+                }}
+              />
+            </figure>
+          </div>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">See what you’ll get</p>
-          <button onClick={() => setIsWaitlistOpen(true)} className="mt-1 inline-block text-center text-[11px] font-semibold bg-gradient-to-r from-primary/90 to-accent/90 bg-clip-text text-transparent hover:opacity-95 px-2 py-1 rounded-md">Get early access →</button>
-          <div className="h-4 mt-1" aria-hidden="true" />
+          <div className="flex justify-center mt-1">
+            <button 
+              onClick={() => setIsWaitlistOpen(true)} 
+              className="inline-flex items-center justify-center px-4 py-2 text-[11px] font-semibold border border-primary/30 rounded-lg bg-transparent text-primary hover:bg-primary/5 transition-colors min-h-[40px]"
+            >
+              Get early access →
+            </button>
+          </div>
+          <div className="h-2 mt-1" aria-hidden="true" />
         </section>
 
         {/* 3) Third Section: Feature row */}
-        <section className="px-6 pb-2 flex flex-col justify-between">
+        <section className="px-6 pb-1 flex flex-col justify-between">
           <div className="grid grid-cols-3 gap-3">
             <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm">
-              <CheckCircle2 className="w-4 h-4 text-primary" />
+              <CheckCircle2 className="w-6 h-6 text-primary" />
               <span className="text-[11px] font-semibold text-foreground text-center">Curated Picks</span>
-              
             </div>
             <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm">
-              <BookOpen className="w-4 h-4 text-primary" />
+              <BookOpen className="w-6 h-6 text-primary" />
               <span className="text-[11px] font-semibold text-foreground text-center">How‑To Guides</span>
-              
             </div>
             <div className="flex flex-col items-center gap-1 bg-card/80 border border-border rounded-2xl p-3 shadow-sm">
-              <Bot className="w-4 h-4 text-primary" />
+              <Bot className="w-6 h-6 text-primary" />
               <span className="text-[11px] font-semibold text-foreground text-center">Your AI Assistant</span>
-              
             </div>
           </div>
-          <div className="h-4 mt-1" aria-hidden="true" />
         </section>
 
-        {/* 4) Fourth Section: CTA */}
+        {/* 4) Fourth Section: CTA - Will be replaced by sticky */}
         <section className="px-6 pb-4 flex flex-col justify-center">
-          <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-lg px-6 py-4 rounded-2xl shadow-md hover:shadow-lg transition-all">
-            Get your AI Assistant now.
-          </Button>
-          <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90">Your personalized AI dashboard in under 5 minutes.</p>
+          <div className="h-16" />
+          <p className="text-center text-[10px] text-muted-foreground opacity-90">Your personalized AI dashboard in under 5 minutes.</p>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">Launch price: $29 (less than lunch).</p>
         </section>
       </main>
 
       {/* Mobile Footer */}
-      <footer className="lg:hidden px-4 pb-4 bg-primary-light/60">
+      <footer className="lg:hidden px-4 pb-4 bg-transparent">
         <div className="text-[10px] text-muted-foreground text-center">
           © 2025 Brain Bytes · <Link to="/privacy-policy" className="hover:text-primary">Privacy</Link> · <Link to="/terms-of-service" className="hover:text-primary">Terms</Link> · <Link to="/refund-policy" className="hover:text-primary">Refund</Link> · <Link to="/cookie-policy" className="hover:text-primary">Cookies</Link> · <Link to="/contact" className="hover:text-primary">Contact</Link>
         </div>
       </footer>
+
+      {/* Sticky CTA for mobile */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 px-4"
+           style={{
+             paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)',
+             boxShadow: '0 -6px 20px rgba(16,24,40,0.06)'
+           }}>
+        <Button 
+          id="join-cta" 
+          onClick={() => setIsWaitlistOpen(true)} 
+          className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-lg px-6 py-4 shadow-md hover:shadow-lg transition-all"
+          style={{
+            borderRadius: '16px'
+          }}
+        >
+          Get your AI Assistant now.
+        </Button>
+      </div>
 
       {/* Desktop Layout */}
       <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#F6F0FF] to-[#EAF7FF]">
