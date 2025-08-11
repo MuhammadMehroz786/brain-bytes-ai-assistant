@@ -27,9 +27,8 @@ import { FocusPlaylistSection } from "./dashboard/FocusPlaylistSection";
 import { SystemSettingsSection } from "./dashboard/SystemSettingsSection";
 import { UpgradeAssistantSection } from "./dashboard/UpgradeAssistantSection";
 import { DailyFocusPopup } from "./dashboard/DailyFocusPopup";
-import ToolPicker from "./education/ToolPicker";
-import LearningCard from "./education/LearningCard";
-import CoachRail from "./education/CoachRail";
+import ToolBar from "./education/ToolBar";
+import LearningFlashcard from "./education/LearningFlashcard";
 import { EDUCATION_DATA } from "./education/data";
 import { useEducationProgress } from "@/hooks/useEducationProgress";
 import { useAnalytics } from "@/hooks/useAnalytics";
@@ -205,92 +204,26 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
         return <GoogleCalendarSection />;
       case 'smart-stack':
         return (
-          <div className="space-y-4">
+          <div className="space-y-6 min-h-screen">
             {/* Page Header */}
-            <div className="text-center space-y-2">
+            <div className="text-center space-y-2 py-4">
               <h1 className="text-2xl md:text-3xl font-bold">AI Education Hub</h1>
               <p className="text-sm text-muted-foreground">Learn AI by doing — tiny wins, step by step.</p>
             </div>
 
-            {/* Mobile Tool Picker & Tips */}
-            <div className="md:hidden flex gap-2">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Play className="h-4 w-4 mr-2" />
-                    Tools
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-[85vw] sm:w-96 p-0">
-                  <ToolPicker
-                    prefs={prefs}
-                    setPrefs={(p) => { setPrefs(p); localStorage.setItem('aihub:prefs', JSON.stringify(p)); }}
-                    tools={tools}
-                    starterPath={starterPath}
-                    onSelect={handleSelectTool}
-                    getProgress={getToolProgress}
-                  />
-                </SheetContent>
-              </Sheet>
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="sm">Tips</Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-[85vw] sm:w-80 p-0">
-                  <CoachRail 
-                    tool={activeTool} 
-                    card={activeCard} 
-                    onAsk={() => analytics.track('ask_assistant', { toolId: activeToolId, cardId: activeCardId })} 
-                    beginner={prefs.skill !== 'advanced'} 
-                  />
-                </SheetContent>
-              </Sheet>
-            </div>
-            
-            <div className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)_280px] gap-6">
-              {/* Left: Tool Picker */}
-              <div className="hidden lg:block">
-                <Card className="sticky top-4 h-fit">
-                  <CardContent className="p-0">
-                    <ToolPicker
-                      prefs={prefs}
-                      setPrefs={(p) => { setPrefs(p); localStorage.setItem('aihub:prefs', JSON.stringify(p)); }}
-                      tools={tools}
-                      starterPath={starterPath}
-                      onSelect={handleSelectTool}
-                      getProgress={getToolProgress}
-                    />
-                  </CardContent>
-                </Card>
-              </div>
+            {/* Top Tool Bar */}
+            <ToolBar
+              tools={tools}
+              onSelectTool={handleSelectTool}
+              activeToolId={activeToolId}
+            />
 
-              {/* Center: Learning Card */}
-              <div className="flex-1">
-                <LearningCard
-                  prefs={prefs}
-                  setPrefs={(p) => { setPrefs(p); localStorage.setItem('aihub:prefs', JSON.stringify(p)); }}
-                  tool={activeTool}
-                  card={activeCard}
-                  onCopy={() => analytics.track('prompt_copied', { toolId: activeToolId, cardId: activeCardId })}
-                  onOpenTool={() => analytics.track('open_in_tool_clicked', { toolId: activeToolId, cardId: activeCardId })}
-                  onMarkMastery={handleMarkMastery}
-                  onNext={() => handleSelectTool(activeToolId)}
-                />
-              </div>
-
-              {/* Right: Coach Rail */}
-              <div className="hidden lg:block">
-                <Card className="sticky top-4 h-fit">
-                  <CardContent className="p-0">
-                    <CoachRail 
-                      tool={activeTool} 
-                      card={activeCard} 
-                      onAsk={() => analytics.track('ask_assistant', { toolId: activeToolId, cardId: activeCardId })} 
-                      beginner={prefs.skill !== 'advanced'} 
-                    />
-                  </CardContent>
-                </Card>
-              </div>
+            {/* Main Flashcard Area */}
+            <div className="flex-1 py-8">
+              <LearningFlashcard
+                tool={activeTool}
+                onBack={() => analytics.track('tool_changed', { from: activeToolId })}
+              />
             </div>
           </div>
         );
