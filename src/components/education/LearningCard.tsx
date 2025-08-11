@@ -63,15 +63,32 @@ const LearningCard = ({ prefs, setPrefs, tool, card, onCopy, onOpenTool, onMarkM
     <Card className="overflow-hidden">
       <div className="px-4 md:px-6 py-3 border-b flex items-center justify-between bg-gradient-to-r from-primary/5 to-accent/5">
         <div className="text-xs text-muted-foreground">Card {card.step} of {tool.cards.length} · {tool.category}</div>
-        <div className="flex items-center gap-1 text-xs">
-          <Button variant={level === 'beginner' ? 'default' : 'secondary'} size="sm" onClick={() => { setLevel('beginner'); setPrefs({ ...prefs, skill: 'beginner' })}}>Beginner</Button>
-          <Button variant={level === 'advanced' ? 'default' : 'secondary'} size="sm" onClick={() => { setLevel('advanced'); setPrefs({ ...prefs, skill: 'advanced' })}}>Advanced</Button>
+        <div className="flex items-center gap-1">
+          <Button 
+            variant={level === 'beginner' ? 'default' : 'secondary'} 
+            size="sm" 
+            onClick={() => { setLevel('beginner'); setPrefs({ ...prefs, skill: 'beginner' })}}
+            className="h-7 text-xs"
+          >
+            Beginner
+          </Button>
+          <Button 
+            variant={level === 'advanced' ? 'default' : 'secondary'} 
+            size="sm" 
+            onClick={() => { setLevel('advanced'); setPrefs({ ...prefs, skill: 'advanced' })}}
+            className="h-7 text-xs"
+          >
+            Advanced
+          </Button>
         </div>
       </div>
       <CardContent className="p-4 md:p-6 space-y-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-semibold">{card.title}</h2>
-          <div className="mt-1 text-xs text-muted-foreground">~3 min</div>
+          <h2 className="text-xl md:text-2xl font-semibold leading-tight">{card.title}</h2>
+          <div className="mt-2 flex items-center gap-2">
+            <Badge variant="secondary" className="text-xs">~3 min</Badge>
+            <div className="text-xs text-muted-foreground">This should take ~3 minutes.</div>
+          </div>
         </div>
 
         {/* Quick Steps */}
@@ -113,10 +130,14 @@ const LearningCard = ({ prefs, setPrefs, tool, card, onCopy, onOpenTool, onMarkM
           </details>
         )}
 
-        {/* Actions */}
+        {/* Success State & Actions */}
         <div className="flex flex-wrap gap-3 pt-2">
-          <Button onClick={onMarkMastery}>I did this</Button>
-          <Button variant="ghost">Save as template</Button>
+          <Button onClick={onMarkMastery} className="flex-1 sm:flex-none">
+            I did this
+          </Button>
+          <Button variant="ghost" className="flex-1 sm:flex-none">
+            Save as template
+          </Button>
         </div>
       </CardContent>
     </Card>

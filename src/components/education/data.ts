@@ -20,7 +20,13 @@ export const EDUCATION_DATA: {
           id: "notion-draft-voice",
           step: 1,
           title: "Draft a page in your voice (≈3 min)",
-          defaults: { Topic: "", Audience: "", Tone: "Friendly", Length: "Medium", "Must-include bullets": "" },
+          defaults: { 
+            Topic: "Product strategy", 
+            Audience: "Team leads", 
+            Tone: "Friendly", 
+            Length: "Medium", 
+            "Must-include bullets": "• Key objectives\n• Timeline\n• Success metrics" 
+          },
           quickSteps: [
             "Paste your rough notes below",
             "Choose Beginner (keeps guidance visible)",
@@ -33,16 +39,16 @@ export const EDUCATION_DATA: {
               "Write a concise page about [[Topic]] for [[Audience]] in a [[Tone]] tone (readability: Grade 7). Length: [[Length]]. Use bullets for key ideas and finish with a 3-item action list. Enforce parallel structure and avoid filler.",
           },
           pitfalls: [
-            "If it’s generic → add 2 constraints (audience + outcome).",
-            "If too long → set Length to Short.",
-            "If voice is off → add one reference sentence in your tone.",
+            "If it's generic → add 2 constraints (audience + outcome)",
+            "If too long → set Length to Short",
+            "If voice is off → add one reference sentence in your tone",
           ],
           mistakes: [
             "Too generic? Add audience + outcome",
             "Run-on sentences. Prefer bullets",
             "No actionables. End with 3 actions",
           ],
-          whyThisWorks: "Constraint-led prompts guide tone, length, and structure",
+          whyThisWorks: "Constraint-led prompts guide tone, length, and structure perfectly",
         },
       ],
     },
@@ -55,13 +61,19 @@ export const EDUCATION_DATA: {
       recommended: true,
       nextLabel: "Polish and fact-check",
       openUrl: "https://chat.openai.com",
-      shortcuts: ["Shift+Enter: New line", "/: Commands", "Tab: Indent"] ,
+      shortcuts: ["Shift+Enter: New line", "/: Commands", "Tab: Indent"],
       cards: [
         {
           id: "gpt-polish-check",
           step: 1,
           title: "Polish and fact-check (≈3 min)",
-          defaults: { Topic: "", Audience: "", Tone: "Expert", Length: "Short", "Must-include bullets": "" },
+          defaults: { 
+            Topic: "Market analysis", 
+            Audience: "Executives", 
+            Tone: "Expert", 
+            Length: "Short", 
+            "Must-include bullets": "• Data sources\n• Key findings\n• Recommendations" 
+          },
           quickSteps: [
             "Paste your draft",
             "Pick Advanced for structure",
@@ -73,9 +85,17 @@ export const EDUCATION_DATA: {
             advanced:
               "Edit for clarity, correctness, and concision (3Cs). Add citations for claims. Deliver as: Revised + Bulleted Notes + 3-item action list.",
           },
-          pitfalls: ["Too long? Set Length to Short", "Voice off? Add a sample line", "Unclear? Ask for bullets first"],
-          mistakes: ["Overediting voice", "No sources", "Too dense"],
-          whyThisWorks: "3Cs + structure yields quick high-quality results",
+          pitfalls: [
+            "Too long? Set Length to Short", 
+            "Voice off? Add a sample line", 
+            "Unclear? Ask for bullets first"
+          ],
+          mistakes: [
+            "Overediting voice", 
+            "No sources", 
+            "Too dense"
+          ],
+          whyThisWorks: "3Cs + structure yields quick high-quality results every time",
         },
       ],
     },
@@ -88,33 +108,52 @@ export const EDUCATION_DATA: {
       recommended: true,
       nextLabel: "Turn meeting notes into tasks",
       openUrl: "https://www.notion.so",
-      shortcuts: ["Cmd/Ctrl+J: Ask AI", "Cmd/Ctrl+/ : Quick Find"],
+      shortcuts: ["Cmd/Ctrl+J: Ask AI", "Cmd/Ctrl+/: Quick Find"],
       cards: [
         {
           id: "notion-notes-to-tasks",
           step: 1,
           title: "Turn meeting notes into tasks (≈3 min)",
-          defaults: { Topic: "Meeting notes", Audience: "Self", Tone: "Friendly", Length: "Short", "Must-include bullets": "" },
-          quickSteps: ["Paste raw notes", "Choose Beginner", "Open in Notion AI"],
+          defaults: { 
+            Topic: "Meeting notes", 
+            Audience: "Self", 
+            Tone: "Friendly", 
+            Length: "Short", 
+            "Must-include bullets": "• Discussed Q4 goals\n• Need approval for budget\n• Follow up with marketing team" 
+          },
+          quickSteps: [
+            "Paste raw notes", 
+            "Choose Beginner", 
+            "Open in Notion AI"
+          ],
           prompt: {
             beginner:
               "Turn these notes into action items with owners and due dates. Keep it [[Length]]. Add a summary at top. Notes: [[Must-include bullets]].",
             advanced:
               "Convert notes to structured action items: Owner + Due Date + Outcome. Format: Executive Summary (2 lines) + Action Table + Next Steps (3 items).",
           },
-          pitfalls: ["Too long? Shorten", "Missing owners? Add names", "Vague tasks? Add outcomes"],
-          mistakes: ["No owners", "No dates", "Too vague"],
-          whyThisWorks: "From noise to structured actions fast",
+          pitfalls: [
+            "Too long? Shorten", 
+            "Missing owners? Add names", 
+            "Vague tasks? Add outcomes"
+          ],
+          mistakes: [
+            "No owners", 
+            "No dates", 
+            "Too vague"
+          ],
+          whyThisWorks: "From noise to structured actions fast with clear ownership",
         },
       ],
     },
   ],
   getStarterPath: (prefs: UserPrefs) => {
-    const cards = [
+    const baseCards = [
       { toolId: "notion-ai", cardId: "notion-draft-voice", title: "Draft a page in your voice" },
       { toolId: "notion-tasks", cardId: "notion-notes-to-tasks", title: "Turn notes into tasks" },
       { toolId: "gpt", cardId: "gpt-polish-check", title: "Polish and fact-check" },
     ];
-    return { id: "fast-track", title: "Fast Track (20 mins)", cards, progressPercent: 0 };
+    
+    return { id: "fast-track", title: "Fast Track (20 mins)", cards: baseCards, progressPercent: 0 };
   },
 };

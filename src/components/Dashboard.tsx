@@ -14,7 +14,8 @@ import {
   Rocket,
   Menu,
   Target,
-  LogOut
+  LogOut,
+  Play
 } from "lucide-react";
 import type { ProductivityPlan, UserResponses } from "@/types/productivity";
 import type { UserPrefs } from "./education/types";
@@ -204,11 +205,17 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
         return <GoogleCalendarSection />;
       case 'smart-stack':
         return (
-          <div className="grid grid-cols-1 md:grid-cols-[300px_minmax(0,1fr)_280px] gap-6 h-full">
-            {/* Left: Tool Picker */}
-            <div className="hidden md:block">
-              <Card className="h-full">
-                <CardContent className="p-0 h-full">
+          <div className="space-y-6">
+            {/* Mobile Tool Picker & Tips */}
+            <div className="md:hidden flex gap-2">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="sm" className="flex-1">
+                    <Play className="h-4 w-4 mr-2" />
+                    Tools
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="w-[85vw] sm:w-96 p-0">
                   <ToolPicker
                     prefs={prefs}
                     setPrefs={(p) => { setPrefs(p); localStorage.setItem('aihub:prefs', JSON.stringify(p)); }}
@@ -217,36 +224,67 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
                     onSelect={handleSelectTool}
                     getProgress={getToolProgress}
                   />
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Center: Learning Card */}
-            <div className="flex-1">
-              <LearningCard
-                prefs={prefs}
-                setPrefs={(p) => { setPrefs(p); localStorage.setItem('aihub:prefs', JSON.stringify(p)); }}
-                tool={activeTool}
-                card={activeCard}
-                onCopy={() => analytics.track('prompt_copied', { toolId: activeToolId, cardId: activeCardId })}
-                onOpenTool={() => analytics.track('open_in_tool_clicked', { toolId: activeToolId, cardId: activeCardId })}
-                onMarkMastery={handleMarkMastery}
-                onNext={() => handleSelectTool(activeToolId)}
-              />
-            </div>
-
-            {/* Right: Coach Rail */}
-            <div className="hidden md:block">
-              <Card className="h-full">
-                <CardContent className="p-0 h-full">
+                </SheetContent>
+              </Sheet>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="sm">Tips</Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[85vw] sm:w-80 p-0">
                   <CoachRail 
                     tool={activeTool} 
                     card={activeCard} 
                     onAsk={() => analytics.track('ask_assistant', { toolId: activeToolId, cardId: activeCardId })} 
                     beginner={prefs.skill !== 'advanced'} 
                   />
-                </CardContent>
-              </Card>
+                </SheetContent>
+              </Sheet>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-[300px_minmax(0,1fr)_280px] gap-6">
+              {/* Left: Tool Picker */}
+              <div className="hidden md:block">
+                <Card className="sticky top-4">
+                  <CardContent className="p-0">
+                    <ToolPicker
+                      prefs={prefs}
+                      setPrefs={(p) => { setPrefs(p); localStorage.setItem('aihub:prefs', JSON.stringify(p)); }}
+                      tools={tools}
+                      starterPath={starterPath}
+                      onSelect={handleSelectTool}
+                      getProgress={getToolProgress}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Center: Learning Card */}
+              <div className="flex-1">
+                <LearningCard
+                  prefs={prefs}
+                  setPrefs={(p) => { setPrefs(p); localStorage.setItem('aihub:prefs', JSON.stringify(p)); }}
+                  tool={activeTool}
+                  card={activeCard}
+                  onCopy={() => analytics.track('prompt_copied', { toolId: activeToolId, cardId: activeCardId })}
+                  onOpenTool={() => analytics.track('open_in_tool_clicked', { toolId: activeToolId, cardId: activeCardId })}
+                  onMarkMastery={handleMarkMastery}
+                  onNext={() => handleSelectTool(activeToolId)}
+                />
+              </div>
+
+              {/* Right: Coach Rail */}
+              <div className="hidden md:block">
+                <Card className="sticky top-4">
+                  <CardContent className="p-0">
+                    <CoachRail 
+                      tool={activeTool} 
+                      card={activeCard} 
+                      onAsk={() => analytics.track('ask_assistant', { toolId: activeToolId, cardId: activeCardId })} 
+                      beginner={prefs.skill !== 'advanced'} 
+                    />
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         );
