@@ -24,15 +24,15 @@ export const validatePassword = (password: string): { isValid: boolean; error?: 
     return { isValid: false, error: "Password is required" };
   }
   
-  if (password.length < 6) {
-    return { isValid: false, error: "Password must be at least 6 characters long" };
+  if (password.length < 8) {
+    return { isValid: false, error: "Password must be at least 8 characters long" };
   }
   
   if (password.length > 128) {
     return { isValid: false, error: "Password must be less than 128 characters" };
   }
   
-  // Check for basic password strength
+  // Enhanced password strength requirements
   const hasLowerCase = /[a-z]/.test(password);
   const hasUpperCase = /[A-Z]/.test(password);
   const hasNumbers = /\d/.test(password);
@@ -41,11 +41,26 @@ export const validatePassword = (password: string): { isValid: boolean; error?: 
   const strengthChecks = [hasLowerCase, hasUpperCase, hasNumbers, hasSpecialChar];
   const strengthScore = strengthChecks.filter(Boolean).length;
   
-  if (strengthScore < 2) {
+  if (strengthScore < 3) {
     return { 
       isValid: false, 
-      error: "Password should contain at least 2 of: lowercase, uppercase, numbers, special characters" 
+      error: "Password must contain at least 3 of: lowercase, uppercase, numbers, special characters" 
     };
+  }
+  
+  // Check for common weak patterns
+  const commonPatterns = [
+    /^password/i,
+    /^123456/,
+    /^qwerty/i,
+    /^abc123/i,
+    /(.)\1{2,}/, // Repeated characters
+  ];
+
+  for (const pattern of commonPatterns) {
+    if (pattern.test(password)) {
+      return { isValid: false, error: "Password contains common weak patterns" };
+    }
   }
   
   return { isValid: true };
@@ -104,25 +119,49 @@ export const ERROR_MESSAGES = {
   INVALID_EMAIL: "Please enter a valid email address",
   EMAIL_REQUIRED: "Email address is required",
   PASSWORD_REQUIRED: "Password is required",
-  PASSWORD_TOO_SHORT: "Password must be at least 6 characters long",
+  PASSWORD_TOO_SHORT: "Password must be at least 8 characters long",
   PASSWORD_TOO_LONG: "Password must be less than 128 characters",
-  PASSWORD_WEAK: "Password should contain at least 2 of: lowercase, uppercase, numbers, special characters",
+  PASSWORD_WEAK: "Password must contain at least 3 of: lowercase, uppercase, numbers, special characters",
   RATE_LIMIT_EXCEEDED: "Too many attempts. Please try again later",
   GENERIC_ERROR: "Something went wrong. Please try again",
   UNAUTHORIZED: "You are not authorized to perform this action",
   NETWORK_ERROR: "Network error. Please check your connection",
+  SUSPICIOUS_ACTIVITY: "Suspicious activity detected. Please try again later",
+  ACCOUNT_LOCKED: "Account temporarily locked due to security concerns",
 } as const;
 
-// Log security events (client-side logging)
+// Enhanced security event logging
 export const logSecurityEvent = (event: string, details?: Record<string, any>) => {
-  console.warn(`[SECURITY] ${event}`, details);
+  const timestamp = new Date().toISOString();
+  const logData = {
+    event,
+    timestamp,
+    ...details,
+    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+    url: typeof window !== 'undefined' ? window.location.href : 'unknown'
+  };
   
-  // In production, you might want to send this to a monitoring service
+  console.warn(`[SECURITY] ${event}`, logData);
+  
+  // Send to analytics if available
   if (typeof window !== 'undefined' && (window as any).gtag) {
     (window as any).gtag('event', 'security_event', {
       event_category: 'security',
       event_label: event,
       custom_map: details
     });
+  }
+
+  // Store critical security events in localStorage for debugging
+  if (typeof window !== 'undefined' && ['login_failed', 'signup_failed', 'rate_limited', 'suspicious_activity'].includes(event)) {
+    try {
+      const existingEvents = JSON.parse(localStorage.getItem('security_events') || '[]');
+      existingEvents.push(logData);
+      // Keep only last 50 events
+      const recentEvents = existingEvents.slice(-50);
+      localStorage.setItem('security_events', JSON.stringify(recentEvents));
+    } catch (error) {
+      console.warn('Failed to store security event:', error);
+    }
   }
 };

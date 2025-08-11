@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Brain, Mail, Lock, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { secureSignIn, secureSignUp } from "@/utils/secureAuth";
+import { validateEmail, validatePassword, normalizeEmail, logSecurityEvent } from "@/utils/security";
 
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -42,19 +44,36 @@ export default function Auth() {
     setLoading(true);
 
     try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`
-          }
+      // Client-side validation first
+      const emailValidation = validateEmail(email);
+      if (!emailValidation.isValid) {
+        toast({
+          title: "Invalid email",
+          description: emailValidation.error,
+          variant: "destructive"
         });
+        setLoading(false);
+        return;
+      }
 
-        if (error) {
+      if (isSignUp) {
+        const passwordValidation = validatePassword(password);
+        if (!passwordValidation.isValid) {
+          toast({
+            title: "Invalid password",
+            description: passwordValidation.error,
+            variant: "destructive"
+          });
+          setLoading(false);
+          return;
+        }
+
+        const result = await secureSignUp(normalizeEmail(email), password);
+        
+        if (!result.success) {
           toast({
             title: "Sign up failed",
-            description: error.message,
+            description: result.error,
             variant: "destructive"
           });
         } else {
@@ -62,17 +81,15 @@ export default function Auth() {
             title: "Account created!",
             description: "Please check your email to verify your account.",
           });
+          logSecurityEvent('signup_success', { email: email.substring(0, 3) + '***' });
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
-
-        if (error) {
+        const result = await secureSignIn(normalizeEmail(email), password);
+        
+        if (!result.success) {
           toast({
             title: "Sign in failed",
-            description: error.message,
+            description: result.error,
             variant: "destructive"
           });
         } else {
@@ -80,9 +97,11 @@ export default function Auth() {
             title: "Welcome back!",
             description: "You've been signed in successfully.",
           });
+          logSecurityEvent('signin_success', { email: email.substring(0, 3) + '***' });
         }
       }
     } catch (error: any) {
+      logSecurityEvent('auth_exception', { error: error.message });
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",
@@ -151,7 +170,7 @@ export default function Auth() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10"
                     required
-                    minLength={6}
+                    minLength={8}
                   />
                 </div>
               </div>

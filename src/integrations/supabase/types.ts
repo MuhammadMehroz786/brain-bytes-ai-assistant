@@ -72,7 +72,6 @@ export type Database = {
           encrypted_password: string | null
           encryption_key_id: string | null
           id: string
-          password: string
           updated_at: string
           user_id: string
         }
@@ -82,7 +81,6 @@ export type Database = {
           encrypted_password?: string | null
           encryption_key_id?: string | null
           id?: string
-          password: string
           updated_at?: string
           user_id: string
         }
@@ -92,7 +90,6 @@ export type Database = {
           encrypted_password?: string | null
           encryption_key_id?: string | null
           id?: string
-          password?: string
           updated_at?: string
           user_id?: string
         }
@@ -332,6 +329,39 @@ export type Database = {
         }
         Relationships: []
       }
+      security_events: {
+        Row: {
+          created_at: string | null
+          event_details: Json | null
+          event_type: string
+          id: string
+          ip_address: unknown | null
+          severity: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_details?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: unknown | null
+          severity?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_details?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown | null
+          severity?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       system_upgrade_waitlist: {
         Row: {
           created_at: string
@@ -525,6 +555,17 @@ export type Database = {
           window_minutes?: number
         }
         Returns: Json
+      }
+      log_security_event: {
+        Args: {
+          event_type_param: string
+          event_details_param?: Json
+          severity_param?: string
+          user_id_param?: string
+          ip_param?: unknown
+          user_agent_param?: string
+        }
+        Returns: undefined
       }
       safe_inet_cast: {
         Args: { ip_text: string }

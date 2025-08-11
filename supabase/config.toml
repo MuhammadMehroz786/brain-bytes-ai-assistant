@@ -20,3 +20,6 @@ verify_jwt = true
 
 [functions.enhanced-auth-security]
 verify_jwt = false
+
+[functions.get-google-client-id]
+verify_jwt = false
