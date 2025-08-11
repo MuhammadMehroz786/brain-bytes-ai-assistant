@@ -393,333 +393,235 @@ function getToolDatabase() {
     openMove(item.tool, item.move);
   };
 
-  return <div className="space-y-6">
-      {/* Page header */}
-      <header className="space-y-3">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">Your AI Productivity Toolkit</h2>
-            <p className="text-muted-foreground">A tiny, curated AI stack you’ll actually master—guided step‑by‑step.</p>
+      return (
+        <div className="space-y-4">
+          {/* Personalization modal */}
+          <PersonalizationSurvey
+            isOpen={showSurvey}
+            onClose={() => setShowSurvey(false)}
+            onComplete={handlePersonalizationComplete}
+          />
 
-            {/* Personalization strip */}
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <div className="bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--accent))] p-[1px] rounded-full">
-                <div className="rounded-full bg-background/60 backdrop-blur px-3 py-1 text-xs flex items-center gap-2">
-                  <span className="text-muted-foreground">Goal</span>
-                  <span className="font-medium">{userPreferences?.priority ?? "focus"}</span>
+          {/* Layout: Left menu + Flashcard main */}
+          <div className="flex gap-6 min-h-[70vh]">
+            {/* Left Menu */}
+            <aside className="w-64 lg:w-72 shrink-0">
+              <Card className="h-full p-4 flex flex-col">
+                {/* Search */}
+                <Input
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="I need help with…"
+                  className="mb-3"
+                />
+
+                {/* Tool list */}
+                <div className="flex-1 overflow-auto space-y-1">
+                  {flashcardTools.map((t, idx) => {
+                    const Icon = categoryIcon(t.category);
+                    const isActive = idx === currentToolIdx;
+                    return (
+                      <button
+                        key={t.name}
+                        onClick={() => { setCurrentToolIdx(idx); setStep(1); }}
+                        className={cn(
+                          "w-full flex items-center gap-3 rounded-md border p-2 text-left",
+                          isActive ? "bg-muted" : "hover:bg-muted/50"
+                        )}
+                      >
+                        <Icon className="h-4 w-4" />
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium truncate">{t.name}</div>
+                          <div className="text-xs text-muted-foreground truncate">{t.category}</div>
+                        </div>
+                        <div className="ml-auto text-xs text-muted-foreground whitespace-nowrap">
+                          {levelsCompleted(t.name)}/3
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
-              </div>
-              <div className="bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--accent))] p-[1px] rounded-full">
-                <div className="rounded-full bg-background/60 backdrop-blur px-3 py-1 text-xs flex items-center gap-2">
-                  <span className="text-muted-foreground">Skill</span>
-                  <span className="font-medium">{userPreferences?.experienceLevel ?? "beginner"}</span>
+
+                {/* Edit answers */}
+                <div className="pt-3 mt-3 border-t">
+                  <Button variant="outline" className="w-full" onClick={() => setShowSurvey(true)}>
+                    <Pencil className="mr-2 h-4 w-4" /> Edit My Answers
+                  </Button>
                 </div>
-              </div>
-              <div className="bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--accent))] p-[1px] rounded-full">
-                <div className="rounded-full bg-background/60 backdrop-blur px-3 py-1 text-xs flex items-center gap-2">
-                  <span className="text-muted-foreground">Preferred</span>
-                  <span className="font-medium">{userPreferences?.toolPreference ?? "simple"}</span>
-                </div>
-              </div>
-              <button onClick={() => setShowSurvey(true)} className="text-xs underline underline-offset-4 text-primary hover:opacity-80 ml-2">Edit</button>
-            </div>
-          </div>
+              </Card>
+            </aside>
 
-          {/* Right-side controls */}
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Simulate empty</span>
-              <Switch checked={simulateEmpty} onCheckedChange={setSimulateEmpty} />
-            </div>
-            <Badge variant="outline" className="px-3 py-1">
-              <Zap className="w-4 h-4 mr-1" />
-              {displayedTools.length} Tools
-            </Badge>
-          </div>
-        </div>
+            {/* Main Flashcard */}
+            <main className="flex-1 flex items-start justify-center">
+              <div className="w-full max-w-3xl animate-fade-in">
+                {(() => {
+                  const currentTool = flashcardTools[currentToolIdx];
+                  if (!currentTool) return null;
 
-        {/* Progress */}
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground">Stack mastered: {masteredCount}/{displayedTools.length} tools</span>
-          <div className="flex-1"><Progress value={displayedTools.length ? (masteredCount / displayedTools.length) * 100 : 0} /></div>
-        </div>
+                  const moves = coreMovesByTool[currentTool.name] ?? [
+                    'Turn a messy idea into an outline',
+                    'Draft a page in your voice',
+                    'Polish and fact‑check',
+                  ];
+                  const useOptions = moves.slice(0, 3);
+                  const chosenUse = selectedUseCases[currentTool.name] || '';
+                  const chosenSkill = selectedSkillByTool[currentTool.name] || (userPreferences?.experienceLevel === 'advanced' ? 'advanced' : 'beginner');
 
-        {/* Mobile practice trigger */}
-        <div className="flex sm:hidden">
-          <Button variant="secondary" size="sm" className="mt-2" onClick={() => setPracticeOpen(true)}>
-            <Lightbulb className="w-4 h-4 mr-2" /> Today’s practice
-          </Button>
-        </div>
-      </header>
+                  const beginnerExplainer = 'A simple, safe first pass you can run in minutes. You’ll get a clean starting point and learn the basics.';
+                  const advancedExplainer = 'A stronger, more structured prompt with constraints, assumptions, and checks to produce a high‑quality result.';
 
-      <PersonalizationSurvey isOpen={showSurvey} onClose={() => setShowSurvey(false)} onComplete={handlePersonalizationComplete} />
+                  const beginnerPrompt = `You are helping me ${chosenUse ? chosenUse.toLowerCase() : 'get started quickly'}. Keep it simple. Create a short, numbered plan and one example output. Ask one clarifying question first.`;
+                  const advancedPrompt = `Act as a ${currentTool.category.toLowerCase()} expert using ${currentTool.name}. For \"${chosenUse || 'this task'}\", produce a high‑quality result with: goals, constraints, assumptions, variants (2), and a final check list. Use clear headings.`;
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Main column */}
-        <div className="lg:col-span-2 space-y-6">
-          {simulateEmpty ? (
-            <Card className="p-6 text-center">
-              <CardTitle className="text-lg">We’re re‑curating your stack</CardTitle>
-              <CardDescription className="mt-2">Adjust your goals or try these editor’s picks.</CardDescription>
-              <div className="mt-4 flex flex-wrap gap-2 justify-center">
-                {['Notion AI','ChatGPT Plus','Grammarly'].map((t) => (
-                  <Badge key={t} variant="secondary">{t}</Badge>
-                ))}
-              </div>
-            </Card>
-          ) : (
-            (() => {
-              const currentTool = displayedTools[currentToolIdx];
-              if (!currentTool) return null;
-              const moves = coreMovesByTool[currentTool.name] ?? [
-                'Turn a messy idea into an outline',
-                'Draft a page in your voice',
-                'Polish and fact‑check',
-              ];
-              const useOptions = moves.slice(0, 3);
-              const chosenUse = selectedUseCases[currentTool.name] || '';
-              const chosenSkill = selectedSkillByTool[currentTool.name] || (userPreferences?.experienceLevel === 'advanced' ? 'advanced' : 'beginner');
+                  const beginnerDone = !!levelProgress[currentTool.name]?.beginner;
+                  const advancedDone = !!levelProgress[currentTool.name]?.advanced;
+                  const completedCount = levelsCompleted(currentTool.name); // 0..2
 
-              const beginnerExplainer = 'A simple, safe first pass you can run in minutes. You’ll get a clean starting point and learn the basics.';
-              const advancedExplainer = 'A stronger, more structured prompt with constraints, assumptions, and checks to produce a high‑quality result.';
-              const beginnerPrompt = `You are helping me ${chosenUse ? chosenUse.toLowerCase() : 'get started quickly'}. Keep it simple. Create a short, numbered plan and one example output. Ask one clarifying question first.`;
-              const advancedPrompt = `Act as a ${currentTool.category.toLowerCase()} expert using ${currentTool.name}. For \"${chosenUse || 'this task'}\", produce a high‑quality result with: goals, constraints, assumptions, variants (2), and a final check list. Use clear headings.`;
+                  return (
+                    <>
+                      <Card className="p-6 relative overflow-hidden">
+                        {/* Subtle gradient header by category */}
+                        <div className="absolute inset-x-0 -top-8 h-24 bg-gradient-to-r from-[hsl(var(--primary)/0.12)] to-[hsl(var(--accent)/0.12)] pointer-events-none" />
 
-              return (
-                <>
-                  <Card className="p-6">
-                    {/* Step indicator */}
-                    <div className="mb-4 flex items-center justify-between">
-                      <div className="text-xs text-muted-foreground">Step {step} of 3</div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="text-xs">{currentTool.category}</Badge>
-                        <Button size="icon" variant="ghost" aria-label="Save tool" onClick={() => setSaved(prev => ({ ...prev, [currentTool.name]: !prev[currentTool.name] }))}>
-                          <Star className={cn('w-4 h-4', saved[currentTool.name] ? 'fill-current' : '')} />
+                        {/* Step indicator + meta */}
+                        <div className="mb-4 flex items-center justify-between">
+                          <div className="text-xs text-muted-foreground">Step {step} of 3</div>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary" className="text-xs">{currentTool.category}</Badge>
+                            <span className="text-xs text-muted-foreground">{completedCount}/3 levels completed</span>
+                          </div>
+                        </div>
+
+                        {/* Content */}
+                        <div key={step} className="animate-fade-in space-y-4">
+                          {step === 1 && (
+                            <div className="space-y-3">
+                              <h1 className="text-3xl font-semibold leading-tight">{currentTool.name}</h1>
+                              <p className="text-base text-muted-foreground">{currentTool.description}</p>
+                              <div className="rounded-lg bg-accent/30 p-3">
+                                <p className="text-sm">Used for: {getUseCase(currentTool, currentToolIdx)}</p>
+                              </div>
+                              <div className="pt-2">
+                                <Button onClick={() => setStep(2)}>Select Tool</Button>
+                              </div>
+                            </div>
+                          )}
+
+                          {step === 2 && (
+                            <div className="space-y-4">
+                              <h2 className="text-xl font-medium">Choose a use case</h2>
+                              <div className="flex flex-wrap gap-2">
+                                {useOptions.map((u) => (
+                                  <Button
+                                    key={u}
+                                    variant={chosenUse === u ? 'secondary' : 'outline'}
+                                    size="sm"
+                                    className="rounded-full"
+                                    onClick={() => setSelectedUseCases(prev => ({ ...prev, [currentTool.name]: u }))}
+                                  >
+                                    {u}
+                                  </Button>
+                                ))}
+                              </div>
+                              <div className="pt-2 space-y-2">
+                                <div className="text-sm text-muted-foreground">View</div>
+                                <div className="flex gap-2">
+                                  <Button variant={chosenSkill === 'beginner' ? 'secondary' : 'outline'} size="sm" onClick={() => setSelectedSkillByTool(prev => ({ ...prev, [currentTool.name]: 'beginner' }))}>Beginner</Button>
+                                  <Button variant={chosenSkill === 'advanced' ? 'secondary' : 'outline'} size="sm" onClick={() => setSelectedSkillByTool(prev => ({ ...prev, [currentTool.name]: 'advanced' }))}>Advanced</Button>
+                                </div>
+                              </div>
+                              <div className="pt-2 flex items-center gap-2">
+                                <Button disabled={!chosenUse} onClick={() => setStep(3)}>Continue</Button>
+                                <Button variant="ghost" onClick={() => setStep(1)}>Back</Button>
+                              </div>
+                            </div>
+                          )}
+
+                          {step === 3 && (
+                            <div className="space-y-5">
+                              <div>
+                                <h2 className="text-xl font-medium">{chosenSkill === 'beginner' ? 'Beginner' : 'Advanced'} view</h2>
+                                <p className="text-sm text-muted-foreground mt-1">{chosenSkill === 'beginner' ? beginnerExplainer : advancedExplainer}</p>
+                              </div>
+
+                              <div className="space-y-2">
+                                <div className="text-sm font-medium">Copy this prompt</div>
+                                <div className="rounded-lg border p-3 flex items-start justify-between gap-3">
+                                  <p className="text-sm flex-1">{chosenSkill === 'beginner' ? beginnerPrompt : advancedPrompt}</p>
+                                  <Button size="icon" variant="ghost" aria-label="Copy prompt" onClick={() => handleCopy(chosenSkill === 'beginner' ? beginnerPrompt : advancedPrompt)}>
+                                    <Copy className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+
+                              {chosenSkill === 'advanced' && (
+                                <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
+                                  <li>Set clear goals and constraints up front.</li>
+                                  <li>Ask one clarifying question before drafting.</li>
+                                  <li>Provide two variants; compare and refine.</li>
+                                </ul>
+                              )}
+
+                              <div className="flex flex-wrap items-center gap-2">
+                                {!((chosenSkill === 'beginner' && beginnerDone) || (chosenSkill === 'advanced' && advancedDone)) && (
+                                  <Button onClick={() => markLevelComplete(currentTool.name, chosenSkill)}>
+                                    <Check className="w-4 h-4 mr-2" /> Mark {chosenSkill} complete
+                                  </Button>
+                                )}
+                                <Button variant="ghost" onClick={() => setStep(2)}>Back</Button>
+                                <Button onClick={() => window.open(currentTool.url || '#', '_blank')}>
+                                  <ExternalLink className="w-4 h-4 mr-2" /> Try {currentTool.name}
+                                </Button>
+                              </div>
+
+                              {/* Expert level gated upsell inside flashcard */}
+                              <div className="rounded-lg border p-4 bg-muted/30">
+                                <div className="flex items-center justify-between gap-3">
+                                  <div>
+                                    <div className="text-sm font-medium">Expert Level</div>
+                                    <p className="text-xs text-muted-foreground">Automation ideas, integrations, chaining techniques</p>
+                                  </div>
+                                  {(beginnerDone && advancedDone) ? (
+                                    <Badge variant="secondary">Unlocked</Badge>
+                                  ) : (
+                                    <div className="flex items-center text-xs text-muted-foreground">
+                                      <Lock className="w-3 h-3 mr-1" /> Unlock with Pro
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </Card>
+
+                      {/* Tool navigation */}
+                      <div className="mt-4 flex items-center justify-between">
+                        <Button
+                          variant="outline"
+                          disabled={currentToolIdx === 0}
+                          onClick={() => { setCurrentToolIdx(i => Math.max(0, i - 1)); setStep(1); }}
+                        >
+                          Previous Tool
+                        </Button>
+                        <div className="text-sm text-muted-foreground">{currentToolIdx + 1} / {flashcardTools.length}</div>
+                        <Button
+                          onClick={() => { setCurrentToolIdx(i => Math.min(flashcardTools.length - 1, i + 1)); setStep(1); }}
+                          disabled={currentToolIdx >= flashcardTools.length - 1}
+                        >
+                          Next Tool
                         </Button>
                       </div>
-                    </div>
+                    </>
+                  );
+                })()}
+              </div>
+            </main>
+          </div>
 
-                    {/* Step content */}
-                    {step === 1 && (
-                      <div className="space-y-3">
-                        <h3 className="text-2xl font-semibold leading-tight">{currentTool.name}</h3>
-                        <p className="text-base text-muted-foreground">{currentTool.description}</p>
-                        <div className="rounded-lg bg-accent/30 p-3">
-                          <p className="text-sm">Perfect for: {getUseCase(currentTool, currentToolIdx)}</p>
-                        </div>
-                        <div className="pt-2">
-                          <Button onClick={() => setStep(2)} className="">Continue</Button>
-                        </div>
-                      </div>
-                    )}
-
-                    {step === 2 && (
-                      <div className="space-y-4">
-                        <h4 className="font-medium">Choose a use case</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {useOptions.map((u) => (
-                            <Button
-                              key={u}
-                              variant={chosenUse === u ? 'secondary' : 'outline'}
-                              size="sm"
-                              className="rounded-full"
-                              onClick={() => setSelectedUseCases(prev => ({ ...prev, [currentTool.name]: u }))}
-                            >
-                              {u}
-                            </Button>
-                          ))}
-                        </div>
-                        <div className="pt-2 space-y-2">
-                          <div className="text-sm text-muted-foreground">Pick your view</div>
-                          <div className="flex gap-2">
-                            <Button variant={chosenSkill === 'beginner' ? 'secondary' : 'outline'} size="sm" onClick={() => setSelectedSkillByTool(prev => ({ ...prev, [currentTool.name]: 'beginner' }))}>Beginner</Button>
-                            <Button variant={chosenSkill === 'advanced' ? 'secondary' : 'outline'} size="sm" onClick={() => setSelectedSkillByTool(prev => ({ ...prev, [currentTool.name]: 'advanced' }))}>Advanced</Button>
-                          </div>
-                        </div>
-                        <div className="pt-2 flex items-center gap-2">
-                          <Button disabled={!chosenUse} onClick={() => setStep(3)}>Show steps</Button>
-                          <Button variant="ghost" onClick={() => setStep(1)}>Back</Button>
-                        </div>
-                      </div>
-                    )}
-
-                    {step === 3 && (
-                      <div className="space-y-4">
-                        <h4 className="font-medium">{chosenSkill === 'beginner' ? 'Beginner view' : 'Advanced view'}</h4>
-                        <p className="text-sm text-muted-foreground">{chosenSkill === 'beginner' ? beginnerExplainer : advancedExplainer}</p>
-
-                        <div className="space-y-2">
-                          <div className="text-sm font-medium">Copy this prompt</div>
-                          <div className="rounded-lg border p-3 flex items-start justify-between gap-3">
-                            <p className="text-sm flex-1">{chosenSkill === 'beginner' ? beginnerPrompt : advancedPrompt}</p>
-                            <Button size="icon" variant="ghost" aria-label="Copy prompt" onClick={() => handleCopy(chosenSkill === 'beginner' ? beginnerPrompt : advancedPrompt)}>
-                              <Copy className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </div>
-
-                        {chosenSkill === 'advanced' && (
-                          <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
-                            <li>Set clear goals and constraints up front.</li>
-                            <li>Ask one clarifying question before drafting.</li>
-                            <li>Provide two variants; compare and refine.</li>
-                          </ul>
-                        )}
-
-                        <div className="pt-2 flex flex-wrap items-center gap-2">
-                          <Button onClick={() => window.open(currentTool.url || '#', '_blank')}>
-                            <ExternalLink className="w-4 h-4 mr-2" /> Try {currentTool.name}
-                          </Button>
-                          <Button variant="ghost" onClick={() => setStep(2)}>Back</Button>
-                        </div>
-                      </div>
-                    )}
-                  </Card>
-
-                  {/* Tool navigation */}
-                  <div className="flex items-center justify-between">
-                    <Button variant="outline" disabled={currentToolIdx === 0} onClick={() => { setCurrentToolIdx(i => Math.max(0, i - 1)); setStep(1); }}>
-                      Previous Tool
-                    </Button>
-                    <div className="text-sm text-muted-foreground">{currentToolIdx + 1} / {displayedTools.length}</div>
-                    <Button onClick={() => { setCurrentToolIdx(i => Math.min(displayedTools.length - 1, i + 1)); setStep(1); }} disabled={currentToolIdx >= displayedTools.length - 1}>
-                      Next Tool
-                    </Button>
-                  </div>
-
-                  {/* Subtle upsell after a few cards */}
-                  {!upsellDismissed && currentToolIdx >= 2 && (
-                    <Card className="p-4 border-dashed">
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <p className="text-sm text-muted-foreground">Go further with Pro: advanced playbooks and templates to speed up your workflow.</p>
-                        <div className="flex items-center gap-2">
-                          <Button size="sm" onClick={() => setProOpen(true)}>See Pro plan</Button>
-                          <Button size="sm" variant="ghost" onClick={() => setUpsellDismissed(true)}>Dismiss</Button>
-                        </div>
-                      </div>
-                    </Card>
-                  )}
-                </>
-              );
-            })()
-          )}
+          {/* Keep waitlist section */}
+          <SystemUpgradeWaitlist />
         </div>
+      );
 
-        {/* Right rail */}
-        <aside className="hidden lg:block space-y-4 sticky top-16 self-start">
-          <Card className="p-5">
-            <div className="flex items-center gap-2 mb-2">
-              <Lightbulb className="w-4 h-4" />
-              <h4 className="font-medium">Today’s practice</h4>
-            </div>
-            <div className="space-y-2">
-              {practiceItems.map((it) => (
-                <div key={it.tool} className="rounded-lg border p-3 flex items-center justify-between gap-2">
-                  <div className="text-sm font-medium truncate">{`${it.move} — ${it.tool}`}</div>
-                  <Button size="sm" variant="secondary" onClick={() => startPractice(it)}>Start</Button>
-                </div>
-              ))}
-            </div>
-          </Card>
-          <Card className="p-5">
-            <div className="flex items-center gap-2 mb-2">
-              <Zap className="w-4 h-4" />
-              <h4 className="font-medium">Common pitfalls</h4>
-            </div>
-            <ul className="list-disc pl-5 text-sm space-y-1">
-              <li>Avoid overloading prompts — test one at a time.</li>
-              <li>Start simple — ship a tiny first pass.</li>
-              <li>Save wins — turn good results into reusable prompts.</li>
-            </ul>
-          </Card>
-        </aside>
-      </div>
-
-      {/* Mobile practice bottom sheet */}
-      <Drawer open={practiceOpen} onOpenChange={setPracticeOpen}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Today’s practice</DrawerTitle>
-            <DrawerDescription>Pick a move to try now.</DrawerDescription>
-          </DrawerHeader>
-          <div className="p-4 space-y-2">
-            {practiceItems.map((it) => (
-              <div key={it.tool} className="rounded-lg border p-3 flex items-center justify-between gap-2">
-                <div className="text-sm font-medium truncate">{`${it.move} — ${it.tool}`}</div>
-                <Button size="sm" variant="secondary" onClick={() => { setPracticeOpen(false); startPractice(it); }}>Start</Button>
-              </div>
-            ))}
-          </div>
-          <DrawerFooter>
-            <Button variant="outline" onClick={() => setPracticeOpen(false)}>Close</Button>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-
-      {/* Learn-by-doing drawer (right) */}
-      <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-md">
-          <SheetHeader>
-            <SheetTitle>{activeMove}</SheetTitle>
-            <SheetDescription>{activeTool}</SheetDescription>
-          </SheetHeader>
-          <div className="p-4 space-y-5">
-            <section>
-              <h5 className="text-sm font-medium mb-1">What you’ll do</h5>
-              <p className="text-sm text-muted-foreground">You’ll practice “{activeMove}” inside your current workflow. Expect a tight, 5–10 minute run‑through to build muscle memory.</p>
-            </section>
-            <section>
-              <h5 className="text-sm font-medium mb-1">Copy this prompt</h5>
-              <div className="rounded-lg border p-3 flex items-start justify-between gap-3">
-                <p className="text-sm flex-1">Act as an expert assistant. {activeMove}. Keep it concise, numbered, and ask one clarifying question first.</p>
-                <Button size="icon" variant="ghost" onClick={() => handleCopy(`Act as an expert assistant. ${activeMove}. Keep it concise, numbered, and ask one clarifying question first.`)}>
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-            </section>
-            <section>
-              <h5 className="text-sm font-medium mb-1">Try it now</h5>
-              {!moveSubmitted ? (
-                <div className="space-y-2">
-                  <textarea value={moveInput} onChange={(e) => setMoveInput(e.target.value)} className="w-full min-h-[120px] rounded-md border bg-background p-3 text-sm" placeholder="Paste notes or write a short brief…" />
-                  <Button onClick={() => setMoveSubmitted(true)}>Submit</Button>
-                </div>
-              ) : (
-                <div className="rounded-lg border p-3">
-                  <p className="text-sm font-medium mb-1">Success</p>
-                  <p className="text-sm text-muted-foreground">Nice — that’s a clean first pass. Save the best parts and run the next move.</p>
-                </div>
-              )}
-            </section>
-            <section>
-              <h5 className="text-sm font-medium mb-1">Why it works</h5>
-              <p className="text-sm text-muted-foreground">These moves turn vague goals into concrete actions with feedback. Repetition builds your personal library of prompts and patterns.</p>
-            </section>
-          </div>
-        </SheetContent>
-      </Sheet>
-
-
-      <Sheet open={proOpen} onOpenChange={setProOpen}>
-        <SheetContent side="bottom" className="sm:max-w-lg">
-          <SheetHeader>
-            <SheetTitle>Pro Plan (Preview)</SheetTitle>
-            <SheetDescription>Read‑only feature sheet</SheetDescription>
-          </SheetHeader>
-          <div className="p-4 space-y-2 text-sm">
-            <p>• Advanced playbooks with end‑to‑end workflows</p>
-            <p>• Full template library with updates</p>
-            <p>• Auto‑schedule sessions + Gmail sync</p>
-            <p>• Monthly live practice sessions</p>
-          </div>
-          <SheetFooter>
-            <Button variant="outline" onClick={() => setProOpen(false)}>Close</Button>
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
-
-      {/* System Upgrade Waitlist (kept) */}
-      <SystemUpgradeWaitlist />
-    </div>;
-
-};
+    };
