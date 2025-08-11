@@ -48,6 +48,13 @@ export const AIStackSection = ({
   const [userName, setUserName] = useState<string>("Alex Chen");
   const [avatarUrl, setAvatarUrl] = useState<string>("/placeholder.svg");
 
+  // Flashcard flow state
+  const [currentToolIdx, setCurrentToolIdx] = useState(0);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [selectedUseCases, setSelectedUseCases] = useState<Record<string, string>>({});
+  const [selectedSkillByTool, setSelectedSkillByTool] = useState<Record<string, 'beginner' | 'advanced'>>({});
+  const [upsellDismissed, setUpsellDismissed] = useState(false);
+
   const toolRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const { toast } = useToast();
 
@@ -409,161 +416,140 @@ export const AIStackSection = ({
               </div>
             </Card>
           ) : (
-            displayedTools.map((tool: any, index: number) => {
-              const moves = coreMovesByTool[tool.name] ?? [
-                "Turn a messy idea into an outline",
-                "Draft a page in your voice",
-                "Polish and fact‑check",
+            (() => {
+              const currentTool = displayedTools[currentToolIdx];
+              if (!currentTool) return null;
+              const moves = coreMovesByTool[currentTool.name] ?? [
+                'Turn a messy idea into an outline',
+                'Draft a page in your voice',
+                'Polish and fact‑check',
               ];
-              const checklistLabels = [
-                "Create your account",
-                "Set up one workspace/integration",
-                "Run your first core move",
-                "Save one reusable prompt/snippet",
-                "Reflect on results",
-              ];
-              const progress = completed[tool.name] ? 100 : getChecklistProgress(tool.name);
+              const useOptions = moves.slice(0, 3);
+              const chosenUse = selectedUseCases[currentTool.name] || '';
+              const chosenSkill = selectedSkillByTool[currentTool.name] || (userPreferences?.experienceLevel === 'advanced' ? 'advanced' : 'beginner');
+
+              const beginnerExplainer = 'A simple, safe first pass you can run in minutes. You’ll get a clean starting point and learn the basics.';
+              const advancedExplainer = 'A stronger, more structured prompt with constraints, assumptions, and checks to produce a high‑quality result.';
+              const beginnerPrompt = `You are helping me ${chosenUse ? chosenUse.toLowerCase() : 'get started quickly'}. Keep it simple. Create a short, numbered plan and one example output. Ask one clarifying question first.`;
+              const advancedPrompt = `Act as a ${currentTool.category.toLowerCase()} expert using ${currentTool.name}. For \"${chosenUse || 'this task'}\", produce a high‑quality result with: goals, constraints, assumptions, variants (2), and a final check list. Use clear headings.`;
+
               return (
-                <Card key={tool.name} ref={(el) => (toolRefs.current[tool.name] = el)} className="p-6">
-                  {/* Card header */}
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="space-y-1">
+                <>
+                  <Card className="p-6">
+                    {/* Step indicator */}
+                    <div className="mb-4 flex items-center justify-between">
+                      <div className="text-xs text-muted-foreground">Step {step} of 3</div>
                       <div className="flex items-center gap-2">
-                        <h3 className="text-xl font-semibold">{tool.name}</h3>
-                        <Badge variant="secondary" className="text-xs">{tool.category}</Badge>
-                        <Badge variant="outline" className="text-xs">Recommended</Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{tool.description}</p>
-                    </div>
-                    <Button size="sm" variant="outline" onClick={() => window.open(tool.url || tool.affiliateLink || '#', '_blank')}>
-                      <ExternalLink className="w-4 h-4 mr-2" /> Try
-                    </Button>
-                  </div>
-
-                  {/* Illustration */}
-                  <div className="mt-4 rounded-xl border bg-gradient-to-br from-[hsl(var(--muted))] to-[hsl(var(--accent))]/10 p-5">
-                    <div className="flex items-center gap-3 text-muted-foreground">
-                      <Sparkles className="w-5 h-5" />
-                      <span className="text-sm">No video — learn by doing with guided modules below.</span>
-                    </div>
-                  </div>
-
-                  {/* Perfect for */}
-                  <div className="mt-3 rounded-lg bg-accent/30 p-3">
-                    <p className="text-sm">Perfect for: {getUseCase(tool, index)}</p>
-                  </div>
-
-                  {/* Modules */}
-                  <div className="mt-5 grid md:grid-cols-2 gap-5">
-                    {/* Three Core Moves */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <Target className="w-4 h-4" />
-                        <h4 className="font-medium">Three Core Moves</h4>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {moves.map((m) => (
-                          <Button key={m} variant="outline" size="sm" className="rounded-full" onClick={() => openMove(tool.name, m)}>
-                            {m}
-                          </Button>
-                        ))}
+                        <Badge variant="secondary" className="text-xs">{currentTool.category}</Badge>
+                        <Button size="icon" variant="ghost" aria-label="Save tool" onClick={() => setSaved(prev => ({ ...prev, [currentTool.name]: !prev[currentTool.name] }))}>
+                          <Star className={cn('w-4 h-4', saved[currentTool.name] ? 'fill-current' : '')} />
+                        </Button>
                       </div>
                     </div>
 
-                    {/* QuickStart Guide */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <ListChecks className="w-4 h-4" />
-                          <h4 className="font-medium">QuickStart Guide</h4>
+                    {/* Step content */}
+                    {step === 1 && (
+                      <div className="space-y-3">
+                        <h3 className="text-2xl font-semibold leading-tight">{currentTool.name}</h3>
+                        <p className="text-base text-muted-foreground">{currentTool.description}</p>
+                        <div className="rounded-lg bg-accent/30 p-3">
+                          <p className="text-sm">Perfect for: {getUseCase(currentTool, currentToolIdx)}</p>
                         </div>
-                        <MasteryRing size={40} strokeWidth={5} progress={progress} />
+                        <div className="pt-2">
+                          <Button onClick={() => setStep(2)} className="">Continue</Button>
+                        </div>
                       </div>
-                      <ul className="space-y-2">
-                        {checklistLabels.map((label, i) => (
-                          <li key={i} className="flex items-center gap-2">
-                            <Checkbox id={`${tool.name}-step-${i}`} checked={!!checklists[tool.name]?.[i]} onCheckedChange={() => handleToggleChecklist(tool.name, i)} />
-                            <label htmlFor={`${tool.name}-step-${i}`} className="text-sm leading-none">
-                              {label}
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    )}
 
-                    {/* Prompt Pack */}
-                    <div className="space-y-3 md:col-span-2">
-                      <div className="flex items-center gap-2">
-                        <ClipboardCheck className="w-4 h-4" />
-                        <h4 className="font-medium">Prompt Pack</h4>
-                      </div>
-                      <Tabs defaultValue="starter" className="w-full">
-                        <TabsList>
-                          <TabsTrigger value="starter">Starter</TabsTrigger>
-                          <TabsTrigger value="advanced">Advanced</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="starter" className="space-y-2">
-                          {[
-                            "Summarize this article in 5 bullet points with a key takeaway.",
-                            "Turn these notes into an outline with H2/H3 headings.",
-                            "Rewrite this paragraph to be clearer and more concise.",
-                          ].map((p, i) => (
-                            <div key={i} className="flex items-center justify-between rounded-lg border p-3">
-                              <p className="text-sm pr-3">{p}</p>
-                              <Button size="icon" variant="ghost" onClick={() => handleCopy(p)} aria-label="Copy prompt">
-                                <Copy className="w-4 h-4" />
-                              </Button>
-                            </div>
+                    {step === 2 && (
+                      <div className="space-y-4">
+                        <h4 className="font-medium">Choose a use case</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {useOptions.map((u) => (
+                            <Button
+                              key={u}
+                              variant={chosenUse === u ? 'secondary' : 'outline'}
+                              size="sm"
+                              className="rounded-full"
+                              onClick={() => setSelectedUseCases(prev => ({ ...prev, [currentTool.name]: u }))}
+                            >
+                              {u}
+                            </Button>
                           ))}
-                        </TabsContent>
-                        <TabsContent value="advanced" className="space-y-2">
-                          {[
-                            "Act as an expert editor. Improve clarity, structure, and factuality. Flag weak claims.",
-                            "Create a structured brief: audience, outcomes, tone, constraints, success metric.",
-                            "Generate 3 style variants: casual, concise, and analytical.",
-                          ].map((p, i) => (
-                            <div key={i} className="flex items-center justify-between rounded-lg border p-3">
-                              <p className="text-sm pr-3">{p}</p>
-                              <Button size="icon" variant="ghost" onClick={() => handleCopy(p)} aria-label="Copy prompt">
-                                <Copy className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          ))}
-                        </TabsContent>
-                      </Tabs>
-                    </div>
-
-                    {/* Templates (Locked) */}
-                    <div className="md:col-span-2">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Lock className="w-4 h-4" />
-                        <h4 className="font-medium">Templates (Locked)</h4>
-                        <span className="text-xs text-muted-foreground">Unlock with Pro for full workflows.</span>
-                      </div>
-                      <div className="grid sm:grid-cols-3 gap-3">
-                        {['Writing brief','Research tracker','Slide outline'].map((t) => (
-                          <div key={t} className="rounded-lg border p-3 text-sm flex items-center justify-between">
-                            <span>{t}</span>
-                            <Lock className="w-4 h-4 text-muted-foreground" />
+                        </div>
+                        <div className="pt-2 space-y-2">
+                          <div className="text-sm text-muted-foreground">Pick your view</div>
+                          <div className="flex gap-2">
+                            <Button variant={chosenSkill === 'beginner' ? 'secondary' : 'outline'} size="sm" onClick={() => setSelectedSkillByTool(prev => ({ ...prev, [currentTool.name]: 'beginner' }))}>Beginner</Button>
+                            <Button variant={chosenSkill === 'advanced' ? 'secondary' : 'outline'} size="sm" onClick={() => setSelectedSkillByTool(prev => ({ ...prev, [currentTool.name]: 'advanced' }))}>Advanced</Button>
                           </div>
-                        ))}
+                        </div>
+                        <div className="pt-2 flex items-center gap-2">
+                          <Button disabled={!chosenUse} onClick={() => setStep(3)}>Show steps</Button>
+                          <Button variant="ghost" onClick={() => setStep(1)}>Back</Button>
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    )}
 
-                  {/* Footer */}
-                  <div className="mt-5 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <MasteryRing size={48} progress={progress} />
-                      <span className="text-sm text-muted-foreground">Mastery</span>
-                    </div>
-                    <Button onClick={() => markComplete(tool.name)} className="">
-                      <Check className="w-4 h-4 mr-2" /> Mark complete
+                    {step === 3 && (
+                      <div className="space-y-4">
+                        <h4 className="font-medium">{chosenSkill === 'beginner' ? 'Beginner view' : 'Advanced view'}</h4>
+                        <p className="text-sm text-muted-foreground">{chosenSkill === 'beginner' ? beginnerExplainer : advancedExplainer}</p>
+
+                        <div className="space-y-2">
+                          <div className="text-sm font-medium">Copy this prompt</div>
+                          <div className="rounded-lg border p-3 flex items-start justify-between gap-3">
+                            <p className="text-sm flex-1">{chosenSkill === 'beginner' ? beginnerPrompt : advancedPrompt}</p>
+                            <Button size="icon" variant="ghost" aria-label="Copy prompt" onClick={() => handleCopy(chosenSkill === 'beginner' ? beginnerPrompt : advancedPrompt)}>
+                              <Copy className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        {chosenSkill === 'advanced' && (
+                          <ul className="text-sm text-muted-foreground list-disc pl-5 space-y-1">
+                            <li>Set clear goals and constraints up front.</li>
+                            <li>Ask one clarifying question before drafting.</li>
+                            <li>Provide two variants; compare and refine.</li>
+                          </ul>
+                        )}
+
+                        <div className="pt-2 flex flex-wrap items-center gap-2">
+                          <Button onClick={() => window.open(currentTool.url || '#', '_blank')}>
+                            <ExternalLink className="w-4 h-4 mr-2" /> Try {currentTool.name}
+                          </Button>
+                          <Button variant="ghost" onClick={() => setStep(2)}>Back</Button>
+                        </div>
+                      </div>
+                    )}
+                  </Card>
+
+                  {/* Tool navigation */}
+                  <div className="flex items-center justify-between">
+                    <Button variant="outline" disabled={currentToolIdx === 0} onClick={() => { setCurrentToolIdx(i => Math.max(0, i - 1)); setStep(1); }}>
+                      Previous Tool
+                    </Button>
+                    <div className="text-sm text-muted-foreground">{currentToolIdx + 1} / {displayedTools.length}</div>
+                    <Button onClick={() => { setCurrentToolIdx(i => Math.min(displayedTools.length - 1, i + 1)); setStep(1); }} disabled={currentToolIdx >= displayedTools.length - 1}>
+                      Next Tool
                     </Button>
                   </div>
-                </Card>
+
+                  {/* Subtle upsell after a few cards */}
+                  {!upsellDismissed && currentToolIdx >= 2 && (
+                    <Card className="p-4 border-dashed">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <p className="text-sm text-muted-foreground">Go further with Pro: advanced playbooks and templates to speed up your workflow.</p>
+                        <div className="flex items-center gap-2">
+                          <Button size="sm" onClick={() => setProOpen(true)}>See Pro plan</Button>
+                          <Button size="sm" variant="ghost" onClick={() => setUpsellDismissed(true)}>Dismiss</Button>
+                        </div>
+                      </div>
+                    </Card>
+                  )}
+                </>
               );
-            })
+            })()
           )}
         </div>
 
@@ -576,9 +562,8 @@ export const AIStackSection = ({
             </div>
             <div className="space-y-2">
               {practiceItems.map((it) => (
-                <div key={it.tool} className="rounded-lg border p-3">
-                  <div className="text-sm font-medium">{it.move}</div>
-                  <div className="text-xs text-muted-foreground mb-2">{it.tool}</div>
+                <div key={it.tool} className="rounded-lg border p-3 flex items-center justify-between gap-2">
+                  <div className="text-sm font-medium truncate">{`${it.move} — ${it.tool}`}</div>
                   <Button size="sm" variant="secondary" onClick={() => startPractice(it)}>Start</Button>
                 </div>
               ))}
@@ -590,9 +575,9 @@ export const AIStackSection = ({
               <h4 className="font-medium">Common pitfalls</h4>
             </div>
             <ul className="list-disc pl-5 text-sm space-y-1">
-              <li>Over‑collecting prompts without testing.</li>
-              <li>Skipping a simple first prototype.</li>
-              <li>No feedback loop or reflection.</li>
+              <li>Avoid overloading prompts — test one at a time.</li>
+              <li>Start simple — ship a tiny first pass.</li>
+              <li>Save wins — turn good results into reusable prompts.</li>
             </ul>
           </Card>
         </aside>
@@ -607,9 +592,8 @@ export const AIStackSection = ({
           </DrawerHeader>
           <div className="p-4 space-y-2">
             {practiceItems.map((it) => (
-              <div key={it.tool} className="rounded-lg border p-3">
-                <div className="text-sm font-medium">{it.move}</div>
-                <div className="text-xs text-muted-foreground mb-2">{it.tool}</div>
+              <div key={it.tool} className="rounded-lg border p-3 flex items-center justify-between gap-2">
+                <div className="text-sm font-medium truncate">{`${it.move} — ${it.tool}`}</div>
                 <Button size="sm" variant="secondary" onClick={() => { setPracticeOpen(false); startPractice(it); }}>Start</Button>
               </div>
             ))}
@@ -663,16 +647,6 @@ export const AIStackSection = ({
         </SheetContent>
       </Sheet>
 
-      {/* Sticky Pro panel */}
-      <div className="fixed inset-x-4 bottom-4 z-40 rounded-xl border bg-background/80 backdrop-blur shadow-lg p-4 md:flex md:items-center md:justify-between">
-        <div>
-          <div className="font-semibold">Go further with Pro</div>
-          <div className="text-sm text-muted-foreground">Advanced playbooks • Template library • Auto‑schedule + Gmail sync • Monthly live sessions</div>
-        </div>
-        <div className="mt-3 md:mt-0">
-          <Button onClick={() => setProOpen(true)} className="">See Pro plan</Button>
-        </div>
-      </div>
 
       <Sheet open={proOpen} onOpenChange={setProOpen}>
         <SheetContent side="bottom" className="sm:max-w-lg">
