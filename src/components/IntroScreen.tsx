@@ -247,16 +247,12 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
         {/* 2) Second Section: Video + caption */}
         <section className="px-6 pb-2 flex flex-col justify-between">
-          <figure className="rounded-xl overflow-hidden border border-border shadow-sm bg-card">
-            <iframe
-              src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ"
-              width="100%"
-              height="160"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="w-full aspect-video"
-              title="Brain Bytes Demo"
+          <figure className="rounded-3xl overflow-hidden border border-border shadow-sm bg-card">
+            <img
+              src="/lovable-uploads/b20e6ad1-c463-49d2-840e-0936dfe78118.png"
+              alt="Brain Bytes preview"
+              loading="lazy"
+              className="w-full h-auto object-cover"
             />
           </figure>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">See what you’ll get</p>
@@ -356,13 +352,10 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 </div>
 
                 {/* Demo Link with Pricing */}
-                <div className="pt-4 text-center space-y-3">
-                  <Link to="/demo" className="text-primary hover:text-accent transition-colors duration-200 font-medium text-sm underline underline-offset-4 hover:underline-offset-2 block">👀 Not ready? Watch a 60-second demo →</Link>
-                  <div className="text-center space-y-1">
+                  <div className="pt-4 text-center space-y-1">
                     <p className="text-sm text-muted-foreground">One-time $29 – No subscriptions</p>
                     <p className="text-sm text-muted-foreground">100% Personalized</p>
                   </div>
-                </div>
               </div>
             </div>
 

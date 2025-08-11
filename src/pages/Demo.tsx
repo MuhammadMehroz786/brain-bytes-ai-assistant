@@ -47,16 +47,12 @@ const Demo = () => {
 
           {/* Video Section */}
           <Card className="max-w-4xl mx-auto p-6 bg-gradient-to-br from-primary-light to-accent-light border-primary/20">
-            <div className="rounded-xl overflow-hidden bg-black/5 border border-primary/10 shadow-lg">
-              <iframe 
-                src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ" 
-                width="100%" 
-                height="400" 
-                frameBorder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowFullScreen 
-                className="w-full aspect-video"
-                title="Brain Bytes Demo"
+            <div className="rounded-3xl overflow-hidden bg-black/5 border border-primary/10 shadow-lg">
+              <img 
+                src="/lovable-uploads/b20e6ad1-c463-49d2-840e-0936dfe78118.png" 
+                alt="Brain Bytes demo preview" 
+                loading="lazy" 
+                className="w-full h-auto object-cover" 
               />
             </div>
           </Card>
@@ -73,16 +69,12 @@ const Demo = () => {
           {/* Mobile Video Section */}
           <div className="px-4 space-y-4 flex-1">
             <Card className="p-2 bg-white/80 backdrop-blur-sm border-primary/20">
-              <div className="rounded-lg overflow-hidden bg-black/5 border border-primary/10 shadow-lg">
-                <iframe 
-                  src="https://www.youtube.com/embed/1NnXmp1M0KM?si=Asn2O2q2UQgNz7HZ" 
-                  width="100%" 
-                  height="160" 
-                  frameBorder="0" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  allowFullScreen 
-                  className="w-full"
-                  title="Brain Bytes Demo"
+              <div className="rounded-3xl overflow-hidden bg-black/5 border border-primary/10 shadow-lg">
+                <img 
+                  src="/lovable-uploads/b20e6ad1-c463-49d2-840e-0936dfe78118.png" 
+                  alt="Brain Bytes demo preview" 
+                  loading="lazy" 
+                  className="w-full h-auto object-cover" 
                 />
               </div>
             </Card>
