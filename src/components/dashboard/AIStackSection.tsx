@@ -9,13 +9,14 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { Checkbox } from "@/components/ui/checkbox";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from "@/components/ui/drawer";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetTrigger } from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import MasteryRing from "./MasteryRing";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Zap, ExternalLink, Star, Settings, Lightbulb, Lock, Copy, Check, ListChecks, ClipboardCheck, Sparkles, ArrowRight, Target, Pencil, Palette, Bot, Calendar } from "lucide-react";
+import { Zap, ExternalLink, Star, Settings, Lightbulb, Lock, Copy, Check, ListChecks, ClipboardCheck, Sparkles, ArrowRight, Target, Pencil, Palette, Bot, Calendar, MessageSquare } from "lucide-react";
 import type { ProductivityPlan, UserResponses, UserPreferences } from "@/types/productivity";
 import { PersonalizationSurvey } from "@/components/PersonalizationSurvey";
 import { SystemUpgradeWaitlist } from "@/components/SystemUpgradeWaitlist";
@@ -55,7 +56,55 @@ export const AIStackSection = ({
   const [selectedSkillByTool, setSelectedSkillByTool] = useState<Record<string, 'beginner' | 'advanced'>>({});
   const [upsellDismissed, setUpsellDismissed] = useState(false);
 
-  const toolRefs = useRef<Record<string, HTMLDivElement | null>>({});
+const [searchQuery, setSearchQuery] = useState('');
+const allTools = useMemo(() => getToolDatabase(), []);
+const filteredTools = useMemo(() => {
+  const q = searchQuery.toLowerCase().trim();
+  if (!q) return allTools;
+  return allTools.filter(t => [t.name, t.category, ...(t.categories || [])].join(' ').toLowerCase().includes(q));
+}, [allTools, searchQuery]);
+const flashcardTools = filteredTools;
+useEffect(() => {
+  setCurrentToolIdx(i => Math.min(i, Math.max(0, flashcardTools.length - 1)));
+}, [flashcardTools.length]);
+
+const [levelProgress, setLevelProgress] = useState<Record<string, { beginner: boolean; advanced: boolean }>>(() => {
+  try { return JSON.parse(localStorage.getItem('toolLevelProgress') || '{}'); } catch { return {}; }
+});
+useEffect(() => {
+  localStorage.setItem('toolLevelProgress', JSON.stringify(levelProgress));
+}, [levelProgress]);
+
+const markLevelComplete = (toolName: string, level: 'beginner' | 'advanced') => {
+  setLevelProgress(prev => {
+    const curr = prev[toolName] || { beginner: false, advanced: false };
+    return { ...prev, [toolName]: { ...curr, [level]: true } };
+  });
+  toast({ title: 'Progress saved', description: `${level[0].toUpperCase() + level.slice(1)} complete for ${toolName}` });
+};
+
+const levelsCompleted = (toolName: string) => {
+  const st = levelProgress[toolName] || { beginner: false, advanced: false };
+  return (st.beginner ? 1 : 0) + (st.advanced ? 1 : 0);
+};
+
+const categoryIcon = (cat: string) => {
+  switch (cat) {
+    case 'Automation': return Zap;
+    case 'Writing': return Pencil;
+    case 'AI Assistant': return Bot;
+    case 'Email': return MessageSquare;
+    case 'Project Management': return Calendar;
+    case 'Productivity': return Sparkles;
+    default: return Sparkles;
+  }
+};
+
+const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+const [refinePicks, setRefinePicks] = useState<Record<string, string[]>>({});
+
+const toolRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const { toast } = useToast();
 
   // Load user preferences on mount
