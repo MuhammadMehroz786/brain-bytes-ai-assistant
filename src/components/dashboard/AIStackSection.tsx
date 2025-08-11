@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from "@/components/ui/drawer";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetFooter, SheetTrigger } from "@/components/ui/sheet";
@@ -12,7 +13,9 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import MasteryRing from "./MasteryRing";
-import { Zap, ExternalLink, Star, Settings, Lightbulb, Lock, Copy, Check, ListChecks, ClipboardCheck, Sparkles, ArrowRight, Target } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Zap, ExternalLink, Star, Settings, Lightbulb, Lock, Copy, Check, ListChecks, ClipboardCheck, Sparkles, ArrowRight, Target, Pencil, Palette, Bot, Calendar } from "lucide-react";
 import type { ProductivityPlan, UserResponses, UserPreferences } from "@/types/productivity";
 import { PersonalizationSurvey } from "@/components/PersonalizationSurvey";
 import { SystemUpgradeWaitlist } from "@/components/SystemUpgradeWaitlist";
@@ -40,6 +43,10 @@ export const AIStackSection = ({
   const [moveSubmitted, setMoveSubmitted] = useState(false);
   const [proOpen, setProOpen] = useState(false);
   const [practiceOpen, setPracticeOpen] = useState(false);
+  const [saved, setSaved] = useState<Record<string, boolean>>({});
+  const [expandedMoves, setExpandedMoves] = useState<Record<string, string | null>>({});
+  const [userName, setUserName] = useState<string>("Alex Chen");
+  const [avatarUrl, setAvatarUrl] = useState<string>("/placeholder.svg");
 
   const toolRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const { toast } = useToast();
@@ -56,10 +63,16 @@ export const AIStackSection = ({
         }
       } = await supabase.auth.getUser();
       if (user) {
-        const {
-          data,
-          error
-        } = await supabase.from('ai_tool_preferences').select('*').eq('user_id', user.id).maybeSingle();
+        // Best-effort profile details (front-end only)
+        const display = (user.user_metadata as any)?.full_name || user.email || "Alex Chen";
+        const avatar = (user.user_metadata as any)?.avatar_url || "/placeholder.svg";
+        setUserName(display);
+        setAvatarUrl(avatar);
+        const { data, error } = await supabase
+          .from('ai_tool_preferences')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
         if (data && !error) {
           const preferences = {
             priority: data.priority,
