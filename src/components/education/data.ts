@@ -29,8 +29,8 @@ export const EDUCATION_DATA: {
           },
           quickSteps: [
             "Paste your rough notes below",
-            "Choose Beginner (keeps guidance visible)",
-            "Open in Notion AI and refine",
+            "Choose Beginner (keeps guidance visible)", 
+            "Open in Notion AI and refine"
           ],
           prompt: {
             beginner:
@@ -40,8 +40,8 @@ export const EDUCATION_DATA: {
           },
           pitfalls: [
             "If it's generic → add 2 constraints (audience + outcome)",
-            "If too long → set Length to Short",
-            "If voice is off → add one reference sentence in your tone",
+            "If too long → set Length to Short", 
+            "If voice is off → add one reference sentence in your tone"
           ],
           mistakes: [
             "Too generic? Add audience + outcome",

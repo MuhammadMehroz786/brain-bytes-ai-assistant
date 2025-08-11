@@ -164,7 +164,7 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
       id: 'smart-stack' as SectionId,
       title: 'AI Education Hub',
       icon: Sparkles,
-      description: 'Learn AI by doing — tiny wins, step by step',
+      description: 'Learn AI by doing — tiny wins, step by step.',
       iconColor: 'text-teal-500',
       bgColor: 'bg-teal-100'
     },
@@ -205,7 +205,13 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
         return <GoogleCalendarSection />;
       case 'smart-stack':
         return (
-          <div className="space-y-6">
+          <div className="space-y-4">
+            {/* Page Header */}
+            <div className="text-center space-y-2">
+              <h1 className="text-2xl md:text-3xl font-bold">AI Education Hub</h1>
+              <p className="text-sm text-muted-foreground">Learn AI by doing — tiny wins, step by step.</p>
+            </div>
+
             {/* Mobile Tool Picker & Tips */}
             <div className="md:hidden flex gap-2">
               <Sheet>
@@ -241,10 +247,10 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
               </Sheet>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-[300px_minmax(0,1fr)_280px] gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)_280px] gap-6">
               {/* Left: Tool Picker */}
-              <div className="hidden md:block">
-                <Card className="sticky top-4">
+              <div className="hidden lg:block">
+                <Card className="sticky top-4 h-fit">
                   <CardContent className="p-0">
                     <ToolPicker
                       prefs={prefs}
@@ -273,8 +279,8 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
               </div>
 
               {/* Right: Coach Rail */}
-              <div className="hidden md:block">
-                <Card className="sticky top-4">
+              <div className="hidden lg:block">
+                <Card className="sticky top-4 h-fit">
                   <CardContent className="p-0">
                     <CoachRail 
                       tool={activeTool} 
