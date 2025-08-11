@@ -249,7 +249,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <section className="px-6 pb-2 flex flex-col justify-between">
           <figure className="rounded-3xl overflow-hidden border border-border shadow-sm bg-card">
             <img
-              src="/lovable-uploads/b20e6ad1-c463-49d2-840e-0936dfe78118.png"
+              src="/lovable-uploads/563ffcec-1177-4047-8fe4-b2316454c46c.png"
               alt="Brain Bytes preview"
               loading="lazy"
               className="w-full h-auto object-cover"
