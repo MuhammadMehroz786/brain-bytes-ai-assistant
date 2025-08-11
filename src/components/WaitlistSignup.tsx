@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface WaitlistSignupProps {
   isOpen: boolean;
@@ -23,18 +24,34 @@ export const WaitlistSignup = ({ isOpen, onClose, triggerText }: WaitlistSignupP
 
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setIsSubmitted(true);
-    toast.success("You're on the waitlist! We'll notify you when Brain Bytes launches.");
-    
-    setTimeout(() => {
-      onClose();
-      setIsSubmitted(false);
-      setEmail("");
+    try {
+      const { error } = await supabase
+        .from('prelaunch_roi_waitlist')
+        .insert([{ email }]);
+
+      if (error) {
+        if (error.code === '23505') {
+          toast.error("You're already on the waitlist!");
+        } else {
+          toast.error("Something went wrong. Please try again.");
+        }
+        setIsSubmitting(false);
+        return;
+      }
+
+      setIsSubmitted(true);
+      toast.success("You're on the waitlist! We'll notify you when Brain Bytes launches.");
+      
+      setTimeout(() => {
+        onClose();
+        setIsSubmitted(false);
+        setEmail("");
+        setIsSubmitting(false);
+      }, 2000);
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
       setIsSubmitting(false);
-    }, 2000);
+    }
   };
 
   if (!isOpen) return null;
