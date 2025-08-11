@@ -352,7 +352,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 </div>
 
                 {/* Demo Link with Pricing */}
-                  <div className="pt-4 text-center space-y-1">
+                  <div className="pt-2 text-center space-y-1">
                     <p className="text-sm text-muted-foreground">One-time $29 – No subscriptions</p>
                     <p className="text-sm text-muted-foreground">100% Personalized</p>
                   </div>
