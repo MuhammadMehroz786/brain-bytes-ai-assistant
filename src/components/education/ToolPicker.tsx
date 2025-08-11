@@ -29,7 +29,6 @@ const ToolPicker = ({ prefs, setPrefs, tools, starterPath, onSelect, getProgress
     <div className="p-4 space-y-4">
       <div className="px-2 pt-3 pb-2">
         <h2 className="text-sm font-semibold">Your Tools</h2>
-        <p className="text-xs text-muted-foreground">Fast Track (20 mins)</p>
       </div>
 
       {/* Starter Path */}
@@ -38,14 +37,14 @@ const ToolPicker = ({ prefs, setPrefs, tools, starterPath, onSelect, getProgress
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm font-medium">Fast Track (20 mins) · {starterPath.cards.length} wins</div>
-              <div className="text-xs text-muted-foreground">Continue where you left off</div>
+              <div className="text-xs text-muted-foreground">Your Starter Path is ready</div>
             </div>
             <MasteryRing size={40} progress={starterPath.progressPercent} />
           </div>
           <div className="mt-3 flex flex-col gap-2">
-            {starterPath.cards.map((c) => (
+            {starterPath.cards.map((c, i) => (
               <button key={c.cardId} className="text-left text-sm hover:underline" onClick={() => onSelect(c.toolId)}>
-                • {c.title}
+                {i + 1}. {c.title}
               </button>
             ))}
           </div>

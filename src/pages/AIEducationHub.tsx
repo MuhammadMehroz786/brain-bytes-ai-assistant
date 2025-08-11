@@ -41,11 +41,11 @@ const AIEducationHub = () => {
   useEffect(() => {
     document.title = "AI Education Hub | Learn AI by doing";
     const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', 'AI Education Hub: Learn AI by doing—tiny wins, step by step.');
+    if (meta) meta.setAttribute('content', 'Learn AI by doing — tiny wins, step by step. Transform messy ideas into clear results in under 3 minutes per card.');
     else {
       const m = document.createElement('meta');
       m.name = 'description';
-      m.content = 'AI Education Hub: Learn AI by doing—tiny wins, step by step.';
+      m.content = 'Learn AI by doing — tiny wins, step by step. Transform messy ideas into clear results in under 3 minutes per card.';
       document.head.appendChild(m);
     }
     // Canonical
@@ -85,7 +85,7 @@ const AIEducationHub = () => {
           <Sparkles className="h-5 w-5 text-primary" />
           <div>
             <h1 className="text-lg font-semibold">AI Education Hub</h1>
-            <p className="text-xs text-muted-foreground">Learn AI by doing—tiny wins, step by step.</p>
+            <p className="text-xs text-muted-foreground">Learn AI by doing — tiny wins, step by step.</p>
           </div>
         </div>
         <div className="md:hidden flex items-center gap-2">

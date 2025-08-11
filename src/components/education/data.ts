@@ -22,9 +22,9 @@ export const EDUCATION_DATA: {
           title: "Draft a page in your voice (≈3 min)",
           defaults: { Topic: "", Audience: "", Tone: "Friendly", Length: "Medium", "Must-include bullets": "" },
           quickSteps: [
-            "Paste your rough notes below.",
-            "Choose Beginner (keeps guidance visible).",
-            "Open in Notion AI and accept/refine.",
+            "Paste your rough notes below",
+            "Choose Beginner (keeps guidance visible)",
+            "Open in Notion AI and refine",
           ],
           prompt: {
             beginner:
@@ -38,11 +38,11 @@ export const EDUCATION_DATA: {
             "If voice is off → add one reference sentence in your tone.",
           ],
           mistakes: [
-            "Too generic? Add audience + outcome.",
-            "Run-on sentences. Prefer bullets.",
-            "No actionables. End with 3 actions.",
+            "Too generic? Add audience + outcome",
+            "Run-on sentences. Prefer bullets",
+            "No actionables. End with 3 actions",
           ],
-          whyThisWorks: "Constraint-led prompts guide tone, length, and structure.",
+          whyThisWorks: "Constraint-led prompts guide tone, length, and structure",
         },
       ],
     },
@@ -63,9 +63,9 @@ export const EDUCATION_DATA: {
           title: "Polish and fact-check (≈3 min)",
           defaults: { Topic: "", Audience: "", Tone: "Expert", Length: "Short", "Must-include bullets": "" },
           quickSteps: [
-            "Paste your draft.",
-            "Pick Advanced for structure.",
-            "Review edits + sources.",
+            "Paste your draft",
+            "Pick Advanced for structure",
+            "Review edits + sources",
           ],
           prompt: {
             beginner:
@@ -73,9 +73,9 @@ export const EDUCATION_DATA: {
             advanced:
               "Edit for clarity, correctness, and concision (3Cs). Add citations for claims. Deliver as: Revised + Bulleted Notes + 3-item action list.",
           },
-          pitfalls: ["Too long? Set Length to Short.", "Voice off? Add a sample line.", "Unclear? Ask for bullets first."],
+          pitfalls: ["Too long? Set Length to Short", "Voice off? Add a sample line", "Unclear? Ask for bullets first"],
           mistakes: ["Overediting voice", "No sources", "Too dense"],
-          whyThisWorks: "3Cs + structure yields quick high-quality results.",
+          whyThisWorks: "3Cs + structure yields quick high-quality results",
         },
       ],
     },
@@ -99,10 +99,12 @@ export const EDUCATION_DATA: {
           prompt: {
             beginner:
               "Turn these notes into action items with owners and due dates. Keep it [[Length]]. Add a summary at top. Notes: [[Must-include bullets]].",
+            advanced:
+              "Convert notes to structured action items: Owner + Due Date + Outcome. Format: Executive Summary (2 lines) + Action Table + Next Steps (3 items).",
           },
-          pitfalls: ["Too long? Shorten.", "Missing owners? Add names.", "Vague tasks? Add outcomes."],
+          pitfalls: ["Too long? Shorten", "Missing owners? Add names", "Vague tasks? Add outcomes"],
           mistakes: ["No owners", "No dates", "Too vague"],
-          whyThisWorks: "From noise to structured actions fast.",
+          whyThisWorks: "From noise to structured actions fast",
         },
       ],
     },
