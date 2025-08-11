@@ -183,7 +183,8 @@ const toolRefs = useRef<Record<string, HTMLDivElement | null>>({});
     setUserPreferences(preferences);
     generatePersonalizedTools(preferences);
   };
-  const getToolDatabase = () => [
+function getToolDatabase() {
+  return [
   // Focus & Deep Work tools
   {
     name: "Motion",
@@ -287,7 +288,9 @@ const toolRefs = useRef<Record<string, HTMLDivElement | null>>({});
     complexity: "medium",
     setupComplexity: "simple",
     url: "https://notion.so"
-  }];
+  }
+  ];
+}
   const getUseCase = (tool: any, index: number) => {
     if (!userPreferences) {
       // Default use cases
