@@ -418,267 +418,121 @@ const freeHoursToday = Math.max(0, Math.round((totalWorkM - busyMinutes)/60));
               <p className="text-sm text-gray-500 mt-2">No busy slots found for the next 3 days.</p>
             )}
 
-            <div className="mt-6 border rounded-lg">
-              <div className="max-h-[520px] overflow-y-auto">
-                <div className="sticky top-0 z-20 bg-white/80 backdrop-blur px-4 py-2 border-b flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="text-slate-700 font-semibold">
-                      {selectedDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
-                    </div>
-                    <Input
-                      type="date"
-                      aria-label="Choose date"
-                      value={new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset()*60000)).toISOString().slice(0,10)}
-                      onChange={(e)=>{ const d = new Date(e.target.value + 'T00:00:00'); setSelectedDate(d); }}
-                      className="h-8 w-[9.5rem]"
-                    />
-                    <div className="sm:hidden flex items-center gap-1 text-[11px] text-muted-foreground">
-                      <a href="#morning" className="chips rounded-full px-2.5 py-1 border bg-white/60 backdrop-blur border-slate-200">Morning</a>
-                      <span>&bull;</span>
-                      <a href="#afternoon" className="chips rounded-full px-2.5 py-1 border bg-white/60 backdrop-blur border-slate-200">Afternoon</a>
-                      <span>&bull;</span>
-                      <a href="#evening" className="chips rounded-full px-2.5 py-1 border bg-white/60 backdrop-blur border-slate-200">Evening</a>
-                      <span>&bull;</span>
-                      <a href="#night" className="chips rounded-full px-2.5 py-1 border bg-white/60 backdrop-blur border-slate-200">Night</a>
-                    </div>
-                  </div>
-                  <div className="hidden sm:flex items-center gap-3 text-xs">
-                    <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-focus))' }} /> Focus</span>
-                    <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-meeting))' }} /> Meeting</span>
-                    <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-personal))' }} /> Personal</span>
-                    <span className="inline-flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: 'hsl(var(--cal-busy))' }} /> Busy</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {/* Hints popover icon */}
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant={aiSuggestions ? 'secondary' : 'outline'} size="sm" aria-label="Hints" className="rounded-full px-2.5 py-1 text-xs">
-                          <Lightbulb className="h-4 w-4" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent align="end" className="w-56">
-                        <div className="text-sm mb-2 font-medium">Hints</div>
-                        <Button variant={aiSuggestions ? 'secondary' : 'outline'} size="sm" onClick={()=>setAiSuggestions(v=>!v)}>
-                          {aiSuggestions ? 'Turn off hints' : 'Turn on hints'}
-                        </Button>
-                      </PopoverContent>
-                    </Popover>
-
-                    {/* View segmented control */}
-                    <ToggleGroup type="single" value={viewMode} onValueChange={(v)=>{ if(!v) return; setViewMode(v as any); if(v==='compact') setCompact(true); else setCompact(false); }} className="hidden sm:flex">
-                      <ToggleGroupItem value="day" className="text-xs">Day</ToggleGroupItem>
-                      <ToggleGroupItem value="week" className="text-xs">Week</ToggleGroupItem>
-                      <ToggleGroupItem value="agenda" className="text-xs">Agenda</ToggleGroupItem>
-                      <ToggleGroupItem value="compact" className="text-xs">Compact</ToggleGroupItem>
-                    </ToggleGroup>
-
-                    {/* Preferences */}
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="outline" size="sm" aria-label="Preferences" className="rounded-full px-2.5 py-1 text-xs">Preferences</Button>
-                      </PopoverTrigger>
-                      <PopoverContent align="end" className="w-64">
-                        <div className="space-y-3">
-                          <div className="text-sm font-medium">Working Hours</div>
-                          <div className="flex items-center gap-2 text-xs">
-                            <input type="time" aria-label="Working hours start" value={workingHours.start} onChange={(e)=>{ const v={...workingHours,start:e.target.value}; setWorkingHours(v); localStorage.setItem('bb_calendar_working_hours', JSON.stringify(v)); }} className="border rounded px-2 py-1 bg-background" />
-                            <span>&ndash;</span>
-                            <input type="time" aria-label="Working hours end" value={workingHours.end} onChange={(e)=>{ const v={...workingHours,end:e.target.value}; setWorkingHours(v); localStorage.setItem('bb_calendar_working_hours', JSON.stringify(v)); }} className="border rounded px-2 py-1 bg-background" />
-                          </div>
-                          <div className="text-sm font-medium">Quiet Hours</div>
-                          <div className="flex items-center gap-2 text-xs">
-                            <input type="time" aria-label="Quiet hours start" value={quietHours.start} onChange={(e)=>{ const v={...quietHours,start:e.target.value}; setQuietHours(v); localStorage.setItem('bb_calendar_quiet_hours', JSON.stringify(v)); }} className="border rounded px-2 py-1 bg-background" />
-                            <span>&ndash;</span>
-                            <input type="time" aria-label="Quiet hours end" value={quietHours.end} onChange={(e)=>{ const v={...quietHours,end:e.target.value}; setQuietHours(v); localStorage.setItem('bb_calendar_quiet_hours', JSON.stringify(v)); }} className="border rounded px-2 py-1 bg-background" />
-                          </div>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-
-                    <Button variant="outline" size="sm" onClick={()=>setSuggestionsOpen(true)} aria-label="Open AI Suggestions" className="rounded-full px-2.5 py-1 text-xs">AI Suggestions</Button>
-                  </div>
+            {/* Daily Snapshot - minimal premium view */}
+            <div className="mt-6">
+              <header className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                <h4 className="text-base sm:text-lg font-semibold tracking-tight">
+                  {selectedDate.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}
+                </h4>
+                <div className="flex items-center gap-2 sm:ml-auto">
+                  <Button onClick={handleSetFocusClick} variant="secondary" className="rounded-full">Set Focus</Button>
+                  <Button onClick={()=>setSuggestionsOpen(true)} className="rounded-full bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--cal-focus-accent))] text-primary-foreground">Plan with AI</Button>
                 </div>
-                {Array.from({ length: 24 }).map((_, hour) => {
-                  const hourStart = new Date();
-                  hourStart.setHours(hour, 0, 0, 0);
-                  const hourEnd = new Date(hourStart.getTime() + 60 * 60 * 1000);
+              </header>
 
-                  const isBusy = busySlots.some(slot => {
-                    const slotStart = new Date(slot.start);
-                    const slotEnd = new Date(slot.end);
-                    return (hourStart < slotEnd && hourEnd > slotStart);
-                  });
+              {/* Events for the selected day */}
+              {(() => {
+                const dayStart = new Date(selectedDate); dayStart.setHours(0,0,0,0);
+                const dayEnd = new Date(dayStart.getTime() + 24*60*60*1000);
+                const todaysEvents = calendarEvents
+                  .filter(e => {
+                    const s = new Date(e.start.dateTime || e.start.date);
+                    const en = new Date(e.end.dateTime || e.end.date);
+                    return s < dayEnd && en > dayStart;
+                  })
+                  .sort((a,b) => new Date(a.start.dateTime || a.start.date).getTime() - new Date(b.start.dateTime || b.start.date).getTime());
 
-                  const eventsInHour = calendarEvents.filter(event => {
-                    const eventStart = new Date(event.start.dateTime || event.start.date);
-                    const eventEnd = new Date(event.end.dateTime || event.end.date);
-                    const dayStart = new Date(selectedDate); dayStart.setHours(0,0,0,0);
-                    const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
-                    const inSelectedDay = (eventStart < dayEnd && eventEnd > dayStart);
-                    return inSelectedDay && (eventStart < hourEnd && eventEnd > hourStart);
-                  });
+                const getType = (title: string): 'focus'|'meeting'|'personal'|'busy' => {
+                  const lower = (title||'').toLowerCase();
+                  if (lower.includes('focus') || lower.includes('deep work')) return 'focus';
+                  if (lower.includes('meet') || lower.includes('call')) return 'meeting';
+                  if (lower.includes('gym') || lower.includes('walk') || lower.includes('break') || lower.includes('lunch') || lower.includes('personal')) return 'personal';
+                  return 'busy';
+                };
+                const typeToVar: Record<string,string> = { focus: '--cal-focus', meeting: '--cal-meeting', personal: '--cal-personal', busy: '--cal-busy' };
 
-                  const sectionBg = (hour >= 6 && hour < 12)
-                    ? 'hsl(var(--cal-morning-bg))'
-                    : (hour >= 12 && hour < 18)
-                    ? 'hsl(var(--cal-afternoon-bg))'
-                    : (hour >= 18 && hour < 22)
-                    ? 'hsl(var(--cal-evening-bg))'
-                    : 'hsl(var(--cal-night-bg))';
-
-                  const showSectionHeader = hour === 6 || hour === 12 || hour === 18 || hour === 22;
-                  const sectionTitle = hour === 6 ? 'Morning' : hour === 12 ? 'Afternoon' : hour === 18 ? 'Evening' : 'Night';
-
-                  const rowClasses = compact ? 'py-1.5' : 'py-2.5';
-
-                  return (
-                    <div key={hour} id={showSectionHeader ? sectionTitle.toLowerCase() : undefined} style={{ backgroundColor: sectionBg }} className="relative">
-                      {showSectionHeader && (
-                        <div className="sticky top-[40px] z-10 px-2 py-1 text-xs font-semibold bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--cal-focus-accent))] p-[1px] rounded-full w-fit ml-4">
-                          <div className="rounded-full bg-white/70 dark:bg-background/70 backdrop-blur px-2.5 py-0.5 text-slate-700">{sectionTitle}</div>
-                        </div>
-                      )}
-
-                      <div 
-                        className={`group flex items-stretch ${rowClasses} px-4 odd:bg-muted/20 hover:bg-muted/30 border-t border-border/60`}
-                        onMouseDown={(e) => {
-                          if (eventsInHour.length === 0 && !isBusy) {
-                            setDragStartHour(hour);
-                            setDragEndHour(hour);
-                          }
-                        }}
-                        onMouseEnter={() => {
-                          if (dragStartHour !== null) setDragEndHour(hour);
-                        }}
-                        onMouseUp={() => {
-                          if (dragStartHour !== null) {
-                            const start = new Date(); start.setHours(Math.min(dragStartHour, hour), 0, 0, 0);
-                            const end = new Date(); end.setHours(Math.max(dragStartHour, hour) + 1, 0, 0, 0);
-                            setQaStart(start);
-                            setQaDuration(Math.max(15, Math.round((end.getTime() - start.getTime()) / 60000)));
-                            setQaTitle('');
-                            setQaType('other');
-                            setQaOpen(true);
-                            setDragStartHour(null);
-                            setDragEndHour(null);
-                          }
-                        }}
-                      >
-                        <span className="w-16 shrink-0 text-xs text-muted-foreground leading-6">{hour.toString().padStart(2, '0')}:00</span>
-                        <div className="flex-1 min-h-[28px] relative">
-                          {eventsInHour.length > 0 ? (
-                            <div className="flex flex-col gap-1">
-                              {eventsInHour.map(event => {
-                                const title = event.summary || 'Untitled';
-                                const lower = title.toLowerCase();
-                                const type: 'focus'|'meeting'|'personal'|'busy' = lower.includes('focus') ? 'focus' : (lower.includes('meet') || lower.includes('call')) ? 'meeting' : 'personal';
-                                const colorVar = type === 'focus' ? '--cal-focus' : type === 'meeting' ? '--cal-meeting' : '--cal-personal';
-                                return (
-                                  <TooltipProvider key={event.id}>
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <div className={`relative rounded-xl ${compact ? 'px-2 py-1.5' : 'px-3 py-2'} shadow-sm hover:shadow-lg transition duration-200`} 
-                                          style={{ backgroundColor: `hsl(var(${colorVar}) / 0.10)` }}
-                                        >
-                                          <div className="absolute inset-y-0 left-0 w-1 rounded-l-xl" style={{ backgroundColor: `hsl(var(${colorVar}))` }} />
-                                          <div className="flex items-center justify-between gap-2">
-                                            <div className="min-w-0">
-                                              <div className="text-sm font-medium truncate"><span className="mr-1">{type==='focus'?'🧠':type==='meeting'?'👥':'✅'}</span>{title}</div>
-                                              <div className="text-xs text-muted-foreground truncate">
-                                                {formatTime(event.start.dateTime || event.start.date)} - {formatTime(event.end.dateTime || event.end.date)}
-                                              </div>
-                                            </div>
-                                            <button aria-label="Event actions" className="opacity-0 group-hover:opacity-100 transition text-muted-foreground">
-                                              <MoreHorizontal className="h-4 w-4" />
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </TooltipTrigger>
-                                      <TooltipContent>
-                                        <div className="max-w-xs">
-                                          <div className="font-semibold text-sm mb-1">{title}</div>
-                                          <div className="text-xs text-muted-foreground mb-1">{formatTime(event.start.dateTime || event.start.date)} - {formatTime(event.end.dateTime || event.end.date)}</div>
-                                          {event.location && <div className="text-xs">{event.location}</div>}
-                                          {event.description && <div className="text-xs truncate">{event.description}</div>}
-                                        </div>
-                                      </TooltipContent>
-                                    </Tooltip>
-                                  </TooltipProvider>
-                                );
-                              })}
+                return (
+                  <section aria-label="Daily snapshot" className="mt-4 space-y-2">
+                    {todaysEvents.length === 0 && (
+                      <p className="text-sm text-muted-foreground">No events today. Enjoy the focus time!</p>
+                    )}
+                    {todaysEvents.map(ev => {
+                      const s = new Date(ev.start.dateTime || ev.start.date);
+                      const e = new Date(ev.end.dateTime || ev.end.date);
+                      const type = getType(ev.summary || '');
+                      const colorVar = typeToVar[type];
+                      return (
+                        <article key={ev.id} className="relative rounded-2xl border shadow-sm hover:shadow-lg transition-all duration-200 bg-card/70 backdrop-blur">
+                          <div className="absolute left-0 inset-y-0 w-1 rounded-l-2xl" style={{ backgroundColor: `hsl(var(${colorVar}))` }} />
+                          <div className="flex items-center gap-3 px-4 py-3">
+                            <span className="inline-flex h-2.5 w-2.5 rounded-full" style={{ backgroundColor: `hsl(var(${colorVar}))` }} aria-hidden />
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <time className="text-sm font-medium text-foreground/80">
+                                  {s.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </time>
+                                <span className="sr-only">to</span>
+                                <span className="text-xs text-muted-foreground">{e.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                              </div>
+                              <h5 className="text-sm sm:text-base font-semibold leading-tight truncate">
+                                {ev.summary || 'Untitled'}
+                              </h5>
                             </div>
-                          ) : (
-                            <div className="flex items-center justify-between text-slate-400">
-                              <span>&mdash;</span>
-                              <Popover open={qaOpen} onOpenChange={setQaOpen}>
-                                <PopoverTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    aria-label={`Quick add at ${hour}:00`}
-                                    onClick={() => {
-                                      const start = new Date(); start.setHours(hour, 0, 0, 0);
-                                      setQaStart(start);
-                                      setQaDuration(30);
-                                      setQaTitle('');
-                                      setQaType('other');
-                                    }}
-                                    className="opacity-0 group-hover:opacity-100 transition text-xs"
-                                  >
-                                    + Quick add
-                                  </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-72" align="end">
-                                  <div className="space-y-2">
-                                    <Input value={qaTitle} onChange={(e)=>setQaTitle(e.target.value)} placeholder="Title" aria-label="Title" />
-                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                      <span>{qaStart ? qaStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : `${hour.toString().padStart(2,'0')}:00`}</span>
-                                      <span>&middot;</span>
-                                      <select value={qaDuration} onChange={(e)=>setQaDuration(parseInt(e.target.value))} className="border rounded px-2 py-1 bg-background">
-                                        {[15,30,60,90].map(d => <option key={d} value={d}>{d}m</option>)}
-                                      </select>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      {(['focus','meeting','other'] as const).map(t => (
-                                        <Button key={t} type="button" variant={qaType===t?'secondary':'outline'} size="sm" className="rounded-full px-2.5 py-1 text-xs" onClick={()=>setQaType(t)}>
-                                          {t.charAt(0).toUpperCase()+t.slice(1)}
-                                        </Button>
-                                      ))}
-                                    </div>
-                                    <div className="flex justify-end gap-2">
-                                      <Button variant="outline" size="sm" onClick={()=>setQaOpen(false)}>Cancel</Button>
-                                      <Button size="sm" onClick={async()=>{
-                                        const accessToken = localStorage.getItem('google_calendar_access_token');
-                                        if (!accessToken) { toast.error('Please connect your calendar first.'); return; }
-                                        const start = qaStart || new Date(new Date().setHours(hour,0,0,0));
-                                        const end = new Date(start.getTime() + qaDuration*60000);
-                                        const event = { summary: qaTitle || (qaType==='focus'?'Focus':qaType==='meeting'?'Meeting':'Task'), start: { dateTime: start.toISOString() }, end: { dateTime: end.toISOString() } };
-                                        const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', { method:'POST', headers:{ 'Authorization': `Bearer ${accessToken}`, 'Content-Type':'application/json' }, body: JSON.stringify(event) });
-                                        if (res.ok) { toast.success('Event added'); setQaOpen(false); setQaTitle(''); setQaStart(null); fetchCalendarEvents(); } else { toast.error('Failed to add'); }
-                                      }}>Add</Button>
-                                    </div>
-                                  </div>
-                                </PopoverContent>
-                              </Popover>
-                            </div>
-                          )}
-                          {isSameDay(selectedDate, now) && hour === now.getHours() && (
-                            <div className="absolute left-0 right-0 h-px" style={{ top: `${(now.getMinutes() / 60) * 100}%`, background: `linear-gradient(to right, hsl(var(--primary)), hsl(var(--cal-focus-accent)))` }} />
-                          )}
-                        </div>
-
-                        {canShowHint(hour) && eventsInHour.length === 0 && !isBusy && (hour % 3 === 0) && (
-                          <div className="px-4 pb-1">
-                            <button className="text-xs italic text-slate-400/70 hover:text-slate-500" onClick={() => { setQaOpen(true); const start = new Date(); start.setHours(hour,0,0,0); setQaStart(start); setQaTitle('Quick writing block'); setQaDuration(30); }}>✍️ 30‑min writing block?</button>
                           </div>
-                        )}
-                      </div>
+                        </article>
+                      );
+                    })}
+                  </section>
+                );
+              })()}
+
+              {/* Suggestions section */}
+              <section className="mt-6">
+                <div className="flex items-center justify-between mb-2">
+                  <h5 className="text-sm font-semibold">Suggestions</h5>
+                  <Button variant="ghost" size="sm" className="text-xs" onClick={()=>setSuggestionsOpen(true)}>See more</Button>
+                </div>
+                {(() => {
+                  const suggestions = [
+                    { id: 's1', title: 'Deep work focus', start: '09:00', end: '09:30', type: 'focus' as const },
+                    { id: 's2', title: 'Walk and reset', start: '12:30', end: '13:00', type: 'personal' as const },
+                    { id: 's3', title: 'Inbox zero sweep', start: '16:00', end: '16:30', type: 'meeting' as const },
+                  ];
+                  const typeToVar: Record<string,string> = { focus: '--cal-focus', meeting: '--cal-meeting', personal: '--cal-personal' };
+                  const createEvent = async (title: string, startHHMM: string, endHHMM: string) => {
+                    const accessToken = localStorage.getItem('google_calendar_access_token');
+                    if (!accessToken) { toast.error('Please connect your calendar first.'); return; }
+                    const [sh, sm] = startHHMM.split(':').map(Number);
+                    const [eh, em] = endHHMM.split(':').map(Number);
+                    const start = new Date(selectedDate); start.setHours(sh, sm, 0, 0);
+                    const end = new Date(selectedDate); end.setHours(eh, em, 0, 0);
+                    const evt = { summary: title, start: { dateTime: start.toISOString() }, end: { dateTime: end.toISOString() } };
+                    const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', { method:'POST', headers:{ 'Authorization': `Bearer ${accessToken}`, 'Content-Type':'application/json' }, body: JSON.stringify(evt) });
+                    if (res.ok) { toast.success('Added to calendar'); await fetchCalendarEvents(); } else { toast.error('Failed to add'); }
+                  };
+                  return (
+                    <div className="space-y-2">
+                      {suggestions.map(s => (
+                        <button key={s.id} onClick={()=>createEvent(s.title, s.start, s.end)} className="group relative w-full text-left rounded-2xl border shadow-sm hover:shadow-lg transition-all duration-200 bg-card/70 backdrop-blur">
+                          <div className="absolute left-0 inset-y-0 w-1 rounded-l-2xl" style={{ backgroundColor: `hsl(var(${typeToVar[s.type]}))` }} />
+                          <div className="flex items-center justify-between gap-3 px-4 py-3">
+                            <div className="min-w-0">
+                              <div className="text-xs text-muted-foreground">{s.start} - {s.end}</div>
+                              <div className="text-sm font-semibold truncate">{s.title}</div>
+                            </div>
+                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                              <Button type="button" size="sm" variant="secondary" onClick={(e)=>{ e.stopPropagation(); createEvent(s.title, s.start, s.end); }}>Accept</Button>
+                              <Button type="button" size="sm" variant="outline" onClick={(e)=>{ e.stopPropagation(); toast.message('TODO: Snooze'); }}>Snooze</Button>
+                              <Button type="button" size="sm" variant="ghost" onClick={(e)=>{ e.stopPropagation(); toast.message('Dismissed'); }}>Dismiss</Button>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
                     </div>
                   );
-                })}
-              </div>
-            </div>
-          </div>
+                })()}
+              </section>
+            </div
         ) : (
           <div>
             <Button onClick={handleSyncCalendar} disabled={isLoading} className="mt-4">
