@@ -6,19 +6,19 @@ import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { WaitlistSignup } from "./WaitlistSignup";
 import { CheckCircle2, BookOpen, Bot, LayoutDashboard, ListChecks, Zap } from "lucide-react";
-
 interface IntroScreenProps {
   onStart: () => void;
   onAuth: () => void;
 }
-
 interface QuizAnswers {
   helpWith: string;
   experience: string;
   frustration: string;
 }
-
-export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
+export const IntroScreen = ({
+  onStart,
+  onAuth
+}: IntroScreenProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
@@ -27,7 +27,6 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
     experience: "",
     frustration: ""
   });
-
   useEffect(() => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -36,56 +35,34 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
     window.addEventListener('resize', checkIsMobile);
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
-
   const getPersonalizedMessage = () => {
     const helpWithText = answers.helpWith || "optimize your workflow";
     return `Based on your goals, we'll build your AI Assistant to help you ${helpWithText.toLowerCase()}. You don't have to figure it all out — we'll guide you.`;
   };
-
   const isQuizComplete = () => {
     return answers.helpWith !== "" && answers.experience !== "" && answers.frustration !== "";
   };
-
   const handleSubmit = () => {
     if (isQuizComplete()) {
       setShowResult(true);
     }
   };
-
-  const questions = [
-    {
-      title: "What do you want AI to help you with?",
-      options: [
-        "Create content faster",
-        "Stay organized", 
-        "Automate tasks"
-      ],
-      key: "helpWith" as keyof QuizAnswers
-    },
-    {
-      title: "What's your current experience with AI?",
-      options: [
-        "Beginner",
-        "I've tried a few tools",
-        "I use it regularly"
-      ],
-      key: "experience" as keyof QuizAnswers
-    },
-    {
-      title: "What's your biggest frustration so far?",
-      options: [
-        "Too many options",
-        "Confusing tools",
-        "No time to learn"
-      ],
-      key: "frustration" as keyof QuizAnswers
-    }
-  ];
-
+  const questions = [{
+    title: "What do you want AI to help you with?",
+    options: ["Create content faster", "Stay organized", "Automate tasks"],
+    key: "helpWith" as keyof QuizAnswers
+  }, {
+    title: "What's your current experience with AI?",
+    options: ["Beginner", "I've tried a few tools", "I use it regularly"],
+    key: "experience" as keyof QuizAnswers
+  }, {
+    title: "What's your biggest frustration so far?",
+    options: ["Too many options", "Confusing tools", "No time to learn"],
+    key: "frustration" as keyof QuizAnswers
+  }];
   const renderQuizStep = () => {
     if (showResult) {
-      return (
-        <div className="space-y-6">
+      return <div className="space-y-6">
           <div className="text-center space-y-4">
             <p className="text-slate-700 text-base leading-relaxed font-medium">
               {getPersonalizedMessage()}
@@ -106,43 +83,27 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
             </div>
           </div>
           
-          <Button 
-            onClick={() => setIsWaitlistOpen(true)}
-            className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-base px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
-          >
+          <Button onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-base px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
             Join the Waitlist – Get Early Access
           </Button>
-        </div>
-      );
+        </div>;
     }
-
-    return (
-      <div className="space-y-6">
-        {questions.map((question, index) => (
-          <div key={question.key} className="space-y-3">
+    return <div className="space-y-6">
+        {questions.map((question, index) => <div key={question.key} className="space-y-3">
             {index > 0 && <div className="w-full h-px bg-slate-200/60 my-4"></div>}
             <h3 className="text-base font-semibold text-slate-800">{question.title}</h3>
             <div className="grid grid-cols-3 gap-2">
-              {question.options.map((option) => (
-                <button
-                  key={option}
-                  onClick={() => setAnswers({ ...answers, [question.key]: option })}
-                  className={`px-3 py-2 rounded-lg font-medium text-xs transition-all duration-200 hover:scale-[1.02] hover:shadow-sm ${
-                    answers[question.key] === option
-                      ? 'bg-gradient-to-r from-primary to-accent text-white shadow-md'
-                      : 'bg-white border border-slate-200 text-slate-700 hover:border-primary/30 hover:bg-slate-50'
-                  }`}
-                >
+              {question.options.map(option => <button key={option} onClick={() => setAnswers({
+            ...answers,
+            [question.key]: option
+          })} className={`px-3 py-2 rounded-lg font-medium text-xs transition-all duration-200 hover:scale-[1.02] hover:shadow-sm ${answers[question.key] === option ? 'bg-gradient-to-r from-primary to-accent text-white shadow-md' : 'bg-white border border-slate-200 text-slate-700 hover:border-primary/30 hover:bg-slate-50'}`}>
                   {option}
-                </button>
-              ))}
+                </button>)}
             </div>
-          </div>
-        ))}
+          </div>)}
 
         {/* Live Preview Placeholder */}
-        {Object.values(answers).some(answer => answer !== "") && (
-          <div className="bg-slate-50/60 border border-slate-200/50 rounded-lg p-3 mt-4">
+        {Object.values(answers).some(answer => answer !== "") && <div className="bg-slate-50/60 border border-slate-200/50 rounded-lg p-3 mt-4">
             <div className="text-center space-y-1">
               <p className="text-xs font-medium text-slate-600">Plan Preview</p>
               <div className="flex justify-center items-center space-x-3 text-xs text-slate-500">
@@ -154,22 +115,14 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
               </div>
               <p className="text-xs text-slate-400">(Preview updates as you answer)</p>
             </div>
-          </div>
-        )}
+          </div>}
 
-        <Button 
-          onClick={handleSubmit}
-          disabled={!isQuizComplete()}
-          className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:from-slate-300 disabled:to-slate-400 text-white font-semibold text-base px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
-        >
+        <Button onClick={handleSubmit} disabled={!isQuizComplete()} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 disabled:from-slate-300 disabled:to-slate-400 text-white font-semibold text-base px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed">
           Show My Plan
         </Button>
-      </div>
-    );
+      </div>;
   };
-
-  return (
-    <div className="min-h-[100dvh] overflow-hidden lg:overflow-visible bg-primary-light/60">
+  return <div className="min-h-[100dvh] overflow-hidden lg:overflow-visible bg-primary-light/60">
 
 
       <main className="lg:hidden h-[calc(100dvh-48px)] bg-primary-light/60 overflow-x-hidden overflow-y-hidden">
@@ -178,7 +131,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           <h1 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
           <p className="mt-2 text-sm text-muted-foreground">We solve it for the price of lunch.</p>
           <div className="h-4 mt-1" aria-hidden="true" />
-          <p className="mt-1 text-[11px] text-muted-foreground">Hand-picked tools and steps, tested by the Brain Bytes team.</p>
+          <p className="mt-1 text-[11px] text-muted-foreground">Learn how to use AI properly. Fully curated tools and steps, based on your questionnaire response.</p>
         </section>
         {/* 1) First Section: Three-step row */}
         <section className="px-6 pt-2 pb-1 flex flex-col justify-between">
@@ -202,12 +155,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         {/* 2) Second Section: Video + caption */}
         <section className="px-6 pb-2 flex flex-col justify-between">
           <figure className="rounded-3xl overflow-hidden border border-border shadow-sm bg-card">
-            <img
-              src="/lovable-uploads/563ffcec-1177-4047-8fe4-b2316454c46c.png"
-              alt="Brain Bytes preview"
-              loading="lazy"
-              className="w-full h-auto object-cover"
-            />
+            <img src="/lovable-uploads/563ffcec-1177-4047-8fe4-b2316454c46c.png" alt="Brain Bytes preview" loading="lazy" className="w-full h-auto object-cover" />
           </figure>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">See what you’ll get</p>
           
@@ -409,10 +357,6 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </div>
       </div>
       
-      <WaitlistSignup 
-        isOpen={isWaitlistOpen}
-        onClose={() => setIsWaitlistOpen(false)}
-      />
-    </div>
-  );
+      <WaitlistSignup isOpen={isWaitlistOpen} onClose={() => setIsWaitlistOpen(false)} />
+    </div>;
 };
