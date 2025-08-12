@@ -40,12 +40,7 @@ All colors MUST be HSL.
     --gradient-start: 262 83% 58%;
     --gradient-mid: 174 72% 56%;
     --gradient-end: 142 76% 73%;
-
-    /* Brand gradient for primary CTA */
-    --brand-blue: 230 100% 65%; /* #4D6BFF */
-    --brand-teal: 173 100% 44%; /* #00E1C6 */
-    --gradient-primary: linear-gradient(90deg, hsl(var(--brand-blue)) 0%, hsl(var(--brand-teal)) 100%);
-
+    
     /* Category color tokens (HSL) */
     --cat-alert: 38 92% 50%;       /* #F59E0B */
     --cat-finance: 262 83% 58%;     /* #7C3AED */
@@ -144,7 +139,7 @@ All colors MUST be HSL.
   }
 
   html, body {
-    background: #F7F9FC;
+    background: #F6F7FB;
     min-height: 100%;
   }
 
