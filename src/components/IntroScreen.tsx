@@ -223,7 +223,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       {/* Mobile Footer */}
       <footer className="lg:hidden px-4 pb-4 bg-primary-light/60">
         <div className="text-[10px] text-muted-foreground text-center">
-          © 2025 Brain Bytes · <Link to="/privacy-policy" className="hover:text-primary">Privacy</Link> · <Link to="/terms-of-service" className="hover:text-primary">Terms</Link> · <Link to="/refund-policy" className="hover:text-primary">Refund</Link> · <Link to="/cookie-policy" className="hover:text-primary">Cookies</Link> · <Link to="/contact" className="hover:text-primary">Contact</Link>
+          © 2025 Brain Bytes
         </div>
       </footer>
 
@@ -409,22 +409,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         <div className="bg-white/30 py-12">
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center text-muted-foreground">
-              © 2025 Brain Bytes | 
-              <Link to="/privacy-policy" className="hover:text-primary transition-colors duration-200 mx-1">
-                Privacy Policy
-              </Link> | 
-              <Link to="/terms-of-service" className="hover:text-primary transition-colors duration-200 mx-1">
-                Terms of Service
-              </Link> | 
-              <Link to="/refund-policy" className="hover:text-primary transition-colors duration-200 mx-1">
-                Refund Policy
-              </Link> | 
-              <Link to="/cookie-policy" className="hover:text-primary transition-colors duration-200 mx-1">
-                Cookie Policy
-              </Link> | 
-              <Link to="/contact" className="hover:text-primary transition-colors duration-200 mx-1">
-                Contact
-              </Link>
+              © 2025 Brain Bytes
             </div>
           </div>
         </div>
