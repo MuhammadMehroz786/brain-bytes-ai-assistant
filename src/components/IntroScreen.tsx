@@ -131,7 +131,7 @@ export const IntroScreen = ({
           <h1 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
           <p className="mt-2 text-sm text-muted-foreground">We solve it for the price of lunch.</p>
           <div className="h-4 mt-1" aria-hidden="true" />
-          <p className="mt-1 text-[11px] text-muted-foreground">Learn how to use AI properly. Fully curated tools and steps, based on your questionnaire response.</p>
+          <p className="mt-1 text-[11px] text-muted-foreground">Learn how to use AI properly. Fully curated tools and guides, based on your questionnaire response.</p>
         </section>
         {/* 1) First Section: Three-step row */}
         <section className="px-6 pt-2 pb-1 flex flex-col justify-between">
