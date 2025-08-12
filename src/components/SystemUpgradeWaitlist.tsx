@@ -48,11 +48,8 @@ export const SystemUpgradeWaitlist = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       const { error } = await supabase
-        .from('system_upgrade_waitlist')
-        .insert({
-          email: email.trim().toLowerCase(),
-          user_id: user?.id || null
-        });
+        .from('prelaunch_roi_waitlist')
+        .insert([{ email: email.trim().toLowerCase() }]);
 
       if (error) throw error;
 

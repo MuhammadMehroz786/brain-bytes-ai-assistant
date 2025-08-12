@@ -46,33 +46,8 @@ export const UpgradeAssistantSection = () => {
 
   // Check if user is already on waitlist
   useEffect(() => {
-    const checkWaitlistStatus = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-          setCheckingStatus(false);
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from('brain_bytes_pro_waitlist')
-          .select('id')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (error && error.code !== 'PGRST116') {
-          console.error('Error checking waitlist status:', error);
-        } else if (data) {
-          setIsJoined(true);
-        }
-      } catch (error) {
-        console.error('Error checking waitlist status:', error);
-      } finally {
-        setCheckingStatus(false);
-      }
-    };
-
-    checkWaitlistStatus();
+    // Disabled status check since prelaunch_roi_waitlist has no public SELECT
+    setCheckingStatus(false);
   }, []);
 
   const handleWaitlistJoin = async () => {
@@ -90,9 +65,8 @@ export const UpgradeAssistantSection = () => {
       }
 
       const { error } = await supabase
-        .from('brain_bytes_pro_waitlist')
+        .from('prelaunch_roi_waitlist')
         .insert({
-          user_id: user.id,
           email: user.email || ''
         });
 
