@@ -175,7 +175,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       <main className="lg:hidden h-[calc(100dvh-48px)] bg-primary-light/60 overflow-x-hidden overflow-y-hidden">
         {/* Hero Section */}
         <section className="px-6 pt-5 pb-3 text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
+          <h1 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
           <p className="mt-2 text-sm text-muted-foreground">We solve it for the price of lunch.</p>
           <div className="h-4 mt-1" aria-hidden="true" />
           <p className="mt-1 text-[11px] text-muted-foreground">Hand-picked tools and steps, tested by the Brain Bytes team.</p>
@@ -212,8 +212,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           <p className="mt-2 text-center text-[11px] text-muted-foreground">See what you’ll get</p>
           
           {/* CTA moved directly under "See what you'll get" */}
-          <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="mt-3 w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-lg px-6 py-4 rounded-2xl shadow-md hover:shadow-lg transition-all">
-            Get your AI Assistant now.
+          <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="mt-3 w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-xl px-7 py-5 rounded-2xl shadow-md hover:shadow-lg transition-all">
+            Claim My AI Hub Access
           </Button>
           <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90">Your personalized AI dashboard in under 5 minutes.</p>
           <p className="mt-1 text-center text-[11px] text-muted-foreground">Launch price: $29 (less than lunch).</p>
@@ -230,7 +230,7 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       {/* Desktop Layout */}
       <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#F6F0FF] to-[#EAF7FF]">
         {/* Hero Section */}
-        <div className="relative max-w-7xl mx-auto px-6 pt-4 pb-12">
+        <div className="relative max-w-7xl mx-auto px-6 pt-6 pb-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
             {/* Left Side - Hero Content */}
             <div className="space-y-8 max-w-2xl">
@@ -256,16 +256,22 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
                 {/* Feature Badges Group */}
                 <div className="max-w-2xl mx-auto grid grid-cols-3 gap-6 animate-fade-in">
                   <div className="flex flex-col items-center gap-3 group bg-white/70 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-lg hover-scale transition-all">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center text-2xl">✅</div>
-                    <span className="text-sm font-semibold text-slate-700 text-center">Curated Tool Picks</span>
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary/10 to-accent/10 flex items-center justify-center">
+                      <ListChecks className="w-6 h-6 text-primary" />
+                    </div>
+                    <span className="text-sm font-semibold text-slate-700 text-center">Answer 5 Questions</span>
                   </div>
                   <div className="flex flex-col items-center gap-3 group bg-white/70 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-lg hover-scale transition-all">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center text-2xl">📘</div>
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary/10 to-accent/10 flex items-center justify-center">
+                      <LayoutDashboard className="w-6 h-6 text-primary" />
+                    </div>
+                    <span className="text-sm font-semibold text-slate-700 text-center">Get Your Dashboard</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-3 group bg-white/70 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-lg hover-scale transition-all">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary/10 to-accent/10 flex items-center justify-center">
+                      <BookOpen className="w-6 h-6 text-primary" />
+                    </div>
                     <span className="text-sm font-semibold text-slate-700 text-center">How‑To Guides</span>
-                  </div>
-                  <div className="flex flex-col items-center gap-3 group bg-white/70 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-lg hover-scale transition-all">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-primary/15 to-accent/15 flex items-center justify-center text-2xl">🧠</div>
-                    <span className="text-sm font-semibold text-slate-700 text-center">Productivity Assistant</span>
                   </div>
                 </div>
 
@@ -281,8 +287,8 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
                 {/* Demo Link with Pricing */}
                   <div className="pt-2 text-center space-y-1">
-                    <p className="text-sm text-muted-foreground">One-time $29 – No subscriptions</p>
-                    <p className="text-sm text-muted-foreground">100% Personalized</p>
+                    <p className="text-sm text-muted-foreground">Your personalized AI dashboard in under 5 minutes.</p>
+                    <p className="text-sm text-muted-foreground">Launch price: $29 (less than lunch).</p>
                   </div>
               </div>
             </div>
