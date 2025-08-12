@@ -220,12 +220,6 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
         </section>
       </main>
 
-      {/* Mobile Footer */}
-      <footer className="lg:hidden px-4 pb-4 bg-primary-light/60">
-        <div className="text-[10px] text-muted-foreground text-center">
-          © 2025 Brain Bytes
-        </div>
-      </footer>
 
       {/* Desktop Layout */}
       <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#F6F0FF] to-[#EAF7FF]">
