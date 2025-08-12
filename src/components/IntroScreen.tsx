@@ -178,43 +178,19 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
           </div>
           <span className="text-2xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
         </div>
-        <div className="flex items-center space-x-6">
-          <Link to="/demo" className="text-sm text-foreground hover:text-primary transition-colors duration-200">
-            Demo
-          </Link>
-          <Link to="/contact" className="text-sm text-foreground hover:text-primary transition-colors duration-200">
-            Contact
-          </Link>
-          <button onClick={onAuth} className="text-sm text-foreground hover:text-primary transition-colors duration-200">
-            Sign In
-          </button>
-          <Button onClick={() => setIsWaitlistOpen(true)} className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-300 hover:shadow-lg text-sm">
-            Join Waitlist
-          </Button>
-        </div>
+        {/* Nav buttons removed as requested - keeping only logo and name */}
+        <div className="flex items-center space-x-6"></div>
       </div>
 
       {/* Mobile & Tablet Header */}
       <header className="lg:hidden h-14 bg-gradient-to-r from-primary-light to-accent-light backdrop-blur-sm border-b border-border px-4 shadow-md">
         <div className="flex items-center justify-between h-full">
           <div className="flex items-center gap-2">
-            <span className="text-lg font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+            <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
               Brain Bytes
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <Button onClick={onAuth} className="h-8 px-3 text-xs rounded-xl bg-card text-foreground shadow-sm hover:bg-secondary">
-              Sign In
-            </Button>
-            <div className="flex items-center gap-1">
-              <Button onClick={() => setIsWaitlistOpen(true)} className="h-8 px-3 text-xs rounded-xl bg-gradient-to-r from-primary to-accent text-primary-foreground hover:from-primary/90 hover:to-accent/90">
-                Join the Waitlist
-              </Button>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-muted text-muted-foreground/80 border border-border">
-                Beta
-              </span>
-            </div>
-          </div>
+          <div className="flex items-center gap-2"></div>
         </div>
       </header>
 
