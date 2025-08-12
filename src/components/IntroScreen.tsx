@@ -170,34 +170,12 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
 
   return (
     <div className="min-h-[100dvh] overflow-hidden lg:overflow-visible bg-primary-light/60">
-      {/* Desktop Header */}
-      <div className="hidden lg:flex sticky top-0 z-50 bg-gradient-to-r from-[#F6F0FF] to-[#EAF7FF] backdrop-blur-md border-b border-slate-200/60 px-6 py-2 justify-between items-center">
-        <div className="flex items-center space-x-3">
-          <div className="inline-flex items-center justify-center w-10 h-10 bg-primary-light rounded-xl">
-            <img alt="Brain Bytes Logo" className="w-6 h-6 object-contain" src="/lovable-uploads/9c3a30a8-9cbd-4bb9-a556-df32452393d0.png" />
-          </div>
-          <span className="text-2xl font-bold bg-gradient-to-r from-[#7C3AED] via-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">Brain Bytes</span>
-        </div>
-        {/* Nav buttons removed as requested - keeping only logo and name */}
-        <div className="flex items-center space-x-6"></div>
-      </div>
 
-      {/* Mobile & Tablet Header */}
-      <header className="lg:hidden h-14 bg-gradient-to-r from-primary-light to-accent-light backdrop-blur-sm border-b border-border px-4 shadow-md">
-        <div className="flex items-center justify-between h-full">
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-              Brain Bytes
-            </span>
-          </div>
-          <div className="flex items-center gap-2"></div>
-        </div>
-      </header>
 
-      <main className="lg:hidden h-[calc(100dvh-56px-48px)] bg-primary-light/60 overflow-x-hidden overflow-y-hidden">
+      <main className="lg:hidden h-[calc(100dvh-48px)] bg-primary-light/60 overflow-x-hidden overflow-y-hidden">
         {/* Hero Section */}
         <section className="px-6 pt-5 pb-3 text-center">
-          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
           <p className="mt-2 text-sm text-muted-foreground">We solve it for the price of lunch.</p>
           <div className="h-4 mt-1" aria-hidden="true" />
           <p className="mt-1 text-[11px] text-muted-foreground">Hand-picked tools and steps, tested by the Brain Bytes team.</p>
@@ -252,12 +230,12 @@ export const IntroScreen = ({ onStart, onAuth }: IntroScreenProps) => {
       {/* Desktop Layout */}
       <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#F6F0FF] to-[#EAF7FF]">
         {/* Hero Section */}
-        <div className="relative max-w-7xl mx-auto px-6 py-12">
+        <div className="relative max-w-7xl mx-auto px-6 pt-4 pb-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
             {/* Left Side - Hero Content */}
             <div className="space-y-8 max-w-2xl">
               <div className="space-y-6">
-                <h1 className="text-6xl lg:text-7xl xl:text-8xl font-black text-[#1c1c1c] leading-[1.05] tracking-tight">
+                <h1 className="text-7xl lg:text-7xl xl:text-8xl font-black text-[#1c1c1c] leading-[1.05] tracking-tight">
                   <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                     Overwhelmed by AI?
                   </span>
