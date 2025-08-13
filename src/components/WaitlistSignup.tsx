@@ -40,7 +40,7 @@ export const WaitlistSignup = ({ isOpen, onClose, triggerText }: WaitlistSignupP
       }
 
       setIsSubmitted(true);
-      toast.success("You're on the waitlist! We'll notify you when Brain Bytes launches.");
+      toast.success("You're on the waitlist! We'll notify you when the Brain Bytes Education Hub launches.");
       
       setTimeout(() => {
         onClose();
@@ -73,7 +73,7 @@ export const WaitlistSignup = ({ isOpen, onClose, triggerText }: WaitlistSignupP
             </div>
             <h3 className="text-xl font-bold text-foreground">You're in!</h3>
             <p className="text-muted-foreground">
-              We'll notify you as soon as Brain Bytes launches.
+              We'll notify you as soon as the Brain Bytes Education Hub launches.
             </p>
           </div>
         ) : (
