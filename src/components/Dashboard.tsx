@@ -219,11 +219,20 @@ export const Dashboard = ({ plan, responses, onRestart }: DashboardProps) => {
             />
 
             <div className="py-6">
-              <div className="max-w-[1400px] mx-auto flex items-center justify-center min-h-[70vh]">
-                <LearningFlashcard
-                  tool={activeTool}
-                  onBack={() => analytics.track('tool_changed', { from: activeToolId })}
-                />
+              <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 min-h-[70vh]">
+                <div className="flex items-center justify-center">
+                  <LearningFlashcard
+                    tool={activeTool}
+                    onBack={() => analytics.track('tool_changed', { from: activeToolId })}
+                  />
+                </div>
+                <div className="hidden lg:flex items-center justify-center">
+                  <img 
+                    src="/lovable-uploads/7389b59c-6ac7-4206-aa5a-ca0d8dbdb345.png" 
+                    alt="Dashboard Overview" 
+                    className="w-full max-w-2xl h-auto rounded-2xl shadow-lg"
+                  />
+                </div>
               </div>
             </div>
           </div>
