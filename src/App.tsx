@@ -16,7 +16,7 @@ import TermsOfService from "./pages/TermsOfService";
 import Contact from "./pages/Contact";
 import RefundPolicy from "./pages/RefundPolicy";
 import CookiePolicy from "./pages/CookiePolicy";
-import CookieConsent from "./components/CookieConsent";
+
 import AIEducationHub from "./pages/AIEducationHub";
 
 const queryClient = new QueryClient();
@@ -40,7 +40,7 @@ const AppContent = ({ googleClientId }: { googleClientId: string }) => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-        <CookieConsent />
+        
       </BrowserRouter>
     </TooltipProvider>
   </GoogleOAuthProvider>
