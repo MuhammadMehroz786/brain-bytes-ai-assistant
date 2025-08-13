@@ -84,7 +84,7 @@ export const IntroScreen = ({
           </div>
           
           <Button onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-base px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-            Join the Waitlist – Get Early Access
+            Claim your AI Tool Kit
           </Button>
         </div>;
     }
@@ -161,7 +161,7 @@ export const IntroScreen = ({
           
           {/* CTA moved directly under "See what you'll get" */}
           <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="mt-3 w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-xl px-7 py-5 rounded-2xl shadow-md hover:shadow-lg transition-all">
-            Claim my AI Tool Kit
+            Claim your AI Tool Kit
           </Button>
           <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90">Your personalized AI dashboard in under 5 minutes.</p>
           <p className="mt-1 text-center text-[11px] text-muted-foreground">Launch price: $29 (less than lunch).</p>
@@ -220,7 +220,7 @@ export const IntroScreen = ({
                 {/* Enhanced CTA */}
                 <div className="space-y-8 pt-4">
                   <Button onClick={() => setIsWaitlistOpen(true)} className="relative w-full max-w-2xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-xl px-8 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden hover:shadow-2xl hover:-translate-y-0.5">
-                    → Join the Waitlist
+                    Claim your AI Tool Kit
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                     </div>
