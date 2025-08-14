@@ -99,6 +99,13 @@ export const SystemUpgradeWaitlist = () => {
           Auto-sync tasks, connect apps, and unlock smart automation. Enrollment currently closed—join the waitlist.
         </p>
 
+        {/* Urgency text above CTA */}
+        <div className="text-center pb-4">
+          <p className="text-sm font-semibold text-orange-600 bg-gradient-to-r from-orange-100 to-red-100 px-4 py-2 rounded-lg border border-orange-200 animate-pulse hover:animate-none hover:scale-105 transition-all duration-300 cursor-default inline-block">
+            🔥 Only 75 launch spots available — don't miss out.
+          </p>
+        </div>
+
         <form onSubmit={handleJoinWaitlist} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
           <Input
             type="email"
