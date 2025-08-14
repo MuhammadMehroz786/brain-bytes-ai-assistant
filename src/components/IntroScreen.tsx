@@ -165,7 +165,7 @@ export const IntroScreen = ({
           
           {/* CTA moved directly under "See what you'll get" */}
           <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="mt-3 w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-xl px-7 py-5 rounded-2xl shadow-md hover:shadow-lg transition-all">
-            Start My 3-Question AI Plan
+            Secure My Spot
           </Button>
           <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90 font-semibold">Join the early-access waitlist • Free • 2 mins</p>
         </section>
