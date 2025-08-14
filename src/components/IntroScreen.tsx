@@ -159,15 +159,8 @@ export const IntroScreen = ({
           </figure>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">See what you’ll get</p>
           
-          {/* Urgency text above CTA */}
-          <div className="text-center mt-3 mb-2">
-            <p className="text-xs font-semibold text-orange-600 bg-gradient-to-r from-orange-100 to-red-100 px-3 py-1.5 rounded-lg border border-orange-200 animate-pulse hover:animate-none hover:scale-105 transition-all duration-300 cursor-default inline-block">
-              🔥 Only 75 launch spots available — don't miss out.
-            </p>
-          </div>
-
           {/* CTA moved directly under "See what you'll get" */}
-          <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-xl px-7 py-5 rounded-2xl shadow-md hover:shadow-lg transition-all">
+          <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="mt-3 w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-xl px-7 py-5 rounded-2xl shadow-md hover:shadow-lg transition-all">
             Claim your AI Tool Kit
           </Button>
           <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90">Your personalized AI dashboard in under 5 minutes.</p>
