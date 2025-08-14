@@ -101,8 +101,8 @@ export const SystemUpgradeWaitlist = () => {
 
         {/* Urgency text above CTA */}
         <div className="text-center pb-4">
-          <p className="text-sm font-semibold text-orange-600 bg-gradient-to-r from-orange-100 to-red-100 px-4 py-2 rounded-lg border border-orange-200 animate-pulse hover:animate-none hover:scale-105 transition-all duration-300 cursor-default inline-block">
-            🔥 Only 75 launch spots available — don't miss out.
+          <p className="text-sm font-semibold text-primary bg-primary/10 px-4 py-2 rounded-lg border border-primary/20 hover:scale-105 transition-all duration-300 cursor-default inline-block">
+            Only 75 launch spots available — don't miss out.
           </p>
         </div>
 
