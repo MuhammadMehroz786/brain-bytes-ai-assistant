@@ -123,12 +123,11 @@ export const IntroScreen = ({
       </div>;
   };
   return <div className="min-h-[100dvh] overflow-hidden lg:overflow-visible bg-primary-light/60">
-      {/* Top Ribbon */}
-      <div className="w-full bg-gradient-to-r from-primary/10 to-accent/10 border-b border-primary/20 py-2 text-center">
-        <p className="text-xs text-primary font-medium">Join today to lock founder pricing & secure early access.</p>
-      </div>
-
       <main className="lg:hidden h-[calc(100dvh-54px)] bg-primary-light/60 overflow-x-hidden overflow-y-hidden">
+        {/* Top Ribbon */}
+        <div className="w-full bg-gradient-to-r from-primary/10 to-accent/10 border-b border-primary/20 py-2 text-center">
+          <p className="text-xs text-primary font-medium">Join today to lock founder pricing & secure early access.</p>
+        </div>
         {/* Hero Section */}
         <section className="px-6 pt-5 pb-3 text-center">
           <h1 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
