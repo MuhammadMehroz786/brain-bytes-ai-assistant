@@ -125,7 +125,7 @@ export const IntroScreen = ({
   return <div className="min-h-[100dvh] overflow-hidden lg:overflow-visible bg-primary-light/60">
       {/* Top Ribbon */}
       <div className="w-full bg-gradient-to-r from-primary/10 to-accent/10 border-b border-primary/20 py-2 text-center">
-        <p className="text-xs text-primary font-medium">Founding Member waitlist — early access ends soon.</p>
+        <p className="text-xs text-primary font-medium">Join today to lock founder pricing & early access.</p>
       </div>
 
       <main className="lg:hidden h-[calc(100dvh-54px)] bg-primary-light/60 overflow-x-hidden overflow-y-hidden">
@@ -139,15 +139,15 @@ export const IntroScreen = ({
           <div className="grid grid-cols-3 gap-3">
             <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm">
               <Zap className="w-4 h-4 text-primary" />
-              <span className="text-[11px] font-medium text-foreground text-center">Your exact AI tool stack</span>
+              <span className="text-[11px] font-medium text-foreground text-center">Your Personalized Tool Stack</span>
             </div>
             <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm">
               <LayoutDashboard className="w-4 h-4 text-primary" />
-              <span className="text-[11px] font-medium text-foreground text-center">Step-by-step workflows</span>
+              <span className="text-[11px] font-medium text-foreground text-center">Step-by-Step Workflows</span>
             </div>
             <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm">
               <BookOpen className="w-4 h-4 text-primary" />
-              <span className="text-[11px] font-medium text-foreground text-center">Copy-and-paste prompts</span>
+              <span className="text-[11px] font-medium text-foreground text-center">Copy-and-Paste Prompts</span>
             </div>
           </div>
         </section>
@@ -159,18 +159,8 @@ export const IntroScreen = ({
 
         {/* Dashboard Mockup Section */}
         <section className="px-6 pb-2 flex flex-col justify-between">
-          <figure className="rounded-3xl overflow-hidden border border-border shadow-sm bg-card relative">
+          <figure className="rounded-3xl overflow-hidden border border-border shadow-sm bg-card">
             <img src="/lovable-uploads/b2bc6f38-7334-4724-a35c-2fee369382ce.png" alt="Brain Bytes dashboard preview" loading="lazy" className="w-full h-auto object-cover" />
-            {/* Overlay Labels */}
-            <div className="absolute top-4 left-4 bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold">
-              Your Tools
-            </div>
-            <div className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-accent/90 text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">
-              Workflows
-            </div>
-            <div className="absolute bottom-4 left-4 bg-secondary/90 text-secondary-foreground px-3 py-1 rounded-full text-xs font-semibold">
-              Prompts
-            </div>
           </figure>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">See what you’ll get</p>
           
@@ -179,7 +169,6 @@ export const IntroScreen = ({
             Start My 3-Question AI Plan
           </Button>
           <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90">Join the early-access waitlist • Free • 2 mins</p>
-          <p className="mt-1 text-center text-[11px] text-muted-foreground">Join today to lock founder pricing & early access.</p>
         </section>
       </main>
 
@@ -188,7 +177,7 @@ export const IntroScreen = ({
       <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#F6F0FF] to-[#EAF7FF]">
         {/* Top Ribbon */}
         <div className="w-full bg-gradient-to-r from-primary/10 to-accent/10 border-b border-primary/20 py-3 text-center">
-          <p className="text-sm text-primary font-medium">Founding Member waitlist — early access ends soon.</p>
+          <p className="text-sm text-primary font-medium">Join today to lock founder pricing & early access.</p>
         </div>
 
         {/* Hero Section */}
@@ -215,19 +204,19 @@ export const IntroScreen = ({
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary/10 to-accent/10 flex items-center justify-center">
                       <Zap className="w-6 h-6 text-primary" />
                     </div>
-                    <span className="text-sm font-semibold text-slate-700 text-center">Your exact AI tool stack</span>
+                    <span className="text-sm font-semibold text-slate-700 text-center">Your Personalized Tool Stack</span>
                   </div>
                   <div className="flex flex-col items-center gap-3 group bg-white/70 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-lg hover-scale transition-all">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary/10 to-accent/10 flex items-center justify-center">
                       <LayoutDashboard className="w-6 h-6 text-primary" />
                     </div>
-                    <span className="text-sm font-semibold text-slate-700 text-center">Step-by-step workflows</span>
+                    <span className="text-sm font-semibold text-slate-700 text-center">Step-by-Step Workflows</span>
                   </div>
                   <div className="flex flex-col items-center gap-3 group bg-white/70 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-lg hover-scale transition-all">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary/10 to-accent/10 flex items-center justify-center">
                       <BookOpen className="w-6 h-6 text-primary" />
                     </div>
-                    <span className="text-sm font-semibold text-slate-700 text-center">Copy-and-paste prompts</span>
+                    <span className="text-sm font-semibold text-slate-700 text-center">Copy-and-Paste Prompts</span>
                   </div>
                 </div>
 
@@ -246,7 +235,6 @@ export const IntroScreen = ({
                   </Button>
                   <div className="text-center space-y-1">
                     <p className="text-sm text-muted-foreground">Join the early-access waitlist • Free • 2 mins</p>
-                    <p className="text-sm text-muted-foreground">Join today to lock founder pricing & early access.</p>
                   </div>
                 </div>
               </div>
@@ -258,18 +246,8 @@ export const IntroScreen = ({
                 {/* Subtle inner shadow */}
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-50/40 via-transparent to-slate-100/20 rounded-2xl"></div>
                 <div className="relative">
-                  <figure className="rounded-xl overflow-hidden border border-border shadow-sm bg-card relative">
+                  <figure className="rounded-xl overflow-hidden border border-border shadow-sm bg-card">
                     <img src="/lovable-uploads/b2bc6f38-7334-4724-a35c-2fee369382ce.png" alt="Brain Bytes dashboard preview" loading="lazy" className="w-full h-auto object-cover" />
-                    {/* Overlay Labels */}
-                    <div className="absolute top-4 left-4 bg-primary/90 text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold">
-                      Your Tools
-                    </div>
-                    <div className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-accent/90 text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold">
-                      Workflows
-                    </div>
-                    <div className="absolute bottom-4 left-4 bg-secondary/90 text-secondary-foreground px-4 py-2 rounded-full text-sm font-semibold">
-                      Prompts
-                    </div>
                   </figure>
                 </div>
               </div>
