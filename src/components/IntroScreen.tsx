@@ -123,54 +123,74 @@ export const IntroScreen = ({
       </div>;
   };
   return <div className="min-h-[100dvh] overflow-hidden lg:overflow-visible bg-primary-light/60">
+      {/* Top Ribbon */}
+      <div className="w-full bg-gradient-to-r from-primary/10 to-accent/10 border-b border-primary/20 py-2 text-center">
+        <p className="text-xs text-primary font-medium">Founding Member spots open — early access ends soon.</p>
+      </div>
 
-
-      <main className="lg:hidden h-[calc(100dvh-48px)] bg-primary-light/60 overflow-x-hidden overflow-y-hidden">
+      <main className="lg:hidden h-[calc(100dvh-54px)] bg-primary-light/60 overflow-x-hidden overflow-y-hidden">
         {/* Hero Section */}
         <section className="px-6 pt-5 pb-3 text-center">
           <h1 className="text-5xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">Overwhelmed by AI?</h1>
-          <p className="mt-2 text-sm text-muted-foreground">We solve it for the price of lunch.</p>
-          <div className="h-4 mt-1" aria-hidden="true" />
-          <p className="mt-1 text-[11px] text-muted-foreground">Learn how to use AI properly. Fully curated tools and guides, based on your questionnaire response.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Answer 3 quick questions to get your focused AI tool stack + workflows.</p>
         </section>
-        {/* 1) First Section: Three-step row */}
+        {/* Benefits Row */}
         <section className="px-6 pt-2 pb-1 flex flex-col justify-between">
           <div className="grid grid-cols-3 gap-3">
             <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm">
-              <ListChecks className="w-4 h-4 text-primary" />
-              <span className="text-[11px] font-medium text-foreground text-center">Answer 5 Questions</span>
+              <Zap className="w-4 h-4 text-primary" />
+              <span className="text-[11px] font-medium text-foreground text-center">Your exact AI tool stack</span>
             </div>
             <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm">
               <LayoutDashboard className="w-4 h-4 text-primary" />
-              <span className="text-[11px] font-medium text-foreground text-center">Get Your Dashboard</span>
+              <span className="text-[11px] font-medium text-foreground text-center">Step-by-step workflows</span>
             </div>
             <div className="flex flex-col items-center gap-1 bg-card/90 border border-border rounded-2xl p-3 shadow-sm">
               <BookOpen className="w-4 h-4 text-primary" />
-              <span className="text-[11px] font-medium text-foreground text-center">How‑To Guides</span>
+              <span className="text-[11px] font-medium text-foreground text-center">Copy-and-paste prompts</span>
             </div>
           </div>
-          <div className="h-4 mt-1" aria-hidden="true" />
         </section>
 
-        {/* 2) Second Section: Video + caption */}
+        {/* Proof Line */}
+        <section className="px-6 pt-1 pb-2">
+          <p className="text-center text-[11px] text-muted-foreground italic">'I feel overwhelmed by AI' — the most common thing Brain Bytes readers tell us. Here's the cure.</p>
+        </section>
+
+        {/* Dashboard Mockup Section */}
         <section className="px-6 pb-2 flex flex-col justify-between">
-          <figure className="rounded-3xl overflow-hidden border border-border shadow-sm bg-card">
-            <img src="/lovable-uploads/563ffcec-1177-4047-8fe4-b2316454c46c.png" alt="Brain Bytes preview" loading="lazy" className="w-full h-auto object-cover" />
+          <figure className="rounded-3xl overflow-hidden border border-border shadow-sm bg-card relative">
+            <img src="/lovable-uploads/9e32e39d-bb71-48c4-853f-e74cfa96bfbd.png" alt="Brain Bytes dashboard preview" loading="lazy" className="w-full h-auto object-cover" />
+            {/* Overlay Labels */}
+            <div className="absolute top-4 left-4 bg-primary/90 text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold">
+              Your Tools
+            </div>
+            <div className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-accent/90 text-accent-foreground px-3 py-1 rounded-full text-xs font-semibold">
+              Workflows
+            </div>
+            <div className="absolute bottom-4 left-4 bg-secondary/90 text-secondary-foreground px-3 py-1 rounded-full text-xs font-semibold">
+              Prompts
+            </div>
           </figure>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">See what you’ll get</p>
           
           {/* CTA moved directly under "See what you'll get" */}
           <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="mt-3 w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-xl px-7 py-5 rounded-2xl shadow-md hover:shadow-lg transition-all">
-            Claim your AI Tool Kit
+            Start My 3-Question AI Plan
           </Button>
-          <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90">Your personalized AI dashboard in under 5 minutes.</p>
-          <p className="mt-1 text-center text-[11px] text-muted-foreground">Launch price: $29 (less than lunch).</p>
+          <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90">Free • 2 mins</p>
+          <p className="mt-1 text-center text-[11px] text-muted-foreground">Join today to lock founder pricing & early access.</p>
         </section>
       </main>
 
 
       {/* Desktop Layout */}
       <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#F6F0FF] to-[#EAF7FF]">
+        {/* Top Ribbon */}
+        <div className="w-full bg-gradient-to-r from-primary/10 to-accent/10 border-b border-primary/20 py-3 text-center">
+          <p className="text-sm text-primary font-medium">Founding Member spots open — early access ends soon.</p>
+        </div>
+
         {/* Hero Section */}
         <div className="relative max-w-7xl mx-auto px-6 pt-6 pb-12">
           <div className="grid lg:grid-cols-2 gap-16 items-center min-h-[70vh]">
@@ -184,68 +204,73 @@ export const IntroScreen = ({
                 </h1>
                 
                 <p className="text-lg lg:text-xl text-slate-600 leading-relaxed max-w-2xl">
-                  There are too many tools. Most aren't worth your time.<br />
-                  Brain Bytes helps you find the ones that are — with curated picks, how-to guides, and a productivity assistant to cut through the noise.
+                  Answer 3 quick questions to get your focused AI tool stack + workflows.
                 </p>
               </div>
 
               <div className="space-y-8">
-                {/* Feature Badge Header */}
-                <div className="text-center">
-                  <p className="text-base text-slate-500 font-medium mb-4">What you get inside Brain Bytes:</p>
-                </div>
-
                 {/* Feature Badges Group */}
                 <div className="max-w-2xl mx-auto grid grid-cols-3 gap-6 animate-fade-in">
                   <div className="flex flex-col items-center gap-3 group bg-white/70 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-lg hover-scale transition-all">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary/10 to-accent/10 flex items-center justify-center">
-                      <ListChecks className="w-6 h-6 text-primary" />
+                      <Zap className="w-6 h-6 text-primary" />
                     </div>
-                    <span className="text-sm font-semibold text-slate-700 text-center">Answer 5 Questions</span>
+                    <span className="text-sm font-semibold text-slate-700 text-center">Your exact AI tool stack</span>
                   </div>
                   <div className="flex flex-col items-center gap-3 group bg-white/70 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-lg hover-scale transition-all">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary/10 to-accent/10 flex items-center justify-center">
                       <LayoutDashboard className="w-6 h-6 text-primary" />
                     </div>
-                    <span className="text-sm font-semibold text-slate-700 text-center">Get Your Dashboard</span>
+                    <span className="text-sm font-semibold text-slate-700 text-center">Step-by-step workflows</span>
                   </div>
                   <div className="flex flex-col items-center gap-3 group bg-white/70 border border-slate-200/60 rounded-2xl p-4 shadow-sm hover:shadow-lg hover-scale transition-all">
                     <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-primary/10 to-accent/10 flex items-center justify-center">
                       <BookOpen className="w-6 h-6 text-primary" />
                     </div>
-                    <span className="text-sm font-semibold text-slate-700 text-center">How‑To Guides</span>
+                    <span className="text-sm font-semibold text-slate-700 text-center">Copy-and-paste prompts</span>
                   </div>
                 </div>
 
+                {/* Proof Line */}
+                <div className="text-center">
+                  <p className="text-base text-slate-500 italic">'I feel overwhelmed by AI' — the most common thing Brain Bytes readers tell us. Here's the cure.</p>
+                </div>
+
                 {/* Enhanced CTA */}
-                <div className="space-y-8 pt-4">
+                <div className="space-y-4 pt-4">
                   <Button onClick={() => setIsWaitlistOpen(true)} className="relative w-full max-w-2xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-xl px-8 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden hover:shadow-2xl hover:-translate-y-0.5">
-                    Claim your AI Tool Kit
+                    Start My 3-Question AI Plan
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                     </div>
                   </Button>
-                </div>
-
-                {/* Demo Link with Pricing */}
-                  <div className="pt-2 text-center space-y-1">
-                    <p className="text-sm text-muted-foreground">Your personalized AI dashboard in under 5 minutes.</p>
-                    <p className="text-sm text-muted-foreground">Launch price: $29 (less than lunch).</p>
+                  <div className="text-center space-y-1">
+                    <p className="text-sm text-muted-foreground">Free • 2 mins</p>
+                    <p className="text-sm text-muted-foreground">Join today to lock founder pricing & early access.</p>
                   </div>
+                </div>
               </div>
             </div>
 
-            {/* Right Side - Quiz Module */}
+            {/* Right Side - Dashboard Preview */}
             <div className="lg:ml-8">
               <div className="bg-white/95 backdrop-blur-sm border border-slate-200/60 shadow-lg rounded-2xl p-6 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
                 {/* Subtle inner shadow */}
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-50/40 via-transparent to-slate-100/20 rounded-2xl"></div>
                 <div className="relative">
-                  <div className="text-center mb-6">
-                    <h3 className="text-xl font-semibold text-slate-800 mb-2">Help us personalize your experience</h3>
-                    <p className="text-sm text-slate-600">Answer a few quick questions to get started</p>
-                  </div>
-                  {renderQuizStep()}
+                  <figure className="rounded-xl overflow-hidden border border-border shadow-sm bg-card relative">
+                    <img src="/lovable-uploads/9e32e39d-bb71-48c4-853f-e74cfa96bfbd.png" alt="Brain Bytes dashboard preview" loading="lazy" className="w-full h-auto object-cover" />
+                    {/* Overlay Labels */}
+                    <div className="absolute top-4 left-4 bg-primary/90 text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold">
+                      Your Tools
+                    </div>
+                    <div className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-accent/90 text-accent-foreground px-4 py-2 rounded-full text-sm font-semibold">
+                      Workflows
+                    </div>
+                    <div className="absolute bottom-4 left-4 bg-secondary/90 text-secondary-foreground px-4 py-2 rounded-full text-sm font-semibold">
+                      Prompts
+                    </div>
+                  </figure>
                 </div>
               </div>
             </div>
