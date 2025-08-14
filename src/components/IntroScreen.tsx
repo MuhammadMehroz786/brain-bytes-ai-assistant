@@ -125,7 +125,7 @@ export const IntroScreen = ({
   return <div className="min-h-[100dvh] overflow-hidden lg:overflow-visible bg-primary-light/60">
       {/* Top Ribbon */}
       <div className="w-full bg-gradient-to-r from-primary/10 to-accent/10 border-b border-primary/20 py-2 text-center">
-        <p className="text-xs text-primary font-medium">Join today to lock founder pricing & early access.</p>
+        <p className="text-xs text-primary font-medium">Join today to lock founder pricing & secure early access.</p>
       </div>
 
       <main className="lg:hidden h-[calc(100dvh-54px)] bg-primary-light/60 overflow-x-hidden overflow-y-hidden">
@@ -154,7 +154,7 @@ export const IntroScreen = ({
 
         {/* Proof Line */}
         <section className="px-6 pt-1 pb-2">
-          <p className="text-center text-[11px] text-muted-foreground italic">'I feel overwhelmed by AI' — the most common thing Brain Bytes readers tell us. Early access opens soon — secure your spot.</p>
+          <p className="text-center text-[11px] text-muted-foreground italic">"I feel overwhelmed by AI" — the most common thing Brain Bytes readers tell us. Early access opens soon — secure your spot today.</p>
         </section>
 
         {/* Dashboard Mockup Section */}
@@ -168,7 +168,7 @@ export const IntroScreen = ({
           <Button id="join-cta" onClick={() => setIsWaitlistOpen(true)} className="mt-3 w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-xl px-7 py-5 rounded-2xl shadow-md hover:shadow-lg transition-all">
             Start My 3-Question AI Plan
           </Button>
-          <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90">Join the early-access waitlist • Free • 2 mins</p>
+          <p className="mt-2 text-center text-[10px] text-muted-foreground opacity-90 font-semibold">Join the early-access waitlist • Free • 2 mins</p>
         </section>
       </main>
 
@@ -177,7 +177,7 @@ export const IntroScreen = ({
       <div className="hidden lg:block relative overflow-hidden bg-gradient-to-br from-[#F6F0FF] to-[#EAF7FF]">
         {/* Top Ribbon */}
         <div className="w-full bg-gradient-to-r from-primary/10 to-accent/10 border-b border-primary/20 py-3 text-center">
-          <p className="text-sm text-primary font-medium">Join today to lock founder pricing & early access.</p>
+          <p className="text-sm text-primary font-medium">Join today to lock founder pricing & secure early access.</p>
         </div>
 
         {/* Hero Section */}
@@ -222,7 +222,7 @@ export const IntroScreen = ({
 
                 {/* Proof Line */}
                 <div className="text-center">
-                  <p className="text-base text-slate-500 italic">'I feel overwhelmed by AI' — the most common thing Brain Bytes readers tell us. Early access opens soon — secure your spot.</p>
+                  <p className="text-base text-slate-500 italic">"I feel overwhelmed by AI" — the most common thing Brain Bytes readers tell us. Early access opens soon — secure your spot today.</p>
                 </div>
 
                 {/* Enhanced CTA */}
@@ -234,7 +234,7 @@ export const IntroScreen = ({
                     </div>
                   </Button>
                   <div className="text-center space-y-1">
-                    <p className="text-sm text-muted-foreground">Join the early-access waitlist • Free • 2 mins</p>
+                    <p className="text-sm text-muted-foreground font-semibold">Join the early-access waitlist • Free • 2 mins</p>
                   </div>
                 </div>
               </div>
@@ -242,14 +242,8 @@ export const IntroScreen = ({
 
             {/* Right Side - Dashboard Preview */}
             <div className="lg:ml-8">
-              <div className="bg-white/95 backdrop-blur-sm border border-slate-200/60 shadow-lg rounded-2xl p-6 hover:shadow-xl transition-all duration-300 relative overflow-hidden">
-                {/* Subtle inner shadow */}
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-50/40 via-transparent to-slate-100/20 rounded-2xl"></div>
-                <div className="relative">
-                  <figure className="rounded-xl overflow-hidden border border-border shadow-sm bg-card">
-                    <img src="/lovable-uploads/b2bc6f38-7334-4724-a35c-2fee369382ce.png" alt="Brain Bytes dashboard preview" loading="lazy" className="w-full h-auto object-cover" />
-                  </figure>
-                </div>
+              <div className="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+                <img src="/lovable-uploads/b2bc6f38-7334-4724-a35c-2fee369382ce.png" alt="Brain Bytes dashboard preview" loading="lazy" className="w-full h-auto object-cover" />
               </div>
             </div>
           </div>
