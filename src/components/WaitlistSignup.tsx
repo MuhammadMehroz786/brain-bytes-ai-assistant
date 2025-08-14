@@ -79,9 +79,9 @@ export const WaitlistSignup = ({ isOpen, onClose, triggerText }: WaitlistSignupP
         ) : (
           <div className="space-y-6">
             <div className="text-center space-y-2">
-              <h3 className="text-xl font-bold text-foreground">Join the Waitlist</h3>
+              <h3 className="text-xl font-bold text-foreground">✅ You're Almost In!</h3>
               <p className="text-muted-foreground text-sm">
-                Be the first to get access to your personalized AI toolkit
+                Join the early-access waitlist and be first to get your personalized AI plan.
               </p>
             </div>
 
@@ -89,7 +89,7 @@ export const WaitlistSignup = ({ isOpen, onClose, triggerText }: WaitlistSignupP
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <span className="text-primary">✓</span>
-                  <span>One-time $29 fee - No subscriptions</span>
+                  <span>Founder pricing locked in for you</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <span className="text-primary">✓</span>
@@ -128,9 +128,13 @@ export const WaitlistSignup = ({ isOpen, onClose, triggerText }: WaitlistSignupP
                       Joining...
                     </div>
                   ) : (
-                    "Join the Waitlist"
+                    "Secure My Spot"
                   )}
                 </Button>
+                
+                <p className="text-center text-xs text-muted-foreground">
+                  Free to join • No spam • Launching soon
+                </p>
               </form>
             </div>
           </div>
