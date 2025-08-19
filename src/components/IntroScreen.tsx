@@ -292,56 +292,6 @@ export const IntroScreen = ({
           </div>
         </div>
 
-        {/* Social Proof - Desktop Only */}
-        <div className="hidden lg:block py-12">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-foreground mb-4">Trusted by productive professionals</h2>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-white/80 backdrop-blur-sm border border-primary/10 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-1">
-                    {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-500 text-lg">★</span>)}
-                  </div>
-                  <p className="text-foreground leading-relaxed">
-                    "Brain Bytes transformed my daily routine. I'm saving 2+ hours every day and finally feel in control of my schedule."
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                      <span className="text-primary font-semibold">SM</span>
-                    </div>
-                    <div>
-                      <div className="font-medium text-foreground">Sarah M.</div>
-                      <div className="text-sm text-muted-foreground">Marketing Director</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white/80 backdrop-blur-sm border border-accent/10 rounded-2xl p-8 hover:shadow-lg transition-all duration-300">
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-1">
-                    {[...Array(5)].map((_, i) => <span key={i} className="text-yellow-500 text-lg">★</span>)}
-                  </div>
-                  <p className="text-foreground leading-relaxed">
-                    "The personalized AI insights are incredible. It's like having a productivity coach that actually understands my workflow."
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
-                      <span className="text-accent font-semibold">DL</span>
-                    </div>
-                    <div>
-                      <div className="font-medium text-foreground">David L.</div>
-                      <div className="text-sm text-muted-foreground">Software Engineer</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Footer */}
         <div className="bg-white/30 py-12">
