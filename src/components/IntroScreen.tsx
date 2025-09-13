@@ -227,7 +227,7 @@ export const IntroScreen = ({
                 {/* Enhanced CTA */}
                 <div className="space-y-4 pt-4">
                   <Button onClick={() => setIsWaitlistOpen(true)} className="relative w-full max-w-2xl bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-white font-semibold text-xl px-8 py-6 rounded-2xl transition-all duration-300 h-auto group overflow-hidden hover:shadow-2xl hover:-translate-y-0.5">
-                    Start My 3-Question AI Plan
+                    Secure My Spot
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                     </div>
